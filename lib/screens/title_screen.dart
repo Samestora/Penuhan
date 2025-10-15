@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:penuhan/screens/main_menu.dart';
 import 'package:flame_audio/flame_audio.dart';
+import 'package:penuhan/utils/assets.dart';
 
 class TitleScreen extends StatefulWidget {
   const TitleScreen({super.key});
@@ -34,7 +35,7 @@ class _TitleScreenState extends State<TitleScreen>
   }
 
   void _navigateToMainMenu() {
-    FlameAudio.play("sfx/sfx_click_heavy.mp3");
+    FlameAudio.play(Assets.sfxClick);
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const MainMenu()),
     );
@@ -73,10 +74,7 @@ class _TitleScreenState extends State<TitleScreen>
                 opacity: _animation,
                 child: const Text(
                   'Press anywhere to continue',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 18.0,
-                  ),
+                  style: TextStyle(color: Colors.white70, fontSize: 18.0),
                 ),
               ),
             ],

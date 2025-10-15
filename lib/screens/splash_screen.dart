@@ -1,6 +1,10 @@
-import 'package:flame_splash_screen/flame_splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:penuhan/screens/title_screen.dart';
+import 'package:penuhan/utils/assets.dart';
+
+// Fade in -> 2 seconds
+// NECESSARY jank for 0.05 seconds
+// Fade out -> 2 seconds
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,40 +14,82 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  // 1. Declare the controller
-  late FlameSplashController controller;
+  Future<void>? _precacheFuture;
+  double _opacity = 0.0;
+  bool _isLoaded = false;
 
   @override
   void initState() {
     super.initState();
-    // 2. Initialize the controller with your custom durations
-    controller = FlameSplashController(
-      fadeInDuration: const Duration(milliseconds: 2000), // How long it takes to fade in
-      waitDuration: const Duration(seconds: 3),           // How long it stays on screen
-      fadeOutDuration: const Duration(milliseconds: 1000), // How long it takes to fade out
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _opacity = 1.0; // Trigger fade-in
+        });
+      }
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _precacheFuture ??= _loadData();
+  }
+
+  Future<void> _loadData() async {
+    await Future.wait([
+      precacheAssets(context),
+      Future.delayed(const Duration(seconds: 2)),
+    ]);
+  }
+
+  void _navigateToNextScreen() {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) =>
+            const TitleScreen(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 800),
+      ),
     );
   }
 
   @override
-  void dispose() {
-    // 4. Dispose the controller to prevent memory leaks
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return FlameSplashScreen(
-      controller: controller,
-      theme: FlameSplashTheme.dark,
-      onFinish: (BuildContext context) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const TitleScreen()),
+    return FutureBuilder(
+      future: _precacheFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done && !_isLoaded) {
+          _isLoaded = true;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+              _opacity = 0.0; // Trigger fade-out
+            });
+          });
+        }
+
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedOpacity(
+                  opacity: _opacity,
+                  duration: const Duration(milliseconds: 1500),
+                  onEnd: () {
+                    if (_isLoaded) {
+                      _navigateToNextScreen();
+                    }
+                  },
+                  child: Column(children: [Image.asset(Assets.splashLogo)]),
+                ),
+              ],
+            ),
+          ),
         );
-      },
-      showAfter: (BuildContext context) {
-        return Image.asset('assets/image/engine/sgdc_logo.png');
       },
     );
   }

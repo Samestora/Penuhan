@@ -24,6 +24,7 @@ class Assets {
 
   // Engine image files
   static const String splashLogo = '$_imagesPath/$_enginePath/sgdc_logo.png';
+  static const String gameLogo = '$_imagesPath/$_enginePath/logo.png';
 
   // Sprite image files
   static const String playerSprite = '$_imagesPath/$_spritePath/player.png';
@@ -42,6 +43,7 @@ Future<void> precacheAssets(BuildContext context) async {
 
     // Load all image assets for the UI
     precacheImage(const AssetImage(Assets.splashLogo), context),
+    precacheImage(const AssetImage(Assets.gameLogo), context),
     precacheImage(const AssetImage(Assets.playerSprite), context),
     precacheImage(const AssetImage(Assets.enemySprite), context),
   ]);

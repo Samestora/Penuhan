@@ -1,9 +1,11 @@
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:penuhan/l10n/generated/app_localizations.dart';
+
 import 'package:penuhan/screens/game_play.dart';
 import 'package:penuhan/utils/assets.dart';
 
-// 1. Convert the widget to a StatefulWidget
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
 
@@ -11,18 +13,27 @@ class MainMenu extends StatefulWidget {
   State<MainMenu> createState() => _MainMenuState();
 }
 
-// 2. Create the State class
 class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
+  String _versionNumberText = "Loading...";
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this); // Listen to lifecycle changes
-    FlameAudio.bgm.play(Assets.bgmTitle, volume: 1); // Use your asset constant
+    WidgetsBinding.instance.addObserver(this);
+    FlameAudio.bgm.play(Assets.bgmTitle, volume: 1);
+    _initPackageInfo();
+  }
+
+  Future<void> _initPackageInfo() async {
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    setState(() {
+      _versionNumberText = 'v${packageInfo.version}+${packageInfo.buildNumber}';
+    });
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this); // Stop listening
+    WidgetsBinding.instance.removeObserver(this);
     FlameAudio.bgm.stop();
     super.dispose();
   }
@@ -31,84 +42,180 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.paused) {
-      // The app is in the background
       FlameAudio.bgm.pause();
     } else if (state == AppLifecycleState.resumed) {
-      // The app is in the foreground
       FlameAudio.bgm.resume();
     }
   }
 
+  // Method to show the language selection dialog
+  void _showLanguageDialog(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.grey.shade900,
+          title: Text(
+            localizations.languageDialogTitle,
+            style: const TextStyle(color: Colors.white),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text(
+                  'English',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  // TODO: Implement logic to change app locale to 'en'
+                  // This typically involves a state management solution (like Provider)
+                  // to update the locale in your MaterialApp widget.
+                  print("Language set to English");
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                title: const Text(
+                  'Bahasa Indonesia',
+                  style: TextStyle(color: Colors.white),
+                ),
+                onTap: () {
+                  // TODO: Implement logic to change app locale to 'id'
+                  print("Language set to Indonesian");
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final localizations = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Game Title
-            Text(
-              'Penuhan',
-              style: TextStyle(
-                fontSize: 56.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                shadows: [
-                  Shadow(
-                    blurRadius: 10.0,
-                    color: Colors.blue.shade700,
-                    offset: const Offset(0, 0),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              Image.asset(Assets.gameLogo, height: 150.0),
+              const SizedBox(height: 60.0),
+
+              // Embark Button
+              // TODO Save file for new game and continue
+              // Up to 3 save file
+              _buildMenuButton(context, localizations.mainMenuEmbark, () {
+                FlameAudio.bgm.stop();
+                FlameAudio.play(Assets.sfxClick);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => const GamePlay()),
+                );
+              }),
+              const SizedBox(height: 20.0),
+
+              // Settings Button
+              // TODO: Modal pop up
+              // SFX Toggle
+              // BGM Toggle
+              _buildMenuButton(
+                context,
+                localizations.mainMenuSettings,
+                // () {
+                //   FlameAudio.play(Assets.sfxClick);
+                //   _showSettingsDialog(context);
+                // }
+                // not yet implemented
+                null,
+              ),
+              const SizedBox(height: 20.0),
+
+              // About Button
+              // TODO: Modal pop up
+              // License : Music (chagasi)
+              // Socials : Instagram, Itch io
+              _buildMenuButton(
+                context,
+                localizations.mainMenuAbout,
+                // () {
+                //   FlameAudio.play(Assets.sfxClick);
+                //   _showAboutDialog(context);
+                // }
+                // not yet implemented
+                null,
+              ),
+              const SizedBox(height: 20.0),
+
+              // Language Button
+              // TODO: Modal pop up to change language
+              _buildMenuButton(
+                context,
+                localizations.mainMenuLanguage,
+                // () {
+                //   FlameAudio.play(Assets.sfxClick);
+                //   _showLanguageDialog(context);
+                // }
+                // not yet implemented
+                null,
+              ),
+              const Spacer(),
+
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    _versionNumberText,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12.0),
+                  ),
+                  Text(
+                    localizations.copyrightNotice,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12.0),
                   ),
                 ],
               ),
-            ),
-            const SizedBox(height: 80.0), // Spacer
-            // Play Button
-            _buildMenuButton(context, 'Play', () {
-              // When navigating to gameplay, you might want to stop
-              // the main menu music and play a different track.
-              FlameAudio.bgm.stop();
-              FlameAudio.play(Assets.sfxClick);
-
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const GamePlay()),
-              );
-            }),
-            const SizedBox(height: 20.0), // Spacer
-            // Settings Button
-            _buildMenuButton(context, 'Settings', () {
-              // Navigate to settings_screen
-            }),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // This helper method is now part of the _MainMenuState class
   Widget _buildMenuButton(
     BuildContext context,
     String text,
-    VoidCallback onPressed,
+    VoidCallback? onPressed,
   ) {
     return SizedBox(
-      width: 250, // Set a fixed width for the buttons
-      child: ElevatedButton(
+      width: 250,
+      child: OutlinedButton(
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue.shade800,
+        style: OutlinedButton.styleFrom(
           foregroundColor: Colors.white,
+          side: BorderSide(
+            color: onPressed != null ? Colors.white : Colors.grey.shade800,
+            width: 2,
+          ),
           padding: const EdgeInsets.symmetric(vertical: 16.0),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
-            side: BorderSide(color: Colors.blue.shade300, width: 2),
           ),
-          elevation: 5,
         ),
         child: Text(
           text,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: onPressed != null ? Colors.white : Colors.grey.shade700,
+          ),
         ),
       ),
     );

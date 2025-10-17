@@ -1,0 +1,5 @@
+- Save game func (Hive)
+- l10n func (ID and EN)
+- About func
+- Settings func (Providers/BLoC/Riverpod)
+- Main game func

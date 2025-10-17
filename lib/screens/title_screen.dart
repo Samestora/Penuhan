@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:penuhan/screens/main_menu.dart';
 import 'package:flame_audio/flame_audio.dart';
-import 'package:penuhan/utils/assets.dart';
+import 'package:penuhan/utils/assets.dart'; // Make sure this path is correct for your assets
 
 class TitleScreen extends StatefulWidget {
   const TitleScreen({super.key});
@@ -35,7 +35,7 @@ class _TitleScreenState extends State<TitleScreen>
   }
 
   void _navigateToMainMenu() {
-    FlameAudio.play(Assets.sfxClick);
+    FlameAudio.play(Assets.sfxClick); // Play a click sound effect
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const MainMenu()),
     );
@@ -52,24 +52,8 @@ class _TitleScreenState extends State<TitleScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Your game title.
-              Text(
-                'Penuhan',
-                style: TextStyle(
-                  fontSize: 56.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 10.0,
-                      color: Colors.blue.shade700,
-                      offset: Offset(0, 0),
-                    ),
-                  ],
-                ),
-              ),
+              Image.asset(Assets.gameLogo, height: 150.0),
               const SizedBox(height: 100),
-              // Animated text to prompt the user.
               FadeTransition(
                 opacity: _animation,
                 child: const Text(

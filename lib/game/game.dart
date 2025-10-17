@@ -20,8 +20,8 @@ class PenuhanGame extends FlameGame {
 
   @override
   FutureOr<void> onLoad() async {
-    Player player = Player();
-    add(player);
+    // Player player = Player();
+    // add(player);
     return super.onLoad();
   }
 }

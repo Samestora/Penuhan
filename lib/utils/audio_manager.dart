@@ -3,6 +3,29 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:penuhan/main.dart'; // Import to get the keys
 import 'package:penuhan/utils/asset_manager.dart';
 
+/// Manages audio playback for the game using [flame_audio] (maybe using soloud next time?)
+/// call this using [AssetManager] class like so
+/// ```dart
+/// AssetManager.audioManager.playSfx(Assets.<sfxName>);
+/// AssetManager.audioManager.playBgm(Assets.<bgmName>);
+/// ```
+/// with [sfxName] and [bgmName]
+/// being the name of the sound file defined in [AssetManager]
+///
+/// for pausing and resuming you can wrap them inside of lifecycles
+/// for example :
+/// ```dart
+/// @override
+/// void didChangeAppLifecycleState(AppLifecycleState state) {
+///   super.didChangeAppLifecycleState(state);
+///   if (state == AppLifecycleState.paused) {
+///     AudioManager.instance.onAppPaused();
+///   } else if (state == AppLifecycleState.resumed) {
+///     AudioManager.instance.onAppResumed();
+///   }
+/// }
+/// ```
+
 class AudioManager {
   AudioManager._privateConstructor();
   static final AudioManager instance = AudioManager._privateConstructor();
@@ -16,10 +39,10 @@ class AudioManager {
   // Check if SFX is enabled in settings
   bool get isSfxEnabled => _settingsBox.get(sfxEnabledKey, defaultValue: true);
 
-  void playBgmMenu() {
+  void playBgm(String bgmFile) {
     if (!isBgmEnabled) return; // Don't play if disabled
     _isMusicPlaying = true;
-    FlameAudio.bgm.play(AssetManager.bgmTitle, volume: 1);
+    FlameAudio.bgm.play(bgmFile, volume: 1);
   }
 
   void playSfx(String sfxFile) {
@@ -50,7 +73,7 @@ class AudioManager {
     final bool current = isBgmEnabled;
     _settingsBox.put(bgmEnabledKey, !current);
     if (!current) {
-      playBgmMenu(); // If it was off, turn it on
+      playBgm(AssetManager.bgmTitle); // If it was off, turn it on
     } else {
       stopBgm(); // If it was on, turn it off
     }

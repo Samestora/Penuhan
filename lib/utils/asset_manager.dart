@@ -1,8 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flame_audio/flame_audio.dart';
 
+/// Manages assets shorthand for convinience, for the game
+/// for audio will be using [flame_audio] package
+/// for images will be using native [flutter] package
+///
+/// call the assets in this class like so
+/// ```dart
+/// AssetManager.<sfxName>
+/// AssetManager.<bgmName>
+/// AssetManager.<imageName>
+/// ```
+/// with [sfxName], [bgmName], [imageName]
+/// being the name of the file defined in AssetManager
+///
+/// for prechaching assets you can do them depending on the [Screen]
+/// for example :
+/// ```dart
+/// Future<void> _loadData() async {
+///   await Future.wait([
+///     precacheMainMenuAssets(context),
+///     Future.delayed(const Duration(seconds: 2)),
+///   ]);
+/// }
+/// ```
+
 class AssetManager {
-  // Private constructor to prevent instantiation
   AssetManager._();
 
   static const String _audioPath = 'assets/audio';
@@ -31,20 +54,28 @@ class AssetManager {
   static const String enemySprite = '$_imagesPath/$_spritePath/enemy.png';
 }
 
-/// Loads all essential assets for the game into cache.
-Future<void> precacheAssets(BuildContext context) async {
+Future<void> precacheMainGameAssets(BuildContext context) async {
   await Future.wait([
-    // Load all audio assets
     FlameAudio.audioCache.loadAll([
       AssetManager.bgmTitle,
       AssetManager.sfxClick,
-      // Add other sfx or bgm files here
     ]),
 
-    // Load all image assets for the UI
     precacheImage(const AssetImage(AssetManager.splashLogo), context),
     precacheImage(const AssetImage(AssetManager.gameLogo), context),
     precacheImage(const AssetImage(AssetManager.playerSprite), context),
     precacheImage(const AssetImage(AssetManager.enemySprite), context),
+  ]);
+}
+
+Future<void> precacheMainMenuAssets(BuildContext context) async {
+  await Future.wait([
+    FlameAudio.audioCache.loadAll([
+      AssetManager.bgmTitle,
+      AssetManager.sfxClick,
+    ]),
+
+    precacheImage(const AssetImage(AssetManager.splashLogo), context),
+    precacheImage(const AssetImage(AssetManager.gameLogo), context),
   ]);
 }

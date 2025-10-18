@@ -4,6 +4,7 @@ import 'package:flame/flame.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'package:penuhan/utils/save_manager.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:penuhan/screens/splash_screen.dart';
 
@@ -18,6 +19,7 @@ void main() async {
   Flame.device.setPortrait();
 
   await Hive.initFlutter();
+  await SaveManager.instance.initialize();
   await Hive.openBox(settingsBoxName);
 
   // Clear the default Flame asset prefixes to use full paths

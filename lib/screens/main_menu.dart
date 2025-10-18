@@ -4,7 +4,6 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:penuhan/l10n/generated/app_localizations.dart';
-import 'package:penuhan/screens/game_play.dart';
 import 'package:penuhan/utils/asset_manager.dart';
 import 'package:penuhan/main.dart';
 import 'package:penuhan/widgets/monochrome_button.dart';
@@ -26,7 +25,7 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    AudioManager.instance.playBgmMenu();
+    AudioManager.instance.playBgm(AssetManager.bgmTitle);
     _initPackageInfo();
   }
 
@@ -75,10 +74,7 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
                 text: localizations.mainMenuEmbark,
                 onPressed: () {
                   AudioManager.instance.playSfx(AssetManager.sfxClick);
-                  AudioManager.instance.stopBgm();
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const GamePlay()),
-                  );
+                  _showEmbarkDialog();
                 },
               ),
               const SizedBox(height: 20.0),
@@ -124,6 +120,19 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
   }
 
   // Helper functions
+  /// Shows the select save game dialog using the [_EmbarkContent] class
+  void _showEmbarkDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MonochromeModal(
+          title: AppLocalizations.of(context)!.mainMenuEmbark,
+          child: const _EmbarkContent(),
+        );
+      },
+    );
+  }
+
   /// Shows the settings dialog using the [_SettingsContent] class
   void _showSettingsDialog() {
     // use built in but with custom looks
@@ -149,6 +158,30 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
           child: const _AboutContent(),
         );
       },
+    );
+  }
+}
+
+class _EmbarkContent extends StatefulWidget {
+  const _EmbarkContent();
+
+  @override
+  State<_EmbarkContent> createState() => __EmbarkContentState();
+}
+
+class __EmbarkContentState extends State<_EmbarkContent> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          AppLocalizations.of(context)!.mainMenuEmbark,
+          style: const TextStyle(color: Colors.white, fontSize: 18.0),
+        ),
+        const SizedBox(height: 20.0),
+        // TODO: Implement save slot selection
+      ],
     );
   }
 }

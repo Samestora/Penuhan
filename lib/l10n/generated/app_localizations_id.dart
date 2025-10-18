@@ -21,12 +21,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get copyrightNotice => '© 2025 Soedirman Game Dev Community';
 
   @override
-  String get mainMenuLanguage => 'Bahasa';
-
-  @override
-  String get languageDialogTitle => 'Pilih Bahasa';
-
-  @override
   String get settingsMusic => 'Musik';
 
   @override
@@ -57,4 +51,29 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get aboutSfxUrl => 'https://www.freesfx.co.uk/';
+
+  @override
+  String get embarkNewGame => 'Mulai';
+
+  @override
+  String get embarkContinue => 'lanjutkan';
+
+  @override
+  String get embarkEmpty => 'Kosong';
+
+  @override
+  String embarkSlot(int slotNumber) {
+    return 'Slot $slotNumber';
+  }
+
+  @override
+  String embarkLastSaved(String dateTime) {
+    return 'Terakhir Disimpan: $dateTime';
+  }
+
+  @override
+  String get embarkLoadFromDisk => 'Muat dari Disk';
+
+  @override
+  String get embarkSaveToDisk => 'Simpan ke Disk';
 }

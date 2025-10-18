@@ -122,18 +122,6 @@ abstract class AppLocalizations {
   /// **'© 2025 Soedirman Game Dev Community'**
   String get copyrightNotice;
 
-  /// Button to change the language
-  ///
-  /// In en, this message translates to:
-  /// **'Language'**
-  String get mainMenuLanguage;
-
-  /// Title for the language selection dialog
-  ///
-  /// In en, this message translates to:
-  /// **'Select Language'**
-  String get languageDialogTitle;
-
   /// Toggling music in settings
   ///
   /// In en, this message translates to:
@@ -193,6 +181,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'https://www.freesfx.co.uk/'**
   String get aboutSfxUrl;
+
+  /// No description provided for @embarkNewGame.
+  ///
+  /// In en, this message translates to:
+  /// **'New Game'**
+  String get embarkNewGame;
+
+  /// No description provided for @embarkContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get embarkContinue;
+
+  /// No description provided for @embarkEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty'**
+  String get embarkEmpty;
+
+  /// Label for a save slot, e.g., 'Slot 1'
+  ///
+  /// In en, this message translates to:
+  /// **'Slot {slotNumber}'**
+  String embarkSlot(int slotNumber);
+
+  /// Shows the last time the game was saved
+  ///
+  /// In en, this message translates to:
+  /// **'Last saved: {dateTime}'**
+  String embarkLastSaved(String dateTime);
+
+  /// No description provided for @embarkLoadFromDisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Load from Disk'**
+  String get embarkLoadFromDisk;
+
+  /// No description provided for @embarkSaveToDisk.
+  ///
+  /// In en, this message translates to:
+  /// **'Save to Disk'**
+  String get embarkSaveToDisk;
 }
 
 class _AppLocalizationsDelegate

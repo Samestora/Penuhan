@@ -4,8 +4,6 @@
     "mainMenuSettings": "Pengaturan",
     "mainMenuAbout": "Tentang",
     "copyrightNotice": "© 2025 Soedirman Game Dev Community",
-    "mainMenuLanguage": "Bahasa",
-    "languageDialogTitle": "Pilih Bahasa",
     "settingsMusic": "Musik",
     "settingsSfx": "Efek Suara",
     "aboutCreditsTitle": "Kredit & Apresiasi",
@@ -15,5 +13,28 @@
     "aboutMusicUrl": "https://amachamusic.chagasi.com/",
     "aboutSfxTitle": "Efek Suara",
     "aboutSfxCredit": "Disediakan oleh: freesfx.co.uk",
-    "aboutSfxUrl": "https://www.freesfx.co.uk/"
+    "aboutSfxUrl": "https://www.freesfx.co.uk/",
+    "embarkNewGame": "Mulai",
+    "embarkContinue": "lanjutkan",
+    "embarkEmpty": "Kosong",
+    "embarkSlot": "Slot {slotNumber}",
+    "@embarkSlot": {
+        "description": "Label for a save slot, e.g., 'Slot 1'",
+        "placeholders": {
+            "slotNumber": {
+                "type": "int"
+            }
+        }
+    },
+    "embarkLastSaved": "Terakhir Disimpan: {dateTime}",
+    "@embarkLastSaved": {
+        "description": "Shows the last time the game was saved",
+        "placeholders": {
+            "dateTime": {
+                "type": "String"
+            }
+        }
+    },
+    "embarkLoadFromDisk": "Muat dari Disk",
+    "embarkSaveToDisk": "Simpan ke Disk"
 }

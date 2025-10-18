@@ -16,14 +16,6 @@
     "@copyrightNotice": {
         "description": "Putranto Surya Wijanarko & Raden Demas Amirul Plawirakusumah"
     },
-    "mainMenuLanguage": "Language",
-    "@mainMenuLanguage": {
-        "description": "Button to change the language"
-    },
-    "languageDialogTitle": "Select Language",
-    "@languageDialogTitle": {
-        "description": "Title for the language selection dialog"
-    },
     "settingsMusic": "Music",
     "@settingsMusic": {
         "description": "Toggling music in settings"
@@ -32,8 +24,6 @@
     "@settingsSfx": {
         "description": "Toggling sound effects in settings"
     },
-
-    
     "aboutCreditsTitle": "Credits & Appreciation",
     "@aboutCreditsTitle": {
         "description": "Title for the credits section"
@@ -42,8 +32,6 @@
     "@aboutCreditsHeader": {
         "description": "Header for the credits section"
     },
-
-
     "aboutMusicTitle": "Music",
     "@aboutMusicTitle": {
         "description": "Title for the music section"
@@ -56,8 +44,6 @@
     "@aboutMusicUrl": {
         "description": "URL for the music creator's website"
     },
-
-
     "aboutSfxTitle": "Sound Effects",
     "@aboutSfxTitle": {
         "description": "Title for the sound effects section"
@@ -69,5 +55,28 @@
     "aboutSfxUrl": "https://www.freesfx.co.uk/",
     "@aboutSfxUrl": {
         "description": "URL for the sound effects website"
-    }
+    },
+    "embarkNewGame": "New Game",
+    "embarkContinue": "Continue",
+    "embarkEmpty": "Empty",
+    "embarkSlot": "Slot {slotNumber}",
+    "@embarkSlot": {
+        "description": "Label for a save slot, e.g., 'Slot 1'",
+        "placeholders": {
+            "slotNumber": {
+                "type": "int"
+            }
+        }
+    },
+    "embarkLastSaved": "Last saved: {dateTime}",
+    "@embarkLastSaved": {
+        "description": "Shows the last time the game was saved",
+        "placeholders": {
+            "dateTime": {
+                "type": "String"
+            }
+        }
+    },
+    "embarkLoadFromDisk": "Load from Disk",
+    "embarkSaveToDisk": "Save to Disk"
 }

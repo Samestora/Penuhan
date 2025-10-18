@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:penuhan/screens/title_screen.dart';
 import 'package:penuhan/utils/asset_manager.dart';
 
-// Fade in -> 2 seconds
-// NECESSARY jank for 0.05 seconds
-// Fade out -> 2 seconds
+/// Fade in -> 2 seconds
+/// NECESSARY jank for 0.05 seconds
+/// Fade out -> 2 seconds
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -32,7 +32,6 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void dispose() {
-    super.dispose(); // 2. ALWAYS dispose of it here!
     super.dispose();
   }
 
@@ -44,7 +43,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _loadData() async {
     await Future.wait([
-      precacheAssets(context),
+      precacheMainMenuAssets(context),
       Future.delayed(const Duration(seconds: 2)),
     ]);
   }

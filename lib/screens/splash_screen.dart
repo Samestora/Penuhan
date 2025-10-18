@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:penuhan/screens/title_screen.dart';
-import 'package:penuhan/utils/assets.dart';
+import 'package:penuhan/utils/asset_manager.dart';
 
 // Fade in -> 2 seconds
 // NECESSARY jank for 0.05 seconds
@@ -28,6 +28,12 @@ class _SplashScreenState extends State<SplashScreen> {
         });
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose(); // 2. ALWAYS dispose of it here!
+    super.dispose();
   }
 
   @override
@@ -84,7 +90,9 @@ class _SplashScreenState extends State<SplashScreen> {
                       _navigateToNextScreen();
                     }
                   },
-                  child: Column(children: [Image.asset(Assets.splashLogo)]),
+                  child: Column(
+                    children: [Image.asset(AssetManager.splashLogo)],
+                  ),
                 ),
               ],
             ),

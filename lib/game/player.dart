@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import 'package:penuhan/utils/assets.dart';
+import 'package:penuhan/utils/asset_manager.dart';
 
 class Player extends SpriteComponent {
   Player({super.position})
@@ -7,6 +7,6 @@ class Player extends SpriteComponent {
 
   @override
   Future<void> onLoad() async {
-    sprite = await Sprite.load(Assets.playerSprite);
+    sprite = await Sprite.load(AssetManager.playerSprite);
   }
 }

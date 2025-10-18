@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flame_audio/flame_audio.dart';
 
-class Assets {
+class AssetManager {
   // Private constructor to prevent instantiation
-  Assets._();
+  AssetManager._();
 
   static const String _audioPath = 'assets/audio';
   static const String _sfxPath = 'sfx';
@@ -36,15 +36,15 @@ Future<void> precacheAssets(BuildContext context) async {
   await Future.wait([
     // Load all audio assets
     FlameAudio.audioCache.loadAll([
-      Assets.bgmTitle,
-      Assets.sfxClick,
+      AssetManager.bgmTitle,
+      AssetManager.sfxClick,
       // Add other sfx or bgm files here
     ]),
 
     // Load all image assets for the UI
-    precacheImage(const AssetImage(Assets.splashLogo), context),
-    precacheImage(const AssetImage(Assets.gameLogo), context),
-    precacheImage(const AssetImage(Assets.playerSprite), context),
-    precacheImage(const AssetImage(Assets.enemySprite), context),
+    precacheImage(const AssetImage(AssetManager.splashLogo), context),
+    precacheImage(const AssetImage(AssetManager.gameLogo), context),
+    precacheImage(const AssetImage(AssetManager.playerSprite), context),
+    precacheImage(const AssetImage(AssetManager.enemySprite), context),
   ]);
 }

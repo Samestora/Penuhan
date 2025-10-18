@@ -5,5 +5,15 @@
     "mainMenuAbout": "Tentang",
     "copyrightNotice": "© 2025 Soedirman Game Dev Community",
     "mainMenuLanguage": "Bahasa",
-    "languageDialogTitle": "Pilih Bahasa"
+    "languageDialogTitle": "Pilih Bahasa",
+    "settingsMusic": "Musik",
+    "settingsSfx": "Efek Suara",
+    "aboutCreditsTitle": "Kredit & Apresiasi",
+    "aboutCreditsHeader": "Terima kasih khusus kepada para kreator yang karya luar biasanya telah mewujudkan game ini:",
+    "aboutMusicTitle": "Musik",
+    "aboutMusicCredit": "BGM \"Main Menu\" oleh: 甘茶の音楽工房\n(Amacha Music Studio)",
+    "aboutMusicUrl": "https://amachamusic.chagasi.com/",
+    "aboutSfxTitle": "Efek Suara",
+    "aboutSfxCredit": "Disediakan oleh: freesfx.co.uk",
+    "aboutSfxUrl": "https://www.freesfx.co.uk/"
 }

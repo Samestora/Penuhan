@@ -104,19 +104,19 @@ abstract class AppLocalizations {
   /// **'Embark'**
   String get mainMenuEmbark;
 
-  /// No description provided for @mainMenuSettings.
+  /// For the settings button in main menu
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get mainMenuSettings;
 
-  /// No description provided for @mainMenuAbout.
+  /// For the about button in main menu
   ///
   /// In en, this message translates to:
   /// **'About'**
   String get mainMenuAbout;
 
-  /// No description provided for @copyrightNotice.
+  /// Putranto Surya Wijanarko & Raden Demas Amirul Plawirakusumah
   ///
   /// In en, this message translates to:
   /// **'© 2025 Soedirman Game Dev Community'**
@@ -133,6 +133,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Language'**
   String get languageDialogTitle;
+
+  /// Toggling music in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get settingsMusic;
+
+  /// Toggling sound effects in settings
+  ///
+  /// In en, this message translates to:
+  /// **'Sound Effects'**
+  String get settingsSfx;
+
+  /// Title for the credits section
+  ///
+  /// In en, this message translates to:
+  /// **'Credits & Appreciation'**
+  String get aboutCreditsTitle;
+
+  /// Header for the credits section
+  ///
+  /// In en, this message translates to:
+  /// **'Special thanks to the creators whose amazing work made this game possible:'**
+  String get aboutCreditsHeader;
+
+  /// Title for the music section
+  ///
+  /// In en, this message translates to:
+  /// **'Music'**
+  String get aboutMusicTitle;
+
+  /// Credit for the music in the game
+  ///
+  /// In en, this message translates to:
+  /// **'\"Main Menu\" BGM by: 甘茶の音楽工房\n(Amacha Music Studio)'**
+  String get aboutMusicCredit;
+
+  /// URL for the music creator's website
+  ///
+  /// In en, this message translates to:
+  /// **'https://amachamusic.chagasi.com/'**
+  String get aboutMusicUrl;
+
+  /// Title for the sound effects section
+  ///
+  /// In en, this message translates to:
+  /// **'Sound Effects'**
+  String get aboutSfxTitle;
+
+  /// Credit for the sound effects in the game
+  ///
+  /// In en, this message translates to:
+  /// **'Provided by: freesfx.co.uk'**
+  String get aboutSfxCredit;
+
+  /// URL for the sound effects website
+  ///
+  /// In en, this message translates to:
+  /// **'https://www.freesfx.co.uk/'**
+  String get aboutSfxUrl;
 }
 
 class _AppLocalizationsDelegate

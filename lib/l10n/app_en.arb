@@ -5,8 +5,17 @@
         "description": "The main button to start a new game"
     },
     "mainMenuSettings": "Settings",
+    "@mainMenuSettings": {
+        "description": "For the settings button in main menu"
+    },
     "mainMenuAbout": "About",
+    "@mainMenuAbout": {
+        "description": "For the about button in main menu"
+    },
     "copyrightNotice": "© 2025 Soedirman Game Dev Community",
+    "@copyrightNotice": {
+        "description": "Putranto Surya Wijanarko & Raden Demas Amirul Plawirakusumah"
+    },
     "mainMenuLanguage": "Language",
     "@mainMenuLanguage": {
         "description": "Button to change the language"
@@ -14,5 +23,51 @@
     "languageDialogTitle": "Select Language",
     "@languageDialogTitle": {
         "description": "Title for the language selection dialog"
+    },
+    "settingsMusic": "Music",
+    "@settingsMusic": {
+        "description": "Toggling music in settings"
+    },
+    "settingsSfx": "Sound Effects",
+    "@settingsSfx": {
+        "description": "Toggling sound effects in settings"
+    },
+
+    
+    "aboutCreditsTitle": "Credits & Appreciation",
+    "@aboutCreditsTitle": {
+        "description": "Title for the credits section"
+    },
+    "aboutCreditsHeader": "Special thanks to the creators whose amazing work made this game possible:",
+    "@aboutCreditsHeader": {
+        "description": "Header for the credits section"
+    },
+
+
+    "aboutMusicTitle": "Music",
+    "@aboutMusicTitle": {
+        "description": "Title for the music section"
+    },
+    "aboutMusicCredit": "\"Main Menu\" BGM by: 甘茶の音楽工房\n(Amacha Music Studio)",
+    "@aboutMusicCredit": {
+        "description": "Credit for the music in the game"
+    },
+    "aboutMusicUrl": "https://amachamusic.chagasi.com/",
+    "@aboutMusicUrl": {
+        "description": "URL for the music creator's website"
+    },
+
+
+    "aboutSfxTitle": "Sound Effects",
+    "@aboutSfxTitle": {
+        "description": "Title for the sound effects section"
+    },
+    "aboutSfxCredit": "Provided by: freesfx.co.uk",
+    "@aboutSfxCredit": {
+        "description": "Credit for the sound effects in the game"
+    },
+    "aboutSfxUrl": "https://www.freesfx.co.uk/",
+    "@aboutSfxUrl": {
+        "description": "URL for the sound effects website"
     }
 }

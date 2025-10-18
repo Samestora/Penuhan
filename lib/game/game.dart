@@ -2,8 +2,7 @@ import 'dart:async';
 
 import 'package:flame/game.dart';
 import 'package:flame_audio/flame_audio.dart';
-import 'package:penuhan/game/player.dart';
-import 'package:penuhan/utils/assets.dart';
+import 'package:penuhan/utils/asset_manager.dart';
 
 class PenuhanGame extends FlameGame {
   PenuhanGame() {
@@ -11,17 +10,16 @@ class PenuhanGame extends FlameGame {
   }
 
   @override
-  void onRemove() {
-    FlameAudio.audioCache.clear(Assets.bgmTitle);
-
-    // Always call the super method.
-    super.onRemove();
+  FutureOr<void> onLoad() async {
+    FlameAudio.bgm.stop();
+    FlameAudio.audioCache.clear(AssetManager.bgmTitle);
+    // FlameAudio.bgm.play(AssetManager.bgmGameplay, volume: 0.8);
   }
 
   @override
-  FutureOr<void> onLoad() async {
-    // Player player = Player();
-    // add(player);
-    return super.onLoad();
+  void onRemove() {
+    FlameAudio.audioCache.clearAll();
+
+    super.onRemove();
   }
 }

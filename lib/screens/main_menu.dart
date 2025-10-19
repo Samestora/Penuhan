@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:penuhan/widgets/tap_circle_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:penuhan/l10n/generated/app_localizations.dart';
@@ -57,62 +58,70 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Spacer(),
-              Image.asset(AssetManager.gameLogo, height: 150.0),
-              const SizedBox(height: 60.0),
+    return TapCircleIndicator(
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Spacer(),
+                Image.asset(AssetManager.gameLogo, height: 150.0),
+                const SizedBox(height: 60.0),
 
-              // Embark Button
-              MonochromeButton(
-                text: localizations.mainMenuEmbark,
-                onPressed: () {
-                  AudioManager.instance.playSfx(AssetManager.sfxClick);
-                  _showEmbarkDialog();
-                },
-              ),
-              const SizedBox(height: 20.0),
+                // Embark Button
+                MonochromeButton(
+                  text: localizations.mainMenuEmbark,
+                  onPressed: () {
+                    AudioManager.instance.playSfx(AssetManager.sfxClick);
+                    _showEmbarkDialog();
+                  },
+                ),
+                const SizedBox(height: 20.0),
 
-              // Settings Button - Now enabled!
-              MonochromeButton(
-                text: localizations.mainMenuSettings,
-                onPressed: () {
-                  AudioManager.instance.playSfx(AssetManager.sfxClick);
-                  _showSettingsDialog();
-                },
-              ),
-              const SizedBox(height: 20.0),
+                // Settings Button - Now enabled!
+                MonochromeButton(
+                  text: localizations.mainMenuSettings,
+                  onPressed: () {
+                    AudioManager.instance.playSfx(AssetManager.sfxClick);
+                    _showSettingsDialog();
+                  },
+                ),
+                const SizedBox(height: 20.0),
 
-              // About Button
-              MonochromeButton(
-                text: localizations.mainMenuAbout,
-                onPressed: () {
-                  AudioManager.instance.playSfx(AssetManager.sfxClick);
-                  _showAboutDialog();
-                },
-              ),
-              const Spacer(),
+                // About Button
+                MonochromeButton(
+                  text: localizations.mainMenuAbout,
+                  onPressed: () {
+                    AudioManager.instance.playSfx(AssetManager.sfxClick);
+                    _showAboutDialog();
+                  },
+                ),
+                const Spacer(),
 
-              // Copyright and Version Text
-              Column(
-                children: [
-                  Text(
-                    _versionNumberText,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12.0),
-                  ),
-                  Text(
-                    localizations.copyrightNotice,
-                    style: const TextStyle(color: Colors.grey, fontSize: 12.0),
-                  ),
-                ],
-              ),
-            ],
+                // Copyright and Version Text
+                Column(
+                  children: [
+                    Text(
+                      _versionNumberText,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                    Text(
+                      localizations.copyrightNotice,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -194,16 +203,19 @@ class _SettingsContent extends StatefulWidget {
 }
 
 class __SettingsContentState extends State<_SettingsContent> {
-  // The language selection dialog is no longer needed and can be removed.
+  // Define the master map of all available languages here,
+  // outside of the build method, for better performance.
+  final Map<String, String> _allLanguages = {
+    'en': 'English',
+    'id': 'Bahasa Indonesia',
+    // 'br': 'Português', // Example
+    // 'kr': '한국어', // Example
+    // 'jp': '日本語', // Example
+    // 'ru': 'Русский', // Example
+  };
 
   @override
   Widget build(BuildContext context) {
-    // A map to define the available languages and their display names.
-    final Map<String, String> languages = {
-      'en': 'English',
-      'id': 'Bahasa Indonesia',
-    };
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -213,13 +225,12 @@ class __SettingsContentState extends State<_SettingsContent> {
             settingsBoxName,
           ).listenable(keys: [bgmEnabledKey, sfxEnabledKey]),
           builder: (context, box, child) {
+            // ... (Your existing SwitchListTile code for music and SFX)
+            // This part remains unchanged.
             return Column(
               children: [
                 SwitchListTile(
-                  title: Text(
-                    AppLocalizations.of(context)!.settingsMusic,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  title: Text(AppLocalizations.of(context)!.settingsMusic),
                   value: box.get(bgmEnabledKey, defaultValue: true),
                   onChanged: (value) {
                     AudioManager.instance.toggleBgm();
@@ -229,10 +240,7 @@ class __SettingsContentState extends State<_SettingsContent> {
                   inactiveTrackColor: Colors.grey.shade700,
                 ),
                 SwitchListTile(
-                  title: Text(
-                    AppLocalizations.of(context)!.settingsSfx,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  title: Text(AppLocalizations.of(context)!.settingsSfx),
                   value: box.get(sfxEnabledKey, defaultValue: true),
                   onChanged: (value) {
                     AudioManager.instance.toggleSfx();
@@ -247,7 +255,7 @@ class __SettingsContentState extends State<_SettingsContent> {
         ),
         const SizedBox(height: 20),
 
-        // This builder listens specifically to the language key to update the dropdown.
+        // This builder listens to the language key to update the dropdown.
         ValueListenableBuilder(
           valueListenable: Hive.box(
             settingsBoxName,
@@ -255,9 +263,29 @@ class __SettingsContentState extends State<_SettingsContent> {
           builder: (context, box, child) {
             final currentLangCode = box.get(languageKey, defaultValue: 'en');
 
+            // --- NEW LOGIC TO REORDER THE LANGUAGES ---
+            // Create a new map that will hold the ordered languages.
+            // Using a LinkedHashMap ensures insertion order is preserved.
+            final Map<String, String> orderedLanguages = {};
+
+            // 1. Add the currently selected language first.
+            if (_allLanguages.containsKey(currentLangCode)) {
+              orderedLanguages[currentLangCode] =
+                  _allLanguages[currentLangCode]!;
+            }
+
+            // 2. Add the rest of the languages from the master list.
+            _allLanguages.forEach((key, value) {
+              if (key != currentLangCode) {
+                orderedLanguages[key] = value;
+              }
+            });
+            // --- END OF NEW LOGIC ---
+
             return MonochromeDropdown(
               value: currentLangCode,
-              items: languages,
+              // Pass the newly ordered map to the dropdown.
+              items: orderedLanguages,
               onChanged: (newLangCode) {
                 if (newLangCode != null) {
                   AudioManager.instance.playSfx(AssetManager.sfxClick);

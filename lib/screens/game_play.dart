@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
 import 'package:penuhan/game/game.dart';
 import 'package:penuhan/utils/audio_manager.dart';
+import 'package:penuhan/widgets/tap_circle_indicator.dart';
 
 class GamePlay extends StatefulWidget {
   const GamePlay({super.key});
@@ -38,6 +39,6 @@ class _GamePlayState extends State<GamePlay> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return GameWidget(game: _penuhanGame);
+    return TapCircleIndicator(child: GameWidget(game: _penuhanGame));
   }
 }

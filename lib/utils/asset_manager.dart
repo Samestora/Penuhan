@@ -45,6 +45,11 @@ class AssetManager {
   static const String bgmDungeonGraveyard =
       '$_audioPath/$_bgmPath/dungeon_graveyard_music.mp3';
 
+  // Shader files
+  static const String _shaderPath = 'shaders';
+  static const String crtShader = '$_shaderPath/crt_shader.frag';
+  static const String vhsShader = '$_shaderPath/vhs_shader.frag';
+
   // Engine image files
   static const String splashLogo = '$_imagesPath/$_enginePath/sgdc_logo.png';
   static const String gameLogo = '$_imagesPath/$_enginePath/logo.png';

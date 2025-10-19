@@ -33,11 +33,7 @@ class MonochromeDropdown extends StatelessWidget {
           isExpanded: true,
           dropdownColor: Colors.grey.shade900,
           icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontFamily: "Unifont", fontSize: 16),
           onChanged: onChanged,
           // Create the list of items from the provided map.
           items: items.entries.map((entry) {

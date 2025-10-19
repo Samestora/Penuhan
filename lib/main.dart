@@ -13,7 +13,7 @@ const String languageKey = 'language';
 const String bgmEnabledKey = 'bgm_enabled';
 const String sfxEnabledKey = 'sfx_enabled';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Flame.device.fullScreen();
   Flame.device.setPortrait();
@@ -42,13 +42,35 @@ class MyApp extends StatelessWidget {
       builder: (context, box, widget) {
         // Read the language code, defaulting to 'en' if not found.
         final langCode = box.get(languageKey, defaultValue: 'en');
+
+        final baseTheme = ThemeData(
+          fontFamily: 'Unifont',
+          listTileTheme: const ListTileThemeData(
+            titleTextStyle: TextStyle(
+              fontFamily: 'Unifont',
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+          highlightColor: Colors.white.withAlpha(
+            200,
+          ), // Color on press-and-hold
+          splashColor: Colors.white.withAlpha(
+            150,
+          ), // Color of the ripple itself
+        );
+
         return MaterialApp(
           // Debug settings that are automatically disabled in release mode
           showPerformanceOverlay: kDebugMode,
           debugShowCheckedModeBanner: kDebugMode,
 
+          theme: baseTheme.copyWith(brightness: Brightness.light),
+          darkTheme: baseTheme.copyWith(
+            brightness: Brightness.dark,
+            scaffoldBackgroundColor: const Color(0xFF121212),
+          ),
           themeMode: ThemeMode.dark,
-          darkTheme: ThemeData.dark(),
 
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

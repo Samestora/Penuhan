@@ -13,7 +13,6 @@ class PenuhanGame extends FlameGame {
   FutureOr<void> onLoad() async {
     FlameAudio.bgm.stop();
     FlameAudio.audioCache.clear(AssetManager.bgmTitle);
-    // FlameAudio.bgm.play(AssetManager.bgmGameplay, volume: 0.8);
   }
 
   @override

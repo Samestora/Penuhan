@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:penuhan/screens/game_play.dart';
 import 'package:penuhan/utils/asset_manager.dart';
 import 'package:penuhan/widgets/tap_circle_indicator.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +12,8 @@ import 'package:penuhan/widgets/monochrome_button.dart';
 import 'package:penuhan/widgets/monochrome_dropdown.dart';
 import 'package:penuhan/widgets/monochrome_modal.dart';
 import 'package:penuhan/utils/audio_manager.dart';
+import 'package:penuhan/widgets/dungeon_card.dart';
+import 'package:penuhan/models/dungeons.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -194,16 +197,31 @@ class _EmbarkContent extends StatefulWidget {
 class __EmbarkContentState extends State<_EmbarkContent> {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          AppLocalizations.of(context)!.mainMenuEmbark,
-          style: const TextStyle(color: Colors.white, fontSize: 18.0),
-        ),
-        const SizedBox(height: 20.0),
-        // TODO: Implement save slot selection
-      ],
+    final audioManager = context.read<AudioManager>();
+
+    return SizedBox(
+      height: 300, // Constrain the height of the dialog content
+      width: 400,
+      child: ListView.builder(
+        itemCount: Dungeons.all.length,
+        itemBuilder: (context, index) {
+          final dungeon = Dungeons.all[index];
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: DungeonCard(
+              dungeon: dungeon,
+              onTap: () {
+                audioManager.playSfx(AssetManager.sfxClick);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => GamePlay(dungeon: dungeon),
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
     );
   }
 }

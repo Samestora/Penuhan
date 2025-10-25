@@ -5,28 +5,37 @@ import 'package:penuhan/utils/audio_manager.dart';
 import 'package:penuhan/widgets/tap_circle_indicator.dart';
 import 'package:provider/provider.dart';
 
+import 'package:penuhan/models/dungeon.dart';
+
 class GamePlay extends StatefulWidget {
-  const GamePlay({super.key});
+  final Dungeon dungeon;
+
+  const GamePlay({super.key, required this.dungeon});
 
   @override
   State<GamePlay> createState() => _GamePlayState();
 }
 
 class _GamePlayState extends State<GamePlay> with WidgetsBindingObserver {
-  late final PenuhanGame _penuhanGame;
+  PenuhanGame? _penuhanGame;
   late final AudioManager _audioManager;
 
   @override
   void initState() {
     super.initState();
-    _penuhanGame = PenuhanGame();
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _audioManager = context.read<AudioManager>();
+    if (_penuhanGame == null) {
+      _audioManager = context.read<AudioManager>();
+      _penuhanGame = PenuhanGame(
+        dungeon: widget.dungeon,
+        audioManager: _audioManager,
+      );
+    }
   }
 
   @override
@@ -47,6 +56,15 @@ class _GamePlayState extends State<GamePlay> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return TapCircleIndicator(child: GameWidget(game: _penuhanGame));
+    if (_penuhanGame == null) {
+      // This can happen while the game is being initialized.
+      return const Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+    return TapCircleIndicator(child: GameWidget(game: _penuhanGame!));
   }
 }

@@ -1,24 +1,17 @@
 import 'dart:async';
 
 import 'package:flame/game.dart';
-import 'package:flame_audio/flame_audio.dart';
-import 'package:penuhan/utils/asset_manager.dart';
+import 'package:penuhan/utils/audio_manager.dart';
 
 class PenuhanGame extends FlameGame {
+  late final AudioManager _audioManager;
+
   PenuhanGame() {
     pauseWhenBackgrounded = false;
   }
 
   @override
   FutureOr<void> onLoad() async {
-    FlameAudio.bgm.stop();
-    FlameAudio.audioCache.clear(AssetManager.bgmTitle);
-  }
-
-  @override
-  void onRemove() {
-    FlameAudio.audioCache.clearAll();
-
-    super.onRemove();
+    _audioManager.stopBgm();
   }
 }

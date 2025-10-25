@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flame/flame.dart';
-import 'package:flame_audio/flame_audio.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
+import 'package:penuhan/utils/audio_manager.dart';
 import 'package:penuhan/utils/save_manager.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:penuhan/screens/splash_screen.dart';
-
-const String settingsBoxName = 'settings';
-const String languageKey = 'language';
-const String bgmEnabledKey = 'bgm_enabled';
-const String sfxEnabledKey = 'sfx_enabled';
+import 'package:provider/provider.dart';
+import 'package:penuhan/utils/hive_constants.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,15 +15,21 @@ Future<void> main() async {
   Flame.device.setPortrait();
 
   await Hive.initFlutter();
-  await SaveManager.instance.initialize();
   await Hive.openBox(settingsBoxName);
+  await SaveManager.instance.initialize();
+  final audioManager = AudioManager();
+  await audioManager.initialize();
 
   // Clear the default Flame asset prefixes to use full paths
   // This makes asset handling consistent between Flutter and Flame
-  Flame.images.prefix = '';
-  FlameAudio.audioCache.prefix = '';
+  Flame.images.prefix = "";
 
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [Provider<AudioManager>.value(value: audioManager)],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

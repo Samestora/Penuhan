@@ -44,7 +44,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> _loadData() async {
     await Future.wait([
-      precacheMainMenuAssets(context),
+      precacheCoreAssets(context),
       Future.delayed(const Duration(seconds: 2)),
     ]);
   }

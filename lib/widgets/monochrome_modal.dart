@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:penuhan/utils/asset_manager.dart';
 import 'package:penuhan/utils/audio_manager.dart';
+import 'package:provider/provider.dart';
 
 /// A reusable, monochrome-styled modal that looks like a window decorator.
 ///
@@ -13,6 +14,7 @@ class MonochromeModal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final audioManager = Provider.of<AudioManager>(context, listen: false);
     return Dialog(
       backgroundColor:
           Colors.transparent, // Required to see our custom decorations
@@ -50,7 +52,7 @@ class MonochromeModal extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.close, color: Colors.white),
                   onPressed: () {
-                    AudioManager.instance.playSfx(AssetManager.sfxClick);
+                    audioManager.playSfx(AssetManager.sfxClick);
                     Navigator.of(context).pop();
                   },
                   tooltip: 'Close',

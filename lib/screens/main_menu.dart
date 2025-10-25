@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:penuhan/widgets/tap_circle_indicator.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:penuhan/utils/asset_manager.dart';
-import 'package:penuhan/main.dart';
+import 'package:penuhan/widgets/tap_circle_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:penuhan/utils/hive_constants.dart';
+import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:penuhan/widgets/monochrome_button.dart';
 import 'package:penuhan/widgets/monochrome_dropdown.dart';
 import 'package:penuhan/widgets/monochrome_modal.dart';
@@ -21,12 +21,13 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
   String _versionNumberText = "Loading...";
+  late final AudioManager _audioManager;
+  bool _isMusicStarted = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    AudioManager.instance.playBgm(AssetManager.bgmTitle);
     _initPackageInfo();
   }
 
@@ -38,9 +39,21 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Only run this logic once.
+    if (!_isMusicStarted) {
+      // Get the instance from Provider and store it.
+      _audioManager = context.read<AudioManager>();
+      _audioManager.playBgm(AssetManager.bgmTitle, looping: true);
+      _isMusicStarted = true;
+    }
+  }
+
+  @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    AudioManager.instance.stopBgm();
+    _audioManager.stopBgm();
     super.dispose();
   }
 
@@ -48,9 +61,9 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.paused) {
-      AudioManager.instance.onAppPaused();
+      _audioManager.onAppPaused();
     } else if (state == AppLifecycleState.resumed) {
-      AudioManager.instance.onAppResumed();
+      _audioManager.onAppResumed();
     }
   }
 
@@ -75,7 +88,7 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
                 MonochromeButton(
                   text: localizations.mainMenuEmbark,
                   onPressed: () {
-                    AudioManager.instance.playSfx(AssetManager.sfxClick);
+                    _audioManager.playSfx(AssetManager.sfxClick);
                     _showEmbarkDialog();
                   },
                 ),
@@ -85,7 +98,7 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
                 MonochromeButton(
                   text: localizations.mainMenuSettings,
                   onPressed: () {
-                    AudioManager.instance.playSfx(AssetManager.sfxClick);
+                    _audioManager.playSfx(AssetManager.sfxClick);
                     _showSettingsDialog();
                   },
                 ),
@@ -95,7 +108,7 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
                 MonochromeButton(
                   text: localizations.mainMenuAbout,
                   onPressed: () {
-                    AudioManager.instance.playSfx(AssetManager.sfxClick);
+                    _audioManager.playSfx(AssetManager.sfxClick);
                     _showAboutDialog();
                   },
                 ),
@@ -216,6 +229,8 @@ class __SettingsContentState extends State<_SettingsContent> {
 
   @override
   Widget build(BuildContext context) {
+    final audioManager = context.watch<AudioManager>();
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -233,8 +248,8 @@ class __SettingsContentState extends State<_SettingsContent> {
                   title: Text(AppLocalizations.of(context)!.settingsMusic),
                   value: box.get(bgmEnabledKey, defaultValue: true),
                   onChanged: (value) {
-                    AudioManager.instance.toggleBgm();
-                    AudioManager.instance.playSfx(AssetManager.sfxClick);
+                    audioManager.toggleBgm();
+                    audioManager.playSfx(AssetManager.sfxClick);
                   },
                   activeThumbColor: Colors.white,
                   inactiveTrackColor: Colors.grey.shade700,
@@ -243,8 +258,8 @@ class __SettingsContentState extends State<_SettingsContent> {
                   title: Text(AppLocalizations.of(context)!.settingsSfx),
                   value: box.get(sfxEnabledKey, defaultValue: true),
                   onChanged: (value) {
-                    AudioManager.instance.toggleSfx();
-                    AudioManager.instance.playSfx(AssetManager.sfxClick);
+                    audioManager.toggleSfx();
+                    audioManager.playSfx(AssetManager.sfxClick);
                   },
                   activeThumbColor: Colors.white,
                   inactiveTrackColor: Colors.grey.shade700,
@@ -262,8 +277,8 @@ class __SettingsContentState extends State<_SettingsContent> {
           ).listenable(keys: [languageKey]),
           builder: (context, box, child) {
             final currentLangCode = box.get(languageKey, defaultValue: 'en');
+            final audioManager = context.watch<AudioManager>();
 
-            // --- NEW LOGIC TO REORDER THE LANGUAGES ---
             // Create a new map that will hold the ordered languages.
             // Using a LinkedHashMap ensures insertion order is preserved.
             final Map<String, String> orderedLanguages = {};
@@ -280,7 +295,6 @@ class __SettingsContentState extends State<_SettingsContent> {
                 orderedLanguages[key] = value;
               }
             });
-            // --- END OF NEW LOGIC ---
 
             return MonochromeDropdown(
               value: currentLangCode,
@@ -288,7 +302,7 @@ class __SettingsContentState extends State<_SettingsContent> {
               items: orderedLanguages,
               onChanged: (newLangCode) {
                 if (newLangCode != null) {
-                  AudioManager.instance.playSfx(AssetManager.sfxClick);
+                  audioManager.playSfx(AssetManager.sfxClick);
                   box.put(languageKey, newLangCode);
                 }
               },

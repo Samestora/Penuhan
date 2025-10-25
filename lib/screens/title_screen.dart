@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:penuhan/screens/main_menu.dart';
 import 'package:penuhan/utils/asset_manager.dart';
-import 'package:penuhan/utils/audio_manager.dart'; // Make sure this path is correct for your AssetManager
+import 'package:penuhan/utils/audio_manager.dart';
+import 'package:provider/provider.dart'; // Make sure this path is correct for your AssetManager
 
 class TitleScreen extends StatefulWidget {
   const TitleScreen({super.key});
@@ -35,7 +36,8 @@ class _TitleScreenState extends State<TitleScreen>
   }
 
   void _navigateToMainMenu() {
-    AudioManager.instance.playSfx(AssetManager.sfxClick);
+    final audioManager = context.read<AudioManager>();
+    audioManager.playSfx(AssetManager.sfxClick);
     Navigator.of(context).pushReplacement(
       MaterialPageRoute(builder: (context) => const MainMenu()),
     );
@@ -44,7 +46,7 @@ class _TitleScreenState extends State<TitleScreen>
   @override
   Widget build(BuildContext context) {
     // GestureDetector wraps the entire screen to detect taps anywhere.
-    return InkWell(
+    return GestureDetector(
       onTap: _navigateToMainMenu,
       child: Scaffold(
         backgroundColor: Colors.black,

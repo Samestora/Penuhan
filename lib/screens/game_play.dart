@@ -3,6 +3,7 @@ import 'package:flame/game.dart';
 import 'package:penuhan/game/game.dart';
 import 'package:penuhan/utils/audio_manager.dart';
 import 'package:penuhan/widgets/tap_circle_indicator.dart';
+import 'package:provider/provider.dart';
 
 class GamePlay extends StatefulWidget {
   const GamePlay({super.key});
@@ -13,12 +14,19 @@ class GamePlay extends StatefulWidget {
 
 class _GamePlayState extends State<GamePlay> with WidgetsBindingObserver {
   late final PenuhanGame _penuhanGame;
+  late final AudioManager _audioManager;
 
   @override
   void initState() {
     super.initState();
     _penuhanGame = PenuhanGame();
     WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _audioManager = context.read<AudioManager>();
   }
 
   @override
@@ -31,9 +39,9 @@ class _GamePlayState extends State<GamePlay> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (state == AppLifecycleState.paused) {
-      AudioManager.instance.onAppPaused();
+      _audioManager.onAppPaused();
     } else if (state == AppLifecycleState.resumed) {
-      AudioManager.instance.onAppResumed();
+      _audioManager.onAppResumed();
     }
   }
 

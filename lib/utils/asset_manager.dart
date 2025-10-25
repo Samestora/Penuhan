@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flame_audio/flame_audio.dart';
+import 'package:flutter_soloud/flutter_soloud.dart';
+import 'package:penuhan/utils/audio_manager.dart';
+import 'package:provider/provider.dart';
 
 /// Manages assets shorthand for convinience, for the game
 /// for audio will be using [flame_audio] package
@@ -19,7 +21,7 @@ import 'package:flame_audio/flame_audio.dart';
 /// ```dart
 /// Future<void> _loadData() async {
 ///   await Future.wait([
-///     precacheMainMenuAssets(context),
+///     precacheCoreAssets(context),
 ///     Future.delayed(const Duration(seconds: 2)),
 ///   ]);
 /// }
@@ -59,27 +61,17 @@ class AssetManager {
   static const String enemySprite = '$_imagesPath/$_spritePath/enemy.png';
 }
 
-Future<void> precacheMainGameAssets(BuildContext context) async {
+Future<void> precacheCoreAssets(BuildContext context) async {
+  final audioManager = context.read<AudioManager>();
+
   await Future.wait([
-    FlameAudio.audioCache.loadAll([
-      AssetManager.bgmTitle,
-      AssetManager.sfxClick,
-    ]),
+    // Use LoadMode.disk for BGM, just like in your playBgm method
+    audioManager.preload(AssetManager.bgmTitle, mode: LoadMode.disk),
 
-    precacheImage(const AssetImage(AssetManager.splashLogo), context),
-    precacheImage(const AssetImage(AssetManager.gameLogo), context),
-    precacheImage(const AssetImage(AssetManager.playerSprite), context),
-    precacheImage(const AssetImage(AssetManager.enemySprite), context),
-  ]);
-}
+    // Use the default LoadMode.memory for SFX
+    audioManager.preload(AssetManager.sfxClick),
 
-Future<void> precacheMainMenuAssets(BuildContext context) async {
-  await Future.wait([
-    FlameAudio.audioCache.loadAll([
-      AssetManager.bgmTitle,
-      AssetManager.sfxClick,
-    ]),
-
+    // Image pre-caching
     precacheImage(const AssetImage(AssetManager.splashLogo), context),
     precacheImage(const AssetImage(AssetManager.gameLogo), context),
   ]);

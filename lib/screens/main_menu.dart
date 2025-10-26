@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:penuhan/models/dungeon.dart';
 import 'package:penuhan/screens/game_play.dart';
 import 'package:penuhan/utils/asset_manager.dart';
 import 'package:penuhan/widgets/tap_circle_indicator.dart';
@@ -13,7 +14,6 @@ import 'package:penuhan/widgets/monochrome_dropdown.dart';
 import 'package:penuhan/widgets/monochrome_modal.dart';
 import 'package:penuhan/utils/audio_manager.dart';
 import 'package:penuhan/widgets/dungeon_card.dart';
-import 'package:penuhan/models/dungeons.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -75,72 +75,72 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
     final localizations = AppLocalizations.of(context)!;
 
     return TapCircleIndicator(
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Spacer(),
-                Image.asset(AssetManager.gameLogo, height: 150.0),
-                const SizedBox(height: 60.0),
+        child: Scaffold(
+          backgroundColor: Colors.black,
+          body: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(),
+                  Image.asset(AssetManager.gameLogo, height: 150.0),
+                  const SizedBox(height: 60.0),
 
-                // Embark Button
-                MonochromeButton(
-                  text: localizations.mainMenuEmbark,
-                  onPressed: () {
-                    _audioManager.playSfx(AssetManager.sfxClick);
-                    _showEmbarkDialog();
-                  },
-                ),
-                const SizedBox(height: 20.0),
+                  // Embark Button
+                  MonochromeButton(
+                    text: localizations.mainMenuEmbark,
+                    onPressed: () {
+                      _audioManager.playSfx(AssetManager.sfxClick);
+                      _showEmbarkDialog();
+                    },
+                  ),
+                  const SizedBox(height: 20.0),
 
-                // Settings Button - Now enabled!
-                MonochromeButton(
-                  text: localizations.mainMenuSettings,
-                  onPressed: () {
-                    _audioManager.playSfx(AssetManager.sfxClick);
-                    _showSettingsDialog();
-                  },
-                ),
-                const SizedBox(height: 20.0),
+                  // Settings Button - Now enabled!
+                  MonochromeButton(
+                    text: localizations.mainMenuSettings,
+                    onPressed: () {
+                      _audioManager.playSfx(AssetManager.sfxClick);
+                      _showSettingsDialog();
+                    },
+                  ),
+                  const SizedBox(height: 20.0),
 
-                // About Button
-                MonochromeButton(
-                  text: localizations.mainMenuAbout,
-                  onPressed: () {
-                    _audioManager.playSfx(AssetManager.sfxClick);
-                    _showAboutDialog();
-                  },
-                ),
-                const Spacer(),
+                  // About Button
+                  MonochromeButton(
+                    text: localizations.mainMenuAbout,
+                    onPressed: () {
+                      _audioManager.playSfx(AssetManager.sfxClick);
+                      _showAboutDialog();
+                    },
+                  ),
+                  const Spacer(),
 
-                // Copyright and Version Text
-                Column(
-                  children: [
-                    Text(
-                      _versionNumberText,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12.0,
+                  // Copyright and Version Text
+                  Column(
+                    children: [
+                      Text(
+                        _versionNumberText,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12.0,
+                        ),
                       ),
-                    ),
-                    Text(
-                      localizations.copyrightNotice,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12.0,
+                      Text(
+                        localizations.copyrightNotice,
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12.0,
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -203,9 +203,9 @@ class __EmbarkContentState extends State<_EmbarkContent> {
       height: 300, // Constrain the height of the dialog content
       width: 400,
       child: ListView.builder(
-        itemCount: Dungeons.all.length,
+        itemCount: Dungeon.values.length,
         itemBuilder: (context, index) {
-          final dungeon = Dungeons.all[index];
+          final dungeon = Dungeon.values[index];
           return Padding(
             padding: const EdgeInsets.symmetric(vertical: 4.0),
             child: DungeonCard(

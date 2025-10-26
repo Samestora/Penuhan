@@ -78,5 +78,20 @@
         }
     },
     "embarkLoadFromDisk": "Load from Disk",
-    "embarkSaveToDisk": "Save to Disk"
+    "embarkSaveToDisk": "Save to Disk",
+    "sunkenCitadelName": "Sunken Citadel",
+    "@sunkenCitadelName": {
+        "description": "Name of the Sunken Citadel dungeon"
+    },
+    "whisperingCryptName": "Whispering Crypts",
+    "@whisperingCryptName": {
+        "description": "Name of the Whispering Crypts dungeon"
+    },
+    "dragonsMawName": "Dragon's Maw",
+    "@dragonsMawName": {
+        "description": "Name of the Dragon's Maw dungeon"
+    },
+    "easyDifficultyName" : "Easy",
+    "normalDifficultyName" : "Normal",
+    "hardDifficultyName" : "Hard"
 }

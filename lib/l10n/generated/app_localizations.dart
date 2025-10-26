@@ -223,6 +223,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save to Disk'**
   String get embarkSaveToDisk;
+
+  /// Name of the Sunken Citadel dungeon
+  ///
+  /// In en, this message translates to:
+  /// **'Sunken Citadel'**
+  String get sunkenCitadelName;
+
+  /// Name of the Whispering Crypts dungeon
+  ///
+  /// In en, this message translates to:
+  /// **'Whispering Crypts'**
+  String get whisperingCryptName;
+
+  /// Name of the Dragon's Maw dungeon
+  ///
+  /// In en, this message translates to:
+  /// **'Dragon\'s Maw'**
+  String get dragonsMawName;
+
+  /// No description provided for @easyDifficultyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Easy'**
+  String get easyDifficultyName;
+
+  /// No description provided for @normalDifficultyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get normalDifficultyName;
+
+  /// No description provided for @hardDifficultyName.
+  ///
+  /// In en, this message translates to:
+  /// **'Hard'**
+  String get hardDifficultyName;
 }
 
 class _AppLocalizationsDelegate

@@ -167,14 +167,16 @@ class AudioManager {
   /// Called when the app goes into the background.
   void onAppPaused() {
     _log.info('App paused. Pausing all audio.');
-    // _soloud?.pauseAll();
+    if (_musicHandle != null && _soloud!.getIsValidVoiceHandle(_musicHandle!)) {
+      _soloud!.setPause(_musicHandle!, true);
+      _log.info('Music paused on app pause.');
+    }
   }
 
   /// Resumes all paused audio.
   /// Called when the app returns to the foreground.
   void onAppResumed() {
     _log.info('App resumed. Resuming all audio.');
-    // _soloud?.resumeAll();
 
     // After resuming, we must respect the BGM setting.
     // If BGM is disabled, we must manually re-pause the music handle.
@@ -183,6 +185,11 @@ class AudioManager {
         _soloud!.getIsValidVoiceHandle(_musicHandle!)) {
       _soloud!.setPause(_musicHandle!, true);
       _log.info('BGM is disabled, keeping music paused on resume.');
+    } else if (isBgmEnabled &&
+        _musicHandle != null &&
+        _soloud!.getIsValidVoiceHandle(_musicHandle!)) {
+      _soloud!.setPause(_musicHandle!, false);
+      _log.info('BGM is enabled, resuming music on resume.');
     }
   }
 

@@ -76,4 +76,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get embarkSaveToDisk => 'Save to Disk';
+
+  @override
+  String get sunkenCitadelName => 'Sunken Citadel';
+
+  @override
+  String get whisperingCryptName => 'Whispering Crypts';
+
+  @override
+  String get dragonsMawName => 'Dragon\'s Maw';
+
+  @override
+  String get easyDifficultyName => 'Easy';
+
+  @override
+  String get normalDifficultyName => 'Normal';
+
+  @override
+  String get hardDifficultyName => 'Hard';
 }

@@ -36,5 +36,20 @@
         }
     },
     "embarkLoadFromDisk": "Muat dari Disk",
-    "embarkSaveToDisk": "Simpan ke Disk"
+    "embarkSaveToDisk": "Simpan ke Disk",
+    "sunkenCitadelName": "Benteng Bawah Air",
+    "@sunkenCitadelName": {
+        "description": "Name of the Sunken Citadel dungeon"
+    },
+    "whisperingCryptName": "Kuburan",
+    "@whisperingCryptName": {
+        "description": "Name of the Whispering Crypts dungeon"
+    },
+    "dragonsMawName": "Mulut Naga",
+    "@dragonsMawName": {
+        "description": "Name of the Dragon's Maw dungeon"
+    },
+    "easyDifficultyName" : "Mudah",
+    "normalDifficultyName" : "Biasa",
+    "hardDifficultyName" : "Sulit"
 }

@@ -76,4 +76,22 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get embarkSaveToDisk => 'Simpan ke Disk';
+
+  @override
+  String get sunkenCitadelName => 'Benteng Bawah Air';
+
+  @override
+  String get whisperingCryptName => 'Kuburan';
+
+  @override
+  String get dragonsMawName => 'Mulut Naga';
+
+  @override
+  String get easyDifficultyName => 'Mudah';
+
+  @override
+  String get normalDifficultyName => 'Biasa';
+
+  @override
+  String get hardDifficultyName => 'Sulit';
 }

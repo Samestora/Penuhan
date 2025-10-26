@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:penuhan/models/dungeon.dart';
+import 'package:penuhan/utils/localization_extensions.dart';
 
 class DungeonCard extends StatelessWidget {
   final Dungeon dungeon;
@@ -29,12 +30,12 @@ class DungeonCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      dungeon.name,
+                      dungeon.name.getName(context),
                       style: const TextStyle(color: Colors.white, fontSize: 18.0),
                     ),
                     const SizedBox(height: 4.0),
                     Text(
-                      dungeon.difficulty,
+                      dungeon.difficulty.getName(context),
                       style: TextStyle(
                         color: _getDifficultyColor(dungeon.difficulty),
                         fontSize: 14.0,
@@ -51,16 +52,14 @@ class DungeonCard extends StatelessWidget {
     );
   }
 
-  Color _getDifficultyColor(String difficulty) {
-    switch (difficulty.toLowerCase()) {
-      case 'hard':
+  Color _getDifficultyColor(DungeonDifficulty difficulty) {
+    switch (difficulty) {
+      case DungeonDifficulty.hard:
         return Colors.red;
-      case 'normal':
+      case DungeonDifficulty.normal:
         return Colors.orange;
-      case 'easy':
+      case DungeonDifficulty.easy:
         return Colors.green;
-      default:
-        return Colors.grey;
     }
   }
 }

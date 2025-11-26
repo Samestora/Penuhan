@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:penuhan/models/dungeon.dart';
-import 'package:penuhan/screens/game_play.dart';
-import 'package:penuhan/utils/asset_manager.dart';
-import 'package:penuhan/widgets/tap_circle_indicator.dart';
+import 'package:penuhan/core/models/dungeon.dart';
+import 'package:penuhan/core/models/game_progress.dart';
+import 'package:penuhan/features/app/screens/resting_screen.dart';
+import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:penuhan/utils/hive_constants.dart';
+import 'package:penuhan/core/utils/hive_constants.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
-import 'package:penuhan/widgets/monochrome_button.dart';
-import 'package:penuhan/widgets/monochrome_dropdown.dart';
-import 'package:penuhan/widgets/monochrome_modal.dart';
-import 'package:penuhan/utils/audio_manager.dart';
-import 'package:penuhan/widgets/dungeon_card.dart';
+import 'package:penuhan/core/widgets/monochrome_button.dart';
+import 'package:penuhan/core/widgets/monochrome_dropdown.dart';
+import 'package:penuhan/core/widgets/monochrome_modal.dart';
+import 'package:penuhan/core/utils/audio_manager.dart';
+import 'package:penuhan/features/app/widgets/dungeon_card.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -74,73 +74,65 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
 
-    return TapCircleIndicator(
-        child: Scaffold(
-          backgroundColor: Colors.black,
-          body: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Spacer(),
+              Image.asset(AssetManager.gameLogo, height: 150.0),
+              const SizedBox(height: 60.0),
+
+              // Embark Button
+              MonochromeButton(
+                text: localizations.mainMenuEmbark,
+                onPressed: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  _showEmbarkDialog();
+                },
+              ),
+              const SizedBox(height: 20.0),
+
+              // Settings Button - Now enabled!
+              MonochromeButton(
+                text: localizations.mainMenuSettings,
+                onPressed: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  _showSettingsDialog();
+                },
+              ),
+              const SizedBox(height: 20.0),
+
+              // About Button
+              MonochromeButton(
+                text: localizations.mainMenuAbout,
+                onPressed: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  _showAboutDialog();
+                },
+              ),
+              const Spacer(),
+
+              // Copyright and Version Text
+              Column(
                 children: [
-                  const Spacer(),
-                  Image.asset(AssetManager.gameLogo, height: 150.0),
-                  const SizedBox(height: 60.0),
-
-                  // Embark Button
-                  MonochromeButton(
-                    text: localizations.mainMenuEmbark,
-                    onPressed: () {
-                      _audioManager.playSfx(AssetManager.sfxClick);
-                      _showEmbarkDialog();
-                    },
+                  Text(
+                    _versionNumberText,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12.0),
                   ),
-                  const SizedBox(height: 20.0),
-
-                  // Settings Button - Now enabled!
-                  MonochromeButton(
-                    text: localizations.mainMenuSettings,
-                    onPressed: () {
-                      _audioManager.playSfx(AssetManager.sfxClick);
-                      _showSettingsDialog();
-                    },
-                  ),
-                  const SizedBox(height: 20.0),
-
-                  // About Button
-                  MonochromeButton(
-                    text: localizations.mainMenuAbout,
-                    onPressed: () {
-                      _audioManager.playSfx(AssetManager.sfxClick);
-                      _showAboutDialog();
-                    },
-                  ),
-                  const Spacer(),
-
-                  // Copyright and Version Text
-                  Column(
-                    children: [
-                      Text(
-                        _versionNumberText,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12.0,
-                        ),
-                      ),
-                      Text(
-                        localizations.copyrightNotice,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 12.0,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    localizations.copyrightNotice,
+                    style: const TextStyle(color: Colors.grey, fontSize: 12.0),
                   ),
                 ],
               ),
-            ),
+            ],
           ),
         ),
+      ),
     );
   }
 
@@ -212,9 +204,27 @@ class __EmbarkContentState extends State<_EmbarkContent> {
               dungeon: dungeon,
               onTap: () {
                 audioManager.playSfx(AssetManager.sfxClick);
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).pop(); // Close dialog
+
+                // Initialize game progress
+                final initialProgress = GameProgress(
+                  currentFloor: 1,
+                  maxFloor: 5,
+                  playerHp: 150,
+                  playerMaxHp: 150,
+                  playerXp: 0,
+                  playerMaxXp: 150,
+                  playerAttack: 10,
+                  playerSkill: 10,
+                  gold: 0,
+                );
+
+                Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => GamePlay(dungeon: dungeon),
+                    builder: (context) => RestingScreen(
+                      dungeon: dungeon,
+                      gameProgress: initialProgress,
+                    ),
                   ),
                 );
               },

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_soloud/flutter_soloud.dart';
-import 'package:penuhan/utils/audio_manager.dart';
+import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:provider/provider.dart';
 
 /// Manages assets shorthand for convinience, for the game

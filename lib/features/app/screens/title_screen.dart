@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:penuhan/screens/main_menu.dart';
-import 'package:penuhan/utils/asset_manager.dart';
-import 'package:penuhan/utils/audio_manager.dart';
+import 'package:penuhan/features/app/screens/main_menu.dart';
+import 'package:penuhan/core/utils/asset_manager.dart';
+import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:provider/provider.dart'; // Make sure this path is correct for your AssetManager
 
 class TitleScreen extends StatefulWidget {

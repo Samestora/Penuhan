@@ -51,5 +51,131 @@
     },
     "easyDifficultyName" : "Mudah",
     "normalDifficultyName" : "Biasa",
-    "hardDifficultyName" : "Sulit"
+    "hardDifficultyName" : "Sulit",
+    "battleAttack": "Serang",
+    "battleSkill": "Skill",
+    "battleWin": "Menyerah",
+    "battleStart": "Pertempuran Dimulai!",
+    "battleVictory": "MENANG!",
+    "battleDefeat": "KALAH!",
+    "battleContinue": "Lanjutkan",
+    "battleReturn": "Kembali",
+    "battlePlayerAttacks": "{playerName} menyerang dengan {damage} damage!",
+    "@battlePlayerAttacks": {
+        "placeholders": {
+            "playerName": {"type": "String"},
+            "damage": {"type": "int"}
+        }
+    },
+    "battlePlayerUsesSkill": "{playerName} menggunakan {skillName} dengan {damage} damage!",
+    "@battlePlayerUsesSkill": {
+        "placeholders": {
+            "playerName": {"type": "String"},
+            "skillName": {"type": "String"},
+            "damage": {"type": "int"}
+        }
+    },
+    "battlePlayerHeals": "{playerName} memulihkan {amount} HP!",
+    "@battlePlayerHeals": {
+        "placeholders": {
+            "playerName": {"type": "String"},
+            "amount": {"type": "int"}
+        }
+    },
+    "battleEnemyAttacks": "{enemyName} menyerang dengan {damage} damage!",
+    "@battleEnemyAttacks": {
+        "placeholders": {
+            "enemyName": {"type": "String"},
+            "damage": {"type": "int"}
+        }
+    },
+    "battleVictoryMessage": "Menang! {enemyName} telah dikalahkan!",
+    "@battleVictoryMessage": {
+        "placeholders": {
+            "enemyName": {"type": "String"}
+        }
+    },
+    "battleDefeatMessage": "Kalah! Kamu telah dikalahkan...",
+    "battleSurrendered": "Kamu menyerah...",
+    "skillSelectTitle": "PILIH SKILL",
+    "skillCancel": "BATAL",
+    "skillAttack": "SERANG",
+    "skillCost": "Biaya: {cost} SP",
+    "@skillCost": {
+        "placeholders": {
+            "cost": {"type": "int"}
+        }
+    },
+    "skillCostLabel": "Biaya",
+    "skillDamageLabel": "Damage",
+    "skillHealLabel": "Heal",
+    "skillEstimatedDamage": "~{damage}",
+    "@skillEstimatedDamage": {
+        "placeholders": {
+            "damage": {"type": "int"}
+        }
+    },
+    "skillFireballName": "Bola Api",
+    "skillFireballDesc": "Luncurkan bola api yang membara Memberikan 150% skill damage",
+    "skillIceSpearName": "Tombak Es",
+    "skillIceSpearDesc": "Tusuk dengan tombak beku Memberikan 120% skill damage",
+    "skillThunderStrikeName": "Sambaran Petir",
+    "skillThunderStrikeDesc": "Panggil petir dari langit Memberikan 200% skill damage",
+    "skillQuickStrikeName": "Serangan Cepat",
+    "skillQuickStrikeDesc": "Serangan cepat dan presisi Memberikan 100% skill damage",
+    "skillHealingLightName": "Cahaya Penyembuh",
+    "skillHealingLightDesc": "Pulihkan vitalitasmu Memulihkan 30 HP",
+    "floorChoosePath": "PILIH JALANMU",
+    "floorMonster": "Monster",
+    "floorMonsterDesc": "Lawan monster dan dapatkan hadiah",
+    "floorShop": "Toko",
+    "floorShopDesc": "Beli item dengan gold",
+    "floorRest": "Istirahat",
+    "floorRestDesc": "Pulihkan HP dan kelola inventory",
+    "floorStatus": "STATUS",
+    "floorItem": "ITEM",
+    "floorNumber": "LANTAI {floor}",
+    "@floorNumber": {
+        "placeholders": {
+            "floor": {"type": "int"}
+        }
+    },
+    "restingStatus": "Status",
+    "restingItem": "Item",
+    "restingResting": "Istirahat",
+    "restingNextFloor": "Lantai Berikutnya",
+    "restingFinishDungeon": "Selesaikan Dungeon",
+    "restingHp": "HP",
+    "restingXp": "XP",
+    "restingAttack": "Serangan",
+    "restingSkill": "Skill",
+    "restingGold": "Gold",
+    "restingFloor": "Lantai",
+    "restingDungeonInfo": "Info Dungeon",
+    "restingNoItems": "Tidak ada item di inventory",
+    "restingUse": "Gunakan",
+    "shopTitle": "Toko",
+    "shopGold": "Gold: {gold}",
+    "@shopGold": {
+        "placeholders": {
+            "gold": {"type": "int"}
+        }
+    },
+    "shopBuy": "BELI",
+    "shopNotEnoughGold": "GOLD TIDAK CUKUP",
+    "shopNextFloor": "Lantai Berikutnya",
+    "shopPrice": "{price}G",
+    "@shopPrice": {
+        "placeholders": {
+            "price": {"type": "int"}
+        }
+    },
+    "itemHealthPotionName": "Ramuan Kesehatan",
+    "itemHealthPotionDesc": "Memulihkan 50 HP",
+    "itemSuperHealthPotionName": "Ramuan Kesehatan Super",
+    "itemSuperHealthPotionDesc": "Memulihkan 100 HP",
+    "itemAttackScrollName": "Gulungan Serangan",
+    "itemAttackScrollDesc": "Meningkatkan Serangan secara permanen sebesar 5",
+    "itemSkillScrollName": "Gulungan Skill",
+    "itemSkillScrollDesc": "Meningkatkan Skill secara permanen sebesar 5"
 }

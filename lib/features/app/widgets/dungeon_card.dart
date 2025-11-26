@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:penuhan/models/dungeon.dart';
-import 'package:penuhan/utils/localization_extensions.dart';
+import 'package:penuhan/core/models/dungeon.dart';
+import 'package:penuhan/core/utils/localization_extensions.dart';
 
 class DungeonCard extends StatelessWidget {
   final Dungeon dungeon;
@@ -31,7 +31,10 @@ class DungeonCard extends StatelessWidget {
                   children: [
                     Text(
                       dungeon.name.getName(context),
-                      style: const TextStyle(color: Colors.white, fontSize: 18.0),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.0,
+                      ),
                     ),
                     const SizedBox(height: 4.0),
                     Text(

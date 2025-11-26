@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
-import 'package:penuhan/models/dungeon.dart';
+import 'package:penuhan/core/models/dungeon.dart';
 
 /// Extension to get the localized name for a [DungeonDifficulty].
 /// ```dart

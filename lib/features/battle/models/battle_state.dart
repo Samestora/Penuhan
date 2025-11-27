@@ -1,6 +1,6 @@
 import 'package:penuhan/features/battle/models/battle_character.dart';
 
-enum BattleAction { attack, skill, win }
+enum BattleAction { attack, skill, item }
 
 enum BattlePhase { playerTurn, enemyTurn, victory, defeat }
 

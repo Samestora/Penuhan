@@ -4,6 +4,7 @@ import 'package:penuhan/features/battle/models/battle_state.dart';
 import 'package:penuhan/features/battle/models/skill.dart';
 import 'package:penuhan/core/models/dungeon.dart';
 import 'package:penuhan/core/models/game_progress.dart';
+import 'package:penuhan/core/models/item.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/features/app/screens/resting_screen.dart';
@@ -30,11 +31,17 @@ class _BattleScreenState extends State<BattleScreen>
   bool _isEnemyHit = false;
   bool _showSkillList = false;
   Skill? _selectedSkill;
+  bool _showItemList = false;
+  Item? _selectedItem;
+  bool _showMessage = false;
+  String _currentMessage = '';
+  List<InventoryItem> _currentInventory = [];
 
   @override
   void initState() {
     super.initState();
     _initBattle();
+    _currentInventory = widget.gameProgress?.inventory ?? [];
     _shakeController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
@@ -146,11 +153,19 @@ class _BattleScreenState extends State<BattleScreen>
           _selectedSkill = null;
           _audioManager.playSfx(AssetManager.sfxClick);
           return; // Don't process turn yet
-        case BattleAction.win:
-          log = AppLocalizations.of(context)!.battleSurrendered;
-          _battleState.phase = BattlePhase.defeat;
-          break;
+        case BattleAction.item:
+          // Show item list UI
+          _showItemList = true;
+          _selectedItem = null;
+          _audioManager.playSfx(AssetManager.sfxClick);
+          return; // Don't process turn yet
       }
+
+      _battleState.battleLog = log;
+
+      // Show player action message and keep showing until turn completes
+      _currentMessage = log;
+      _showMessage = true;
 
       // Check if enemy is defeated
       if (!_battleState.enemy.isAlive) {
@@ -163,7 +178,7 @@ class _BattleScreenState extends State<BattleScreen>
         // Enemy's turn
         _battleState.phase = BattlePhase.enemyTurn;
 
-        Future.delayed(const Duration(milliseconds: 800), () {
+        Future.delayed(const Duration(milliseconds: 1500), () {
           if (mounted) {
             setState(() {
               _isEnemyHit = false;
@@ -176,6 +191,11 @@ class _BattleScreenState extends State<BattleScreen>
               _shakeController.forward(from: 0);
               _audioManager.playSfx(AssetManager.sfxClick);
 
+              _battleState.battleLog = log;
+
+              // Update to enemy action message
+              _currentMessage = log;
+
               // Check if player is defeated
               if (!_battleState.player.isAlive) {
                 _battleState.phase = BattlePhase.defeat;
@@ -184,12 +204,12 @@ class _BattleScreenState extends State<BattleScreen>
                 _battleState.phase = BattlePhase.playerTurn;
               }
 
-              _battleState.battleLog = log;
-
-              Future.delayed(const Duration(milliseconds: 800), () {
+              // Hide message after enemy action completes
+              Future.delayed(const Duration(milliseconds: 1500), () {
                 if (mounted) {
                   setState(() {
                     _isPlayerHit = false;
+                    _showMessage = false;
                   });
                 }
               });
@@ -197,8 +217,6 @@ class _BattleScreenState extends State<BattleScreen>
           }
         });
       }
-
-      _battleState.battleLog = log;
     });
 
     Future.delayed(const Duration(milliseconds: 800), () {
@@ -285,27 +303,6 @@ class _BattleScreenState extends State<BattleScreen>
               child: _buildStickFigure(size: 80, isPlayer: false),
             ),
           ),
-
-          // Battle log in center
-          Center(
-            child: Container(
-              padding: const EdgeInsets.all(16),
-              margin: const EdgeInsets.symmetric(horizontal: 32),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(0.7),
-                border: Border.all(color: Colors.white, width: 2),
-              ),
-              child: Text(
-                _battleState.battleLog,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontFamily: 'Unifont',
-                  fontSize: 14,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -341,54 +338,101 @@ class _BattleScreenState extends State<BattleScreen>
               ),
             ),
 
-            // Player info at top
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 16,
+            // Enemy info at top (only when NOT viewing skill detail)
+            if (_selectedSkill == null &&
+                !(_selectedSkill != null &&
+                    _selectedSkill!.effect == SkillEffect.heal))
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16,
+                ),
+                child: _buildCharacterInfo(
+                  _battleState.enemy,
+                  isPlayer: false,
+                  isHit: _isEnemyHit,
+                  previewDamage: null,
+                  previewHeal: null,
+                ),
               ),
-              child: _buildCharacterInfo(
-                _battleState.player,
-                isPlayer: true,
-                isHit: _isPlayerHit,
-                previewDamage: null,
-                previewHeal:
-                    _selectedSkill != null &&
-                        _selectedSkill!.effect == SkillEffect.heal
-                    ? 30
-                    : null,
-              ),
-            ),
 
             // Spacer for battle area (sprites are on layer 2)
             const Spacer(),
 
-            // Enemy info at bottom center (above action buttons)
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 8,
+            // Player info at bottom (only when NOT viewing skill detail)
+            if (_selectedSkill == null)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 8,
+                ),
+                child: _buildCharacterInfo(
+                  _battleState.player,
+                  isPlayer: true,
+                  isHit: _isPlayerHit,
+                  previewDamage: null,
+                  previewHeal: null,
+                ),
               ),
-              child: _buildCharacterInfo(
-                _battleState.enemy,
-                isPlayer: false,
-                isHit: _isEnemyHit,
-                previewDamage:
-                    _selectedSkill != null &&
-                        _selectedSkill!.effect != SkillEffect.heal
-                    ? _selectedSkill!.calculateDamage(_battleState.player.skill)
-                    : null,
-                previewHeal: null,
-              ),
-            ),
 
-            // Action buttons or skill detail (when skill selected)
-            Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: _selectedSkill != null
-                  ? _buildSkillDetail()
-                  : _buildActionButtons(),
-            ),
+            // Battle message (shown during actions)
+            if (_showMessage) _buildBattleMessage(),
+
+            // Action buttons or skill detail or item detail (hidden during actions)
+            if (!_showMessage)
+              Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: _selectedSkill != null
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Character info bar above skill detail
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: _selectedSkill!.effect == SkillEffect.heal
+                                ? _buildCharacterInfo(
+                                    _battleState.player,
+                                    isPlayer: true,
+                                    isHit: _isPlayerHit,
+                                    previewDamage: null,
+                                    previewHeal: 30,
+                                  )
+                                : _buildCharacterInfo(
+                                    _battleState.enemy,
+                                    isPlayer: false,
+                                    isHit: _isEnemyHit,
+                                    previewDamage: _selectedSkill!
+                                        .calculateDamage(
+                                          _battleState.player.skill,
+                                        ),
+                                    previewHeal: null,
+                                  ),
+                          ),
+                          // Skill detail below
+                          _buildSkillDetail(),
+                        ],
+                      )
+                    : _selectedItem != null
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Player info bar above item detail (items restore HP)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: _buildCharacterInfo(
+                              _battleState.player,
+                              isPlayer: true,
+                              isHit: _isPlayerHit,
+                              previewDamage: null,
+                              previewHeal: _selectedItem!.hpRestore,
+                            ),
+                          ),
+                          // Item detail below
+                          _buildItemDetail(),
+                        ],
+                      )
+                    : _buildActionButtons(),
+              ),
           ],
         ),
 
@@ -404,6 +448,22 @@ class _BattleScreenState extends State<BattleScreen>
                 ),
                 constraints: const BoxConstraints(maxHeight: 500),
                 child: _buildSkillList(),
+              ),
+            ),
+          ),
+
+        // Item list overlay (only when showing list, not detail)
+        if (_showItemList && _selectedItem == null)
+          Container(
+            color: Colors.black87,
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 60,
+                ),
+                constraints: const BoxConstraints(maxHeight: 500),
+                child: _buildItemList(),
               ),
             ),
           ),
@@ -725,6 +785,30 @@ class _BattleScreenState extends State<BattleScreen>
     );
   }
 
+  Widget _buildBattleMessage() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          border: Border.all(color: Colors.white, width: 2),
+        ),
+        child: Text(
+          _currentMessage,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: 'Unifont',
+            fontSize: 16,
+            height: 1.5,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildActionButtons() {
     final bool canAct =
         _battleState.phase == BattlePhase.playerTurn &&
@@ -744,9 +828,9 @@ class _BattleScreenState extends State<BattleScreen>
           () => _performAction(BattleAction.skill),
         ),
         _buildActionButton(
-          'Win',
+          'Item',
           canAct,
-          () => _performAction(BattleAction.win),
+          () => _performAction(BattleAction.item),
         ),
       ],
     );
@@ -1068,6 +1152,12 @@ class _BattleScreenState extends State<BattleScreen>
       _showSkillList = false;
       _selectedSkill = null;
 
+      _battleState.battleLog = log;
+
+      // Show player skill message and keep showing until turn completes
+      _currentMessage = log;
+      _showMessage = true;
+
       // Check if enemy is defeated
       if (!_battleState.enemy.isAlive) {
         _battleState.phase = BattlePhase.victory;
@@ -1079,7 +1169,7 @@ class _BattleScreenState extends State<BattleScreen>
         // Enemy's turn
         _battleState.phase = BattlePhase.enemyTurn;
 
-        Future.delayed(const Duration(milliseconds: 800), () {
+        Future.delayed(const Duration(milliseconds: 1500), () {
           if (mounted) {
             setState(() {
               _isEnemyHit = false;
@@ -1092,6 +1182,11 @@ class _BattleScreenState extends State<BattleScreen>
               _shakeController.forward(from: 0);
               _audioManager.playSfx(AssetManager.sfxClick);
 
+              _battleState.battleLog = enemyLog;
+
+              // Update to enemy action message
+              _currentMessage = enemyLog;
+
               // Check if player is defeated
               if (!_battleState.player.isAlive) {
                 _battleState.phase = BattlePhase.defeat;
@@ -1100,12 +1195,12 @@ class _BattleScreenState extends State<BattleScreen>
                 _battleState.phase = BattlePhase.playerTurn;
               }
 
-              _battleState.battleLog = enemyLog;
-
-              Future.delayed(const Duration(milliseconds: 800), () {
+              // Hide message after enemy action completes
+              Future.delayed(const Duration(milliseconds: 1500), () {
                 if (mounted) {
                   setState(() {
                     _isPlayerHit = false;
+                    _showMessage = false;
                   });
                 }
               });
@@ -1114,8 +1209,6 @@ class _BattleScreenState extends State<BattleScreen>
         });
       }
 
-      _battleState.battleLog = log;
-
       if (_isEnemyHit) {
         _shakeController.forward(from: 0).then((_) {
           if (mounted) {
@@ -1123,6 +1216,327 @@ class _BattleScreenState extends State<BattleScreen>
           }
         });
       }
+    });
+  }
+
+  Widget _buildItemList() {
+    final availableItems = _currentInventory
+        .map((invItem) {
+          final item = Item.allItems.firstWhere((i) => i.id == invItem.itemId);
+          return item;
+        })
+        .where((item) => item.type == ItemType.potion)
+        .toList();
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'SELECT ITEM',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: 'Unifont',
+              fontSize: 18,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Expanded(
+            child: availableItems.isEmpty
+                ? Center(
+                    child: Text(
+                      AppLocalizations.of(context)!.restingNoItems,
+                      style: const TextStyle(
+                        fontFamily: 'Unifont',
+                        fontSize: 14,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  )
+                : ListView.builder(
+                    itemCount: availableItems.length,
+                    itemBuilder: (context, index) {
+                      final item = availableItems[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 6),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            _audioManager.playSfx(AssetManager.sfxClick);
+                            setState(() {
+                              _selectedItem = item;
+                            });
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.black,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 12,
+                            ),
+                            shape: const RoundedRectangleBorder(
+                              borderRadius: BorderRadius.zero,
+                            ),
+                            side: const BorderSide(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                item.getLocalizedName(context),
+                                style: const TextStyle(
+                                  fontFamily: 'Unifont',
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                item.getLocalizedDescription(context),
+                                style: const TextStyle(
+                                  fontFamily: 'Unifont',
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+          ),
+          const SizedBox(height: 12),
+          Builder(
+            builder: (context) {
+              final l10n = AppLocalizations.of(context)!;
+              return ElevatedButton(
+                onPressed: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  setState(() {
+                    _showItemList = false;
+                    _selectedItem = null;
+                  });
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.grey[800],
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  side: const BorderSide(color: Colors.white, width: 2),
+                ),
+                child: Text(
+                  l10n.skillCancel,
+                  style: const TextStyle(
+                    fontFamily: 'Unifont',
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildItemDetail() {
+    final l10n = AppLocalizations.of(context)!;
+    final item = _selectedItem!;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            item.getLocalizedName(context).toUpperCase(),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontFamily: 'Unifont',
+              fontSize: 20,
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white, width: 1),
+            ),
+            child: Text(
+              item.getLocalizedDescription(context),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'Unifont',
+                fontSize: 14,
+                color: Colors.white,
+                height: 1.5,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          if (item.hpRestore != null)
+            Center(child: _buildStatInfo('Restore', '${item.hpRestore} HP')),
+          const Spacer(),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    _audioManager.playSfx(AssetManager.sfxClick);
+                    setState(() {
+                      _selectedItem = null;
+                    });
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.grey[800],
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    side: const BorderSide(color: Colors.white, width: 2),
+                  ),
+                  child: Text(
+                    l10n.skillCancel,
+                    style: const TextStyle(
+                      fontFamily: 'Unifont',
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () {
+                    _useItem(item);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    side: const BorderSide(color: Colors.white, width: 2),
+                  ),
+                  child: Text(
+                    l10n.restingUse,
+                    style: const TextStyle(
+                      fontFamily: 'Unifont',
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _useItem(Item item) {
+    _audioManager.playSfx(AssetManager.sfxClick);
+
+    setState(() {
+      String log = '';
+
+      // Use the item effect
+      if (item.hpRestore != null) {
+        final oldHp = _battleState.player.currentHp;
+        _battleState.player.heal(item.hpRestore!);
+        final actualHeal = _battleState.player.currentHp - oldHp;
+        log = AppLocalizations.of(
+          context,
+        )!.battlePlayerHeals(_battleState.player.name, actualHeal);
+      }
+
+      // Remove item from local inventory
+      final itemIndex = _currentInventory.indexWhere(
+        (inv) => inv.itemId == item.id,
+      );
+      if (itemIndex >= 0) {
+        final inventoryItem = _currentInventory[itemIndex];
+        if (inventoryItem.quantity > 1) {
+          _currentInventory[itemIndex] = inventoryItem.copyWith(
+            quantity: inventoryItem.quantity - 1,
+          );
+        } else {
+          _currentInventory.removeAt(itemIndex);
+        }
+      }
+
+      // Reset item UI
+      _showItemList = false;
+      _selectedItem = null;
+
+      _battleState.battleLog = log;
+
+      // Show player item usage message and keep showing until turn completes
+      _currentMessage = log;
+      _showMessage = true;
+
+      // Enemy's turn
+      _battleState.phase = BattlePhase.enemyTurn;
+
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        if (mounted) {
+          setState(() {
+            int enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
+            _battleState.player.takeDamage(enemyDamage);
+            String enemyLog = AppLocalizations.of(
+              context,
+            )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+            _isPlayerHit = true;
+            _shakeController.forward(from: 0);
+            _audioManager.playSfx(AssetManager.sfxClick);
+
+            _battleState.battleLog = enemyLog;
+
+            // Update to enemy action message
+            _currentMessage = enemyLog;
+
+            // Check if player is defeated
+            if (!_battleState.player.isAlive) {
+              _battleState.phase = BattlePhase.defeat;
+              enemyLog = AppLocalizations.of(context)!.battleDefeatMessage;
+            } else {
+              _battleState.phase = BattlePhase.playerTurn;
+            }
+
+            // Hide message after enemy action completes
+            Future.delayed(const Duration(milliseconds: 1500), () {
+              if (mounted) {
+                setState(() {
+                  _isPlayerHit = false;
+                  _showMessage = false;
+                });
+              }
+            });
+          });
+        }
+      });
     });
   }
 
@@ -1191,7 +1605,8 @@ class _BattleScreenState extends State<BattleScreen>
                       playerAttack: _battleState.player.attack,
                       playerSkill: _battleState.player.skill,
                       gold: (widget.gameProgress?.gold ?? 0) + goldReward,
-                      inventory: widget.gameProgress?.inventory ?? [],
+                      inventory:
+                          _currentInventory, // Use updated inventory from battle
                     );
                     Navigator.of(context).pushReplacement(
                       MaterialPageRoute(

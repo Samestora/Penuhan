@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flame/flame.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:penuhan/utils/audio_manager.dart';
-import 'package:penuhan/utils/save_manager.dart';
+import 'package:penuhan/core/utils/audio_manager.dart';
+import 'package:penuhan/core/utils/save_manager.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
-import 'package:penuhan/screens/splash_screen.dart';
+import 'package:penuhan/features/app/screens/splash_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:penuhan/utils/hive_constants.dart';
+import 'package:penuhan/core/utils/hive_constants.dart';
+import 'package:penuhan/core/widgets/tap_circle_indicator.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,6 +81,10 @@ class MyApp extends StatelessWidget {
           locale: Locale(langCode),
 
           home: const SplashScreen(),
+
+          builder: (context, child) {
+            return TapCircleIndicator(child: child ?? const SizedBox());
+          },
         );
       },
     );

@@ -1,15 +1,15 @@
 import 'dart:async';
 
 import 'package:flame/game.dart';
-import 'package:penuhan/utils/audio_manager.dart';
-import 'package:penuhan/models/dungeon.dart';
+import 'package:penuhan/core/utils/audio_manager.dart';
+import 'package:penuhan/core/models/dungeon.dart';
 
 class PenuhanGame extends FlameGame {
   final AudioManager _audioManager;
   final Dungeon dungeon;
 
   PenuhanGame({required this.dungeon, required AudioManager audioManager})
-      : _audioManager = audioManager {
+    : _audioManager = audioManager {
     pauseWhenBackgrounded = false;
   }
 

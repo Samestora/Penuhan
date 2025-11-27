@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:penuhan/models/save_data.dart';
+import 'package:penuhan/core/models/save_data.dart';
 
 const String saveDataBoxName = 'save_data_box';
 

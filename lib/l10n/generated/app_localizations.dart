@@ -259,6 +259,432 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Hard'**
   String get hardDifficultyName;
+
+  /// No description provided for @battleAttack.
+  ///
+  /// In en, this message translates to:
+  /// **'Attack'**
+  String get battleAttack;
+
+  /// No description provided for @battleSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill'**
+  String get battleSkill;
+
+  /// No description provided for @battleWin.
+  ///
+  /// In en, this message translates to:
+  /// **'Win'**
+  String get battleWin;
+
+  /// No description provided for @battleStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Battle Start!'**
+  String get battleStart;
+
+  /// No description provided for @battleVictory.
+  ///
+  /// In en, this message translates to:
+  /// **'VICTORY!'**
+  String get battleVictory;
+
+  /// No description provided for @battleDefeat.
+  ///
+  /// In en, this message translates to:
+  /// **'DEFEAT!'**
+  String get battleDefeat;
+
+  /// No description provided for @battleContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get battleContinue;
+
+  /// No description provided for @battleReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get battleReturn;
+
+  /// No description provided for @battlePlayerAttacks.
+  ///
+  /// In en, this message translates to:
+  /// **'{playerName} attacks for {damage} damage!'**
+  String battlePlayerAttacks(String playerName, int damage);
+
+  /// No description provided for @battlePlayerUsesSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'{playerName} uses {skillName} for {damage} damage!'**
+  String battlePlayerUsesSkill(String playerName, String skillName, int damage);
+
+  /// No description provided for @battlePlayerHeals.
+  ///
+  /// In en, this message translates to:
+  /// **'{playerName} heals for {amount} HP!'**
+  String battlePlayerHeals(String playerName, int amount);
+
+  /// No description provided for @battleEnemyAttacks.
+  ///
+  /// In en, this message translates to:
+  /// **'{enemyName} attacks for {damage} damage!'**
+  String battleEnemyAttacks(String enemyName, int damage);
+
+  /// No description provided for @battleVictoryMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Victory! {enemyName} has been defeated!'**
+  String battleVictoryMessage(String enemyName);
+
+  /// No description provided for @battleDefeatMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Defeat! You have been defeated...'**
+  String get battleDefeatMessage;
+
+  /// No description provided for @battleSurrendered.
+  ///
+  /// In en, this message translates to:
+  /// **'You surrendered...'**
+  String get battleSurrendered;
+
+  /// No description provided for @skillSelectTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'SELECT SKILL'**
+  String get skillSelectTitle;
+
+  /// No description provided for @skillCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCEL'**
+  String get skillCancel;
+
+  /// No description provided for @skillAttack.
+  ///
+  /// In en, this message translates to:
+  /// **'ATTACK'**
+  String get skillAttack;
+
+  /// No description provided for @skillCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost: {cost} SP'**
+  String skillCost(int cost);
+
+  /// No description provided for @skillCostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get skillCostLabel;
+
+  /// No description provided for @skillDamageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Damage'**
+  String get skillDamageLabel;
+
+  /// No description provided for @skillHealLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Heal'**
+  String get skillHealLabel;
+
+  /// No description provided for @skillEstimatedDamage.
+  ///
+  /// In en, this message translates to:
+  /// **'~{damage}'**
+  String skillEstimatedDamage(int damage);
+
+  /// No description provided for @skillFireballName.
+  ///
+  /// In en, this message translates to:
+  /// **'Fireball'**
+  String get skillFireballName;
+
+  /// No description provided for @skillFireballDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Launch a blazing fireball\\nDeals 150% skill damage'**
+  String get skillFireballDesc;
+
+  /// No description provided for @skillIceSpearName.
+  ///
+  /// In en, this message translates to:
+  /// **'Ice Spear'**
+  String get skillIceSpearName;
+
+  /// No description provided for @skillIceSpearDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Pierce with frozen spear\\nDeals 120% skill damage'**
+  String get skillIceSpearDesc;
+
+  /// No description provided for @skillThunderStrikeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Thunder Strike'**
+  String get skillThunderStrikeName;
+
+  /// No description provided for @skillThunderStrikeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Call down lightning\\nDeals 200% skill damage'**
+  String get skillThunderStrikeDesc;
+
+  /// No description provided for @skillQuickStrikeName.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Strike'**
+  String get skillQuickStrikeName;
+
+  /// No description provided for @skillQuickStrikeDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Swift precise attack\\nDeals 100% skill damage'**
+  String get skillQuickStrikeDesc;
+
+  /// No description provided for @skillHealingLightName.
+  ///
+  /// In en, this message translates to:
+  /// **'Healing Light'**
+  String get skillHealingLightName;
+
+  /// No description provided for @skillHealingLightDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore your vitality\\nHeals 30 HP'**
+  String get skillHealingLightDesc;
+
+  /// No description provided for @floorChoosePath.
+  ///
+  /// In en, this message translates to:
+  /// **'CHOOSE YOUR PATH'**
+  String get floorChoosePath;
+
+  /// No description provided for @floorMonster.
+  ///
+  /// In en, this message translates to:
+  /// **'Monster'**
+  String get floorMonster;
+
+  /// No description provided for @floorMonsterDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Fight a monster and earn rewards'**
+  String get floorMonsterDesc;
+
+  /// No description provided for @floorShop.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop'**
+  String get floorShop;
+
+  /// No description provided for @floorShopDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Buy items with your gold'**
+  String get floorShopDesc;
+
+  /// No description provided for @floorRest.
+  ///
+  /// In en, this message translates to:
+  /// **'Rest'**
+  String get floorRest;
+
+  /// No description provided for @floorRestDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore HP and manage inventory'**
+  String get floorRestDesc;
+
+  /// No description provided for @floorStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'STATUS'**
+  String get floorStatus;
+
+  /// No description provided for @floorItem.
+  ///
+  /// In en, this message translates to:
+  /// **'ITEM'**
+  String get floorItem;
+
+  /// No description provided for @floorNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'FLOOR {floor}'**
+  String floorNumber(int floor);
+
+  /// No description provided for @restingStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get restingStatus;
+
+  /// No description provided for @restingItem.
+  ///
+  /// In en, this message translates to:
+  /// **'Item'**
+  String get restingItem;
+
+  /// No description provided for @restingResting.
+  ///
+  /// In en, this message translates to:
+  /// **'Resting'**
+  String get restingResting;
+
+  /// No description provided for @restingNextFloor.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Floor'**
+  String get restingNextFloor;
+
+  /// No description provided for @restingFinishDungeon.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish Dungeon'**
+  String get restingFinishDungeon;
+
+  /// No description provided for @restingHp.
+  ///
+  /// In en, this message translates to:
+  /// **'HP'**
+  String get restingHp;
+
+  /// No description provided for @restingXp.
+  ///
+  /// In en, this message translates to:
+  /// **'XP'**
+  String get restingXp;
+
+  /// No description provided for @restingAttack.
+  ///
+  /// In en, this message translates to:
+  /// **'Attack'**
+  String get restingAttack;
+
+  /// No description provided for @restingSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill'**
+  String get restingSkill;
+
+  /// No description provided for @restingGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold'**
+  String get restingGold;
+
+  /// No description provided for @restingFloor.
+  ///
+  /// In en, this message translates to:
+  /// **'Floor'**
+  String get restingFloor;
+
+  /// No description provided for @restingDungeonInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Dungeon Info'**
+  String get restingDungeonInfo;
+
+  /// No description provided for @restingNoItems.
+  ///
+  /// In en, this message translates to:
+  /// **'No items in inventory'**
+  String get restingNoItems;
+
+  /// No description provided for @restingUse.
+  ///
+  /// In en, this message translates to:
+  /// **'Use'**
+  String get restingUse;
+
+  /// No description provided for @shopTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Shop'**
+  String get shopTitle;
+
+  /// No description provided for @shopGold.
+  ///
+  /// In en, this message translates to:
+  /// **'Gold: {gold}'**
+  String shopGold(int gold);
+
+  /// No description provided for @shopBuy.
+  ///
+  /// In en, this message translates to:
+  /// **'BUY'**
+  String get shopBuy;
+
+  /// No description provided for @shopNotEnoughGold.
+  ///
+  /// In en, this message translates to:
+  /// **'NOT ENOUGH GOLD'**
+  String get shopNotEnoughGold;
+
+  /// No description provided for @shopNextFloor.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Floor'**
+  String get shopNextFloor;
+
+  /// No description provided for @shopPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'{price}G'**
+  String shopPrice(int price);
+
+  /// No description provided for @itemHealthPotionName.
+  ///
+  /// In en, this message translates to:
+  /// **'Health Potion'**
+  String get itemHealthPotionName;
+
+  /// No description provided for @itemHealthPotionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Restores 50 HP'**
+  String get itemHealthPotionDesc;
+
+  /// No description provided for @itemSuperHealthPotionName.
+  ///
+  /// In en, this message translates to:
+  /// **'Super Health Potion'**
+  String get itemSuperHealthPotionName;
+
+  /// No description provided for @itemSuperHealthPotionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Restores 100 HP'**
+  String get itemSuperHealthPotionDesc;
+
+  /// No description provided for @itemAttackScrollName.
+  ///
+  /// In en, this message translates to:
+  /// **'Attack Scroll'**
+  String get itemAttackScrollName;
+
+  /// No description provided for @itemAttackScrollDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently increases Attack by 5'**
+  String get itemAttackScrollDesc;
+
+  /// No description provided for @itemSkillScrollName.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill Scroll'**
+  String get itemSkillScrollName;
+
+  /// No description provided for @itemSkillScrollDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently increases Skill by 5'**
+  String get itemSkillScrollDesc;
 }
 
 class _AppLocalizationsDelegate

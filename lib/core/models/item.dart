@@ -1,0 +1,125 @@
+import 'package:flutter/material.dart';
+import 'package:penuhan/l10n/generated/app_localizations.dart';
+
+enum ItemType { potion, equipment, consumable }
+
+class Item {
+  final String id;
+  final String name;
+  final String description;
+  final ItemType type;
+  final int? hpRestore;
+  final int? attackBoost;
+  final int? skillBoost;
+
+  const Item({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.type,
+    this.hpRestore,
+    this.attackBoost,
+    this.skillBoost,
+  });
+
+  // Get localized name
+  String getLocalizedName(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (id) {
+      case 'health_potion':
+        return l10n.itemHealthPotionName;
+      case 'super_health_potion':
+        return l10n.itemSuperHealthPotionName;
+      case 'attack_scroll':
+        return l10n.itemAttackScrollName;
+      case 'skill_scroll':
+        return l10n.itemSkillScrollName;
+      default:
+        return name;
+    }
+  }
+
+  // Get localized description
+  String getLocalizedDescription(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (id) {
+      case 'health_potion':
+        return l10n.itemHealthPotionDesc;
+      case 'super_health_potion':
+        return l10n.itemSuperHealthPotionDesc;
+      case 'attack_scroll':
+        return l10n.itemAttackScrollDesc;
+      case 'skill_scroll':
+        return l10n.itemSkillScrollDesc;
+      default:
+        return description;
+    }
+  }
+
+  // Predefined items
+  static const healthPotion = Item(
+    id: 'health_potion',
+    name: 'Health Potion',
+    description: 'Restores 50 HP',
+    type: ItemType.potion,
+    hpRestore: 50,
+  );
+
+  static const superHealthPotion = Item(
+    id: 'super_health_potion',
+    name: 'Super Health Potion',
+    description: 'Restores 100 HP',
+    type: ItemType.potion,
+    hpRestore: 100,
+  );
+
+  static const attackScroll = Item(
+    id: 'attack_scroll',
+    name: 'Attack Scroll',
+    description: 'Permanently increases Attack by 5',
+    type: ItemType.consumable,
+    attackBoost: 5,
+  );
+
+  static const skillScroll = Item(
+    id: 'skill_scroll',
+    name: 'Skill Scroll',
+    description: 'Permanently increases Skill by 5',
+    type: ItemType.consumable,
+    skillBoost: 5,
+  );
+
+  // List of all items for lookup
+  static const allItems = [
+    healthPotion,
+    superHealthPotion,
+    attackScroll,
+    skillScroll,
+  ];
+}
+
+class ShopItem {
+  final Item item;
+  final int price;
+
+  const ShopItem({required this.item, required this.price});
+
+  // Shop inventory
+  static const shopItems = [
+    ShopItem(item: Item.healthPotion, price: 20),
+    ShopItem(item: Item.superHealthPotion, price: 50),
+    ShopItem(item: Item.attackScroll, price: 100),
+    ShopItem(item: Item.skillScroll, price: 100),
+  ];
+}
+
+class InventoryItem {
+  final String itemId;
+  int quantity;
+
+  InventoryItem({required this.itemId, this.quantity = 1});
+
+  InventoryItem copyWith({int? quantity}) {
+    return InventoryItem(itemId: itemId, quantity: quantity ?? this.quantity);
+  }
+}

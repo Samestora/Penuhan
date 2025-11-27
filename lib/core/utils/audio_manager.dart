@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter_soloud/flutter_soloud.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:logging/logging.dart';
-import 'package:penuhan/utils/hive_constants.dart';
+import 'package:penuhan/core/utils/hive_constants.dart';
 
 class AudioManager {
   static final Logger _log = Logger('AudioManager');

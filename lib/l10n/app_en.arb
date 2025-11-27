@@ -93,5 +93,131 @@
     },
     "easyDifficultyName" : "Easy",
     "normalDifficultyName" : "Normal",
-    "hardDifficultyName" : "Hard"
+    "hardDifficultyName" : "Hard",
+    "battleAttack": "Attack",
+    "battleSkill": "Skill",
+    "battleWin": "Win",
+    "battleStart": "Battle Start!",
+    "battleVictory": "VICTORY!",
+    "battleDefeat": "DEFEAT!",
+    "battleContinue": "Continue",
+    "battleReturn": "Return",
+    "battlePlayerAttacks": "{playerName} attacks for {damage} damage!",
+    "@battlePlayerAttacks": {
+        "placeholders": {
+            "playerName": {"type": "String"},
+            "damage": {"type": "int"}
+        }
+    },
+    "battlePlayerUsesSkill": "{playerName} uses {skillName} for {damage} damage!",
+    "@battlePlayerUsesSkill": {
+        "placeholders": {
+            "playerName": {"type": "String"},
+            "skillName": {"type": "String"},
+            "damage": {"type": "int"}
+        }
+    },
+    "battlePlayerHeals": "{playerName} heals for {amount} HP!",
+    "@battlePlayerHeals": {
+        "placeholders": {
+            "playerName": {"type": "String"},
+            "amount": {"type": "int"}
+        }
+    },
+    "battleEnemyAttacks": "{enemyName} attacks for {damage} damage!",
+    "@battleEnemyAttacks": {
+        "placeholders": {
+            "enemyName": {"type": "String"},
+            "damage": {"type": "int"}
+        }
+    },
+    "battleVictoryMessage": "Victory! {enemyName} has been defeated!",
+    "@battleVictoryMessage": {
+        "placeholders": {
+            "enemyName": {"type": "String"}
+        }
+    },
+    "battleDefeatMessage": "Defeat! You have been defeated...",
+    "battleSurrendered": "You surrendered...",
+    "skillSelectTitle": "SELECT SKILL",
+    "skillCancel": "CANCEL",
+    "skillAttack": "ATTACK",
+    "skillCost": "Cost: {cost} SP",
+    "@skillCost": {
+        "placeholders": {
+            "cost": {"type": "int"}
+        }
+    },
+    "skillCostLabel": "Cost",
+    "skillDamageLabel": "Damage",
+    "skillHealLabel": "Heal",
+    "skillEstimatedDamage": "~{damage}",
+    "@skillEstimatedDamage": {
+        "placeholders": {
+            "damage": {"type": "int"}
+        }
+    },
+    "skillFireballName": "Fireball",
+    "skillFireballDesc": "Launch a blazing fireball\\nDeals 150% skill damage",
+    "skillIceSpearName": "Ice Spear",
+    "skillIceSpearDesc": "Pierce with frozen spear\\nDeals 120% skill damage",
+    "skillThunderStrikeName": "Thunder Strike",
+    "skillThunderStrikeDesc": "Call down lightning\\nDeals 200% skill damage",
+    "skillQuickStrikeName": "Quick Strike",
+    "skillQuickStrikeDesc": "Swift precise attack\\nDeals 100% skill damage",
+    "skillHealingLightName": "Healing Light",
+    "skillHealingLightDesc": "Restore your vitality\\nHeals 30 HP",
+    "floorChoosePath": "CHOOSE YOUR PATH",
+    "floorMonster": "Monster",
+    "floorMonsterDesc": "Fight a monster and earn rewards",
+    "floorShop": "Shop",
+    "floorShopDesc": "Buy items with your gold",
+    "floorRest": "Rest",
+    "floorRestDesc": "Restore HP and manage inventory",
+    "floorStatus": "STATUS",
+    "floorItem": "ITEM",
+    "floorNumber": "FLOOR {floor}",
+    "@floorNumber": {
+        "placeholders": {
+            "floor": {"type": "int"}
+        }
+    },
+    "restingStatus": "Status",
+    "restingItem": "Item",
+    "restingResting": "Resting",
+    "restingNextFloor": "Next Floor",
+    "restingFinishDungeon": "Finish Dungeon",
+    "restingHp": "HP",
+    "restingXp": "XP",
+    "restingAttack": "Attack",
+    "restingSkill": "Skill",
+    "restingGold": "Gold",
+    "restingFloor": "Floor",
+    "restingDungeonInfo": "Dungeon Info",
+    "restingNoItems": "No items in inventory",
+    "restingUse": "Use",
+    "shopTitle": "Shop",
+    "shopGold": "Gold: {gold}",
+    "@shopGold": {
+        "placeholders": {
+            "gold": {"type": "int"}
+        }
+    },
+    "shopBuy": "BUY",
+    "shopNotEnoughGold": "NOT ENOUGH GOLD",
+    "shopNextFloor": "Next Floor",
+    "shopPrice": "{price}G",
+    "@shopPrice": {
+        "placeholders": {
+            "price": {"type": "int"}
+        }
+    },
+    "itemHealthPotionName": "Health Potion",
+    "itemHealthPotionDesc": "Restores 50 HP",
+    "itemSuperHealthPotionName": "Super Health Potion",
+    "itemSuperHealthPotionDesc": "Restores 100 HP",
+    "itemAttackScrollName": "Attack Scroll",
+    "itemAttackScrollDesc": "Permanently increases Attack by 5",
+    "itemSkillScrollName": "Skill Scroll",
+    "itemSkillScrollDesc": "Permanently increases Skill by 5"
 }

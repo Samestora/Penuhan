@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flame/game.dart';
-import 'package:penuhan/game/game.dart';
-import 'package:penuhan/utils/audio_manager.dart';
-import 'package:penuhan/widgets/tap_circle_indicator.dart';
+import 'package:penuhan/features/exploration/game/penuhan_game.dart';
+import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:provider/provider.dart';
 
-import 'package:penuhan/models/dungeon.dart';
+import 'package:penuhan/core/models/dungeon.dart';
 
 class GamePlay extends StatefulWidget {
   final Dungeon dungeon;
@@ -60,11 +59,9 @@ class _GamePlayState extends State<GamePlay> with WidgetsBindingObserver {
       // This can happen while the game is being initialized.
       return const Scaffold(
         backgroundColor: Colors.black,
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
+        body: Center(child: CircularProgressIndicator()),
       );
     }
-    return TapCircleIndicator(child: GameWidget(game: _penuhanGame!));
+    return GameWidget(game: _penuhanGame!);
   }
 }

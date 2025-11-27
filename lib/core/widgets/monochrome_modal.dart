@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:penuhan/utils/asset_manager.dart';
-import 'package:penuhan/utils/audio_manager.dart';
+import 'package:penuhan/core/utils/asset_manager.dart';
+import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:provider/provider.dart';
 
 /// A reusable, monochrome-styled modal that looks like a window decorator.

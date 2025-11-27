@@ -94,4 +94,245 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hardDifficultyName => 'Hard';
+
+  @override
+  String get battleAttack => 'Attack';
+
+  @override
+  String get battleSkill => 'Skill';
+
+  @override
+  String get battleWin => 'Win';
+
+  @override
+  String get battleStart => 'Battle Start!';
+
+  @override
+  String get battleVictory => 'VICTORY!';
+
+  @override
+  String get battleDefeat => 'DEFEAT!';
+
+  @override
+  String get battleContinue => 'Continue';
+
+  @override
+  String get battleReturn => 'Return';
+
+  @override
+  String battlePlayerAttacks(String playerName, int damage) {
+    return '$playerName attacks for $damage damage!';
+  }
+
+  @override
+  String battlePlayerUsesSkill(
+    String playerName,
+    String skillName,
+    int damage,
+  ) {
+    return '$playerName uses $skillName for $damage damage!';
+  }
+
+  @override
+  String battlePlayerHeals(String playerName, int amount) {
+    return '$playerName heals for $amount HP!';
+  }
+
+  @override
+  String battleEnemyAttacks(String enemyName, int damage) {
+    return '$enemyName attacks for $damage damage!';
+  }
+
+  @override
+  String battleVictoryMessage(String enemyName) {
+    return 'Victory! $enemyName has been defeated!';
+  }
+
+  @override
+  String get battleDefeatMessage => 'Defeat! You have been defeated...';
+
+  @override
+  String get battleSurrendered => 'You surrendered...';
+
+  @override
+  String get skillSelectTitle => 'SELECT SKILL';
+
+  @override
+  String get skillCancel => 'CANCEL';
+
+  @override
+  String get skillAttack => 'ATTACK';
+
+  @override
+  String skillCost(int cost) {
+    return 'Cost: $cost SP';
+  }
+
+  @override
+  String get skillCostLabel => 'Cost';
+
+  @override
+  String get skillDamageLabel => 'Damage';
+
+  @override
+  String get skillHealLabel => 'Heal';
+
+  @override
+  String skillEstimatedDamage(int damage) {
+    return '~$damage';
+  }
+
+  @override
+  String get skillFireballName => 'Fireball';
+
+  @override
+  String get skillFireballDesc =>
+      'Launch a blazing fireball\\nDeals 150% skill damage';
+
+  @override
+  String get skillIceSpearName => 'Ice Spear';
+
+  @override
+  String get skillIceSpearDesc =>
+      'Pierce with frozen spear\\nDeals 120% skill damage';
+
+  @override
+  String get skillThunderStrikeName => 'Thunder Strike';
+
+  @override
+  String get skillThunderStrikeDesc =>
+      'Call down lightning\\nDeals 200% skill damage';
+
+  @override
+  String get skillQuickStrikeName => 'Quick Strike';
+
+  @override
+  String get skillQuickStrikeDesc =>
+      'Swift precise attack\\nDeals 100% skill damage';
+
+  @override
+  String get skillHealingLightName => 'Healing Light';
+
+  @override
+  String get skillHealingLightDesc => 'Restore your vitality\\nHeals 30 HP';
+
+  @override
+  String get floorChoosePath => 'CHOOSE YOUR PATH';
+
+  @override
+  String get floorMonster => 'Monster';
+
+  @override
+  String get floorMonsterDesc => 'Fight a monster and earn rewards';
+
+  @override
+  String get floorShop => 'Shop';
+
+  @override
+  String get floorShopDesc => 'Buy items with your gold';
+
+  @override
+  String get floorRest => 'Rest';
+
+  @override
+  String get floorRestDesc => 'Restore HP and manage inventory';
+
+  @override
+  String get floorStatus => 'STATUS';
+
+  @override
+  String get floorItem => 'ITEM';
+
+  @override
+  String floorNumber(int floor) {
+    return 'FLOOR $floor';
+  }
+
+  @override
+  String get restingStatus => 'Status';
+
+  @override
+  String get restingItem => 'Item';
+
+  @override
+  String get restingResting => 'Resting';
+
+  @override
+  String get restingNextFloor => 'Next Floor';
+
+  @override
+  String get restingFinishDungeon => 'Finish Dungeon';
+
+  @override
+  String get restingHp => 'HP';
+
+  @override
+  String get restingXp => 'XP';
+
+  @override
+  String get restingAttack => 'Attack';
+
+  @override
+  String get restingSkill => 'Skill';
+
+  @override
+  String get restingGold => 'Gold';
+
+  @override
+  String get restingFloor => 'Floor';
+
+  @override
+  String get restingDungeonInfo => 'Dungeon Info';
+
+  @override
+  String get restingNoItems => 'No items in inventory';
+
+  @override
+  String get restingUse => 'Use';
+
+  @override
+  String get shopTitle => 'Shop';
+
+  @override
+  String shopGold(int gold) {
+    return 'Gold: $gold';
+  }
+
+  @override
+  String get shopBuy => 'BUY';
+
+  @override
+  String get shopNotEnoughGold => 'NOT ENOUGH GOLD';
+
+  @override
+  String get shopNextFloor => 'Next Floor';
+
+  @override
+  String shopPrice(int price) {
+    return '${price}G';
+  }
+
+  @override
+  String get itemHealthPotionName => 'Health Potion';
+
+  @override
+  String get itemHealthPotionDesc => 'Restores 50 HP';
+
+  @override
+  String get itemSuperHealthPotionName => 'Super Health Potion';
+
+  @override
+  String get itemSuperHealthPotionDesc => 'Restores 100 HP';
+
+  @override
+  String get itemAttackScrollName => 'Attack Scroll';
+
+  @override
+  String get itemAttackScrollDesc => 'Permanently increases Attack by 5';
+
+  @override
+  String get itemSkillScrollName => 'Skill Scroll';
+
+  @override
+  String get itemSkillScrollDesc => 'Permanently increases Skill by 5';
 }

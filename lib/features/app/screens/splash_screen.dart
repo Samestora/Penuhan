@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:penuhan/screens/title_screen.dart';
-import 'package:penuhan/utils/asset_manager.dart';
-import 'package:penuhan/widgets/tap_circle_indicator.dart';
+import 'package:penuhan/features/app/screens/title_screen.dart';
+import 'package:penuhan/core/utils/asset_manager.dart';
 
 /// Fade in -> 2 seconds
 /// NECESSARY jank for 0.05 seconds
@@ -76,27 +75,25 @@ class _SplashScreenState extends State<SplashScreen> {
           });
         }
 
-        return TapCircleIndicator(
-          child: Scaffold(
-            backgroundColor: Colors.black,
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  AnimatedOpacity(
-                    opacity: _opacity,
-                    duration: const Duration(milliseconds: 1500),
-                    onEnd: () {
-                      if (_isLoaded) {
-                        _navigateToNextScreen();
-                      }
-                    },
-                    child: Column(
-                      children: [Image.asset(AssetManager.splashLogo)],
-                    ),
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                AnimatedOpacity(
+                  opacity: _opacity,
+                  duration: const Duration(milliseconds: 1500),
+                  onEnd: () {
+                    if (_isLoaded) {
+                      _navigateToNextScreen();
+                    }
+                  },
+                  child: Column(
+                    children: [Image.asset(AssetManager.splashLogo)],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         );

@@ -1,5 +1,5 @@
 import 'package:flame/components.dart';
-import 'package:penuhan/utils/asset_manager.dart';
+import 'package:penuhan/core/utils/asset_manager.dart';
 
 class Player extends SpriteComponent {
   Player({super.position})

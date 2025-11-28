@@ -266,7 +266,7 @@ class _RestingScreenState extends State<RestingScreen> {
             const SizedBox(height: 16),
             _buildStatRow(
               AppLocalizations.of(context)!.restingFloor,
-              '${_progress.currentFloor}/${_progress.maxFloor}',
+              '${_progress.currentFloor}',
             ),
             _buildStatRow('Dungeon', widget.dungeon.name.getName(context)),
           ],
@@ -567,28 +567,20 @@ class _RestingScreenState extends State<RestingScreen> {
   }
 
   Widget _buildNextFloorButton() {
-    final isLastFloor =
-        _progress.currentFloor >= _progress.maxFloor;
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: MonochromeButton(
-        text: isLastFloor
-            ? AppLocalizations.of(context)!.restingFinishDungeon
-            : AppLocalizations.of(context)!.restingNextFloor,
+        text: AppLocalizations.of(context)!.restingNextFloor,
         onPressed: () {
           _audioManager.playSfx(AssetManager.sfxClick);
-          if (isLastFloor) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          } else {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) => FloorSelectionScreen(
-                  dungeon: widget.dungeon,
-                  gameProgress: _progress.nextFloor(),
-                ),
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => FloorSelectionScreen(
+                dungeon: widget.dungeon,
+                gameProgress: _progress.nextFloor(),
               ),
-            );
-          }
+            ),
+          );
         },
       ),
     );

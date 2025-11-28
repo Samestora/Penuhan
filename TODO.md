@@ -27,7 +27,7 @@ If the below task's hyperlink exists then you can continue the implementation or
 - [x] Adding skills list on rest area
 - [x] Can use item on floor selection
 - [x] Adding pause mechanism
-- [] Changing dungeon mechanism
+- [x] Changing dungeon mechanism
 - [] Adding level up mechanism
 - [] Adding up stats when level up
 

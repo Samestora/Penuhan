@@ -58,20 +58,16 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
       case FloorOptionType.battle:
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (_) => BattleScreen(
-              dungeon: widget.dungeon,
-              gameProgress: _progress,
-            ),
+            builder: (_) =>
+                BattleScreen(dungeon: widget.dungeon, gameProgress: _progress),
           ),
         );
         break;
       case FloorOptionType.shop:
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (_) => ShopScreen(
-              dungeon: widget.dungeon,
-              gameProgress: _progress,
-            ),
+            builder: (_) =>
+                ShopScreen(dungeon: widget.dungeon, gameProgress: _progress),
           ),
         );
         break;
@@ -181,9 +177,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            AppLocalizations.of(
-              context,
-            )!.floorNumber(_progress.currentFloor),
+            AppLocalizations.of(context)!.floorNumber(_progress.currentFloor),
             style: const TextStyle(
               fontFamily: 'Unifont',
               fontSize: 18,
@@ -301,24 +295,12 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
             l10n.restingXp,
             '${_progress.playerXp}/${_progress.playerMaxXp}',
           ),
-          _buildStatRow(
-            'MP',
-            '${_progress.playerMp}/${_progress.playerMaxMp}',
-          ),
-          _buildStatRow(
-            l10n.restingAttack,
-            '${_progress.playerAttack}',
-          ),
-          _buildStatRow(
-            l10n.restingSkill,
-            '${_progress.playerSkill}',
-          ),
+          _buildStatRow('MP', '${_progress.playerMp}/${_progress.playerMaxMp}'),
+          _buildStatRow(l10n.restingAttack, '${_progress.playerAttack}'),
+          _buildStatRow(l10n.restingSkill, '${_progress.playerSkill}'),
           _buildStatRow(l10n.restingGold, '${_progress.gold}'),
           const SizedBox(height: 8),
-          _buildStatRow(
-            l10n.restingFloor,
-            '${_progress.currentFloor}/${_progress.maxFloor}',
-          ),
+          _buildStatRow(l10n.restingFloor, '${_progress.currentFloor}'),
         ],
       ),
     );
@@ -500,8 +482,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
     final item = Item.allItems.firstWhere((i) => i.id == itemId);
 
     // Check if player can benefit from this item
-    if (item.hpRestore != null &&
-        _progress.playerHp >= _progress.playerMaxHp) {
+    if (item.hpRestore != null && _progress.playerHp >= _progress.playerMaxHp) {
       // HP already full, can't use potion
       _showCannotUseItemDialog();
       return;

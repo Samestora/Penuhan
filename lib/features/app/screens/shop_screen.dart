@@ -117,9 +117,7 @@ class _ShopScreenState extends State<ShopScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            AppLocalizations.of(
-              context,
-            )!.floorNumber(_progress.currentFloor),
+            AppLocalizations.of(context)!.floorNumber(_progress.currentFloor),
             style: const TextStyle(
               fontFamily: 'Unifont',
               fontSize: 18,
@@ -133,9 +131,7 @@ class _ShopScreenState extends State<ShopScreen> {
               const Icon(Icons.monetization_on, color: Colors.yellow, size: 20),
               const SizedBox(width: 8),
               Text(
-                AppLocalizations.of(
-                  context,
-                )!.shopGold(_progress.gold),
+                AppLocalizations.of(context)!.shopGold(_progress.gold),
                 style: const TextStyle(
                   fontFamily: 'Unifont',
                   fontSize: 16,

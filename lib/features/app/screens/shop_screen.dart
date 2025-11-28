@@ -5,6 +5,7 @@ import 'package:penuhan/core/models/item.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/core/widgets/monochrome_button.dart';
+import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/floor_selection_screen.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,7 @@ class ShopScreen extends StatefulWidget {
 
 class _ShopScreenState extends State<ShopScreen> {
   late AudioManager _audioManager;
+  bool _isPaused = false;
 
   @override
   void didChangeDependencies() {
@@ -56,11 +58,37 @@ class _ShopScreenState extends State<ShopScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            _buildHeader(),
-            Expanded(child: _buildShopContent()),
-            _buildNextFloorButton(),
+            Column(
+              children: [
+                _buildHeader(),
+                Expanded(child: _buildShopContent()),
+                _buildNextFloorButton(),
+              ],
+            ),
+
+            // Pause button (pojok kanan atas, layer atas)
+            Positioned(
+              top: 8,
+              left: 35,
+              child: PauseButton(
+                onPause: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  setState(() => _isPaused = true);
+                },
+              ),
+            ),
+
+            if (_isPaused)
+              PauseOverlay(
+                onResume: () {
+                  setState(() => _isPaused = false);
+                },
+                onMainMenu: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
           ],
         ),
       ),

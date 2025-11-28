@@ -6,6 +6,7 @@ import 'package:penuhan/core/models/item.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/core/widgets/monochrome_button.dart';
+import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/resting_screen.dart';
 import 'package:penuhan/features/app/screens/shop_screen.dart';
 import 'package:penuhan/features/battle/screens/battle_screen.dart';
@@ -15,11 +16,13 @@ import 'package:provider/provider.dart';
 class FloorSelectionScreen extends StatefulWidget {
   final Dungeon dungeon;
   final GameProgress gameProgress;
+  final List<FloorOption>? options;
 
   const FloorSelectionScreen({
     super.key,
     required this.dungeon,
     required this.gameProgress,
+    this.options,
   });
 
   @override
@@ -31,11 +34,12 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
   late List<FloorOption> _options;
   bool _showStatusDialog = false;
   bool _showItemDialog = false;
+  bool _isPaused = false;
 
   @override
   void initState() {
     super.initState();
-    _options = FloorOption.generateRandomOptions();
+    _options = widget.options ?? FloorOption.generateRandomOptions();
   }
 
   @override
@@ -115,6 +119,28 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
             _buildSideButtons(),
             if (_showStatusDialog) _buildStatusDialog(),
             if (_showItemDialog) _buildItemDialog(),
+
+            // Pause button (pojok kanan atas, layer atas)
+            Positioned(
+              top: 8,
+              left: 35,
+              child: PauseButton(
+                onPause: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  setState(() => _isPaused = true);
+                },
+              ),
+            ),
+
+            if (_isPaused)
+              PauseOverlay(
+                onResume: () {
+                  setState(() => _isPaused = false);
+                },
+                onMainMenu: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
           ],
         ),
       ),
@@ -302,21 +328,42 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
                 final item = Item.allItems.firstWhere(
                   (i) => i.id == invItem.itemId,
                 );
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white70, width: 1),
+                  ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // Item info
                       Expanded(
-                        child: Text(
-                          item.getLocalizedName(context),
-                          style: const TextStyle(
-                            fontFamily: 'Unifont',
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.getLocalizedName(context),
+                              style: const TextStyle(
+                                fontFamily: 'Unifont',
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              item.getLocalizedDescription(context),
+                              style: const TextStyle(
+                                fontFamily: 'Unifont',
+                                fontSize: 11,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      const SizedBox(width: 12),
+                      // Quantity
                       Text(
                         'x${invItem.quantity}',
                         style: const TextStyle(
@@ -325,6 +372,32 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
                           color: Colors.white,
                         ),
                       ),
+                      const SizedBox(width: 12),
+                      // Use button (only for potions)
+                      if (item.type == ItemType.potion)
+                        SizedBox(
+                          width: 60,
+                          height: 32,
+                          child: ElevatedButton(
+                            onPressed: () => _useItem(item.id),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              padding: EdgeInsets.zero,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                              ),
+                            ),
+                            child: Text(
+                              l10n.restingUse,
+                              style: const TextStyle(
+                                fontFamily: 'Unifont',
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 );
@@ -395,6 +468,86 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
               fontSize: 14,
               color: Colors.white,
               fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _useItem(String itemId) {
+    _audioManager.playSfx(AssetManager.sfxClick);
+
+    final item = Item.allItems.firstWhere((i) => i.id == itemId);
+
+    // Check if player can benefit from this item
+    if (item.hpRestore != null &&
+        widget.gameProgress.playerHp >= widget.gameProgress.playerMaxHp) {
+      // HP already full, can't use potion
+      _showCannotUseItemDialog();
+      return;
+    }
+
+    // Use the item and update game progress
+    final updatedProgress = widget.gameProgress.useItem(itemId);
+
+    // Close dialog and refresh with new progress
+    setState(() {
+      _showItemDialog = false;
+    });
+
+    // Navigate to same screen with updated progress and same options
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (_) => FloorSelectionScreen(
+          dungeon: widget.dungeon,
+          gameProgress: updatedProgress,
+          options: _options,
+        ),
+      ),
+    );
+  }
+
+  void _showCannotUseItemDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        shape: const RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white, width: 2),
+          borderRadius: BorderRadius.zero,
+        ),
+        title: const Text(
+          'Cannot Use Item',
+          style: TextStyle(
+            fontFamily: 'Unifont',
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: const Text(
+          'HP is already full!',
+          style: TextStyle(
+            fontFamily: 'Unifont',
+            fontSize: 14,
+            color: Colors.white70,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _audioManager.playSfx(AssetManager.sfxClick);
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              'OK',
+              style: TextStyle(
+                fontFamily: 'Unifont',
+                fontSize: 14,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],

@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:penuhan/core/models/dungeon.dart';
 import 'package:penuhan/core/models/game_progress.dart';
 import 'package:penuhan/core/models/item.dart';
+import 'package:penuhan/features/battle/models/skill.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/core/widgets/monochrome_button.dart';
+import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/floor_selection_screen.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +31,7 @@ class RestingScreen extends StatefulWidget {
 class _RestingScreenState extends State<RestingScreen> {
   late AudioManager _audioManager;
   late int _selectedTab;
+  bool _isPaused = false;
 
   @override
   void initState() {
@@ -47,12 +50,38 @@ class _RestingScreenState extends State<RestingScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            _buildHeader(),
-            _buildTabButtons(),
-            Expanded(child: _buildContent()),
-            _buildNextFloorButton(),
+            Column(
+              children: [
+                _buildHeader(),
+                _buildTabButtons(),
+                Expanded(child: _buildContent()),
+                _buildNextFloorButton(),
+              ],
+            ),
+
+            // Pause button (pojok kanan atas, layer atas)
+            Positioned(
+              top: 8,
+              left: 35,
+              child: PauseButton(
+                onPause: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  setState(() => _isPaused = true);
+                },
+              ),
+            ),
+
+            if (_isPaused)
+              PauseOverlay(
+                onResume: () {
+                  setState(() => _isPaused = false);
+                },
+                onMainMenu: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
           ],
         ),
       ),
@@ -110,6 +139,13 @@ class _RestingScreenState extends State<RestingScreen> {
               1,
             ),
           ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildTabButton(
+              AppLocalizations.of(context)!.skillSelectTitle,
+              2,
+            ),
+          ),
         ],
       ),
     );
@@ -148,6 +184,8 @@ class _RestingScreenState extends State<RestingScreen> {
         return _buildStatusTab();
       case 1:
         return _buildItemTab();
+      case 2:
+        return _buildSkillTab();
       default:
         return const SizedBox();
     }
@@ -383,6 +421,139 @@ class _RestingScreenState extends State<RestingScreen> {
         ),
       );
     });
+  }
+
+  Widget _buildSkillTab() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: Skill.allSkills.length,
+      itemBuilder: (context, index) {
+        final skill = Skill.allSkills[index];
+        final l10n = AppLocalizations.of(context)!;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white, width: 2),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Skill name and SP cost
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        skill.getLocalizedName(context),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Unifont',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(color: Colors.white, width: 1),
+                      ),
+                      child: Text(
+                        l10n.skillCost(skill.skillCost),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Unifont',
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Skill description
+                Text(
+                  skill.getLocalizedDescription(context),
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontFamily: 'Unifont',
+                    fontSize: 13,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Skill stats
+                // Row(
+                //   children: [
+                //     if (skill.effect != SkillEffect.heal) ...[
+                //       _buildSkillStat(
+                //         l10n.skillDamageLabel,
+                //         '${(skill.damageMultiplier * 100).toInt()}%',
+                //         Colors.red,
+                //       ),
+                //       const SizedBox(width: 16),
+                //     ],
+                //     if (skill.effect == SkillEffect.heal) ...[
+                //       _buildSkillStat(
+                //         l10n.skillHealLabel,
+                //         '30 HP',
+                //         Colors.green,
+                //       ),
+                //       const SizedBox(width: 16),
+                //     ],
+                //     _buildSkillStat(
+                //       l10n.skillCostLabel,
+                //       '${skill.skillCost} SP',
+                //       Colors.blue,
+                //     ),
+                //   ],
+                // ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSkillStat(String label, String value, Color color) {
+    return Row(
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: color,
+            border: Border.all(color: Colors.white, width: 1),
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          '$label: ',
+          style: const TextStyle(
+            color: Colors.grey,
+            fontFamily: 'Unifont',
+            fontSize: 11,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            color: Colors.white,
+            fontFamily: 'Unifont',
+            fontSize: 11,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
   }
 
   Widget _buildNextFloorButton() {

@@ -7,6 +7,7 @@ import 'package:penuhan/core/models/game_progress.dart';
 import 'package:penuhan/core/models/item.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
+import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/resting_screen.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +37,7 @@ class _BattleScreenState extends State<BattleScreen>
   bool _showMessage = false;
   String _currentMessage = '';
   List<InventoryItem> _currentInventory = [];
+  bool _isPaused = false;
 
   @override
   void initState() {
@@ -251,7 +253,7 @@ class _BattleScreenState extends State<BattleScreen>
             _buildSpritesLayer(screenHeight, screenWidth),
 
             // LAYER 3: UI (buttons, info bars, overlays)
-            _buildUILayer(),
+            _buildUILayer(screenHeight),
           ],
         ),
       ),
@@ -308,7 +310,7 @@ class _BattleScreenState extends State<BattleScreen>
     );
   }
 
-  Widget _buildUILayer() {
+  Widget _buildUILayer(double screenHeight) {
     return Stack(
       children: [
         // Base UI layout
@@ -338,103 +340,124 @@ class _BattleScreenState extends State<BattleScreen>
               ),
             ),
 
-            // Enemy info at top (only when NOT viewing skill detail)
-            if (_selectedSkill == null &&
-                !(_selectedSkill != null &&
-                    _selectedSkill!.effect == SkillEffect.heal))
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 16,
-                ),
-                child: _buildCharacterInfo(
-                  _battleState.enemy,
-                  isPlayer: false,
-                  isHit: _isEnemyHit,
-                  previewDamage: null,
-                  previewHeal: null,
-                ),
-              ),
-
             // Spacer for battle area (sprites are on layer 2)
             const Spacer(),
-
-            // Player info at bottom (only when NOT viewing skill detail)
-            if (_selectedSkill == null)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 8,
-                ),
-                child: _buildCharacterInfo(
-                  _battleState.player,
-                  isPlayer: true,
-                  isHit: _isPlayerHit,
-                  previewDamage: null,
-                  previewHeal: null,
-                ),
-              ),
-
-            // Battle message (shown during actions)
-            if (_showMessage) _buildBattleMessage(),
-
-            // Action buttons or skill detail or item detail (hidden during actions)
-            if (!_showMessage)
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: _selectedSkill != null
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Character info bar above skill detail
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: _selectedSkill!.effect == SkillEffect.heal
-                                ? _buildCharacterInfo(
-                                    _battleState.player,
-                                    isPlayer: true,
-                                    isHit: _isPlayerHit,
-                                    previewDamage: null,
-                                    previewHeal: 30,
-                                  )
-                                : _buildCharacterInfo(
-                                    _battleState.enemy,
-                                    isPlayer: false,
-                                    isHit: _isEnemyHit,
-                                    previewDamage: _selectedSkill!
-                                        .calculateDamage(
-                                          _battleState.player.skill,
-                                        ),
-                                    previewHeal: null,
-                                  ),
-                          ),
-                          // Skill detail below
-                          _buildSkillDetail(),
-                        ],
-                      )
-                    : _selectedItem != null
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Player info bar above item detail (items restore HP)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: _buildCharacterInfo(
-                              _battleState.player,
-                              isPlayer: true,
-                              isHit: _isPlayerHit,
-                              previewDamage: null,
-                              previewHeal: _selectedItem!.hpRestore,
-                            ),
-                          ),
-                          // Item detail below
-                          _buildItemDetail(),
-                        ],
-                      )
-                    : _buildActionButtons(),
-              ),
           ],
         ),
+
+        // Enemy info bar - STATIC POSITION (only for action buttons & battle message)
+        // Hidden when viewing skill/item detail
+        if (_selectedSkill == null && _selectedItem == null)
+          Positioned(
+            left: 24,
+            right: 24,
+            top:
+                screenHeight *
+                0.1, // Di atas player bar - responsif untuk semua device
+            child: _buildCharacterInfo(
+              _battleState.enemy,
+              isPlayer: false,
+              isHit: _isEnemyHit,
+              previewDamage: null,
+              previewHeal: null,
+            ),
+          ),
+
+        // Player info bar - STATIC POSITION (only for action buttons & battle message)
+        // Hidden when viewing skill/item detail
+        if (_selectedSkill == null && _selectedItem == null)
+          Positioned(
+            left: 24,
+            right: 24,
+            bottom:
+                screenHeight *
+                0.17, // 27% dari tinggi layar - responsif untuk semua device
+            child: _buildCharacterInfo(
+              _battleState.player,
+              isPlayer: true,
+              isHit: _isPlayerHit,
+              previewDamage: null,
+              previewHeal: null,
+            ),
+          ),
+
+        // Action area - STATIC POSITION (only for action buttons & battle message)
+        // Hidden when viewing skill/item detail
+        if (_selectedSkill == null && _selectedItem == null)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height:
+                screenHeight *
+                0.18, // 25% dari tinggi layar - responsif untuk semua device
+            child: Column(
+              children: [
+                // Battle message (shown during actions)
+                if (_showMessage) Expanded(child: _buildBattleMessage()),
+
+                // Action buttons (hidden during actions)
+                if (!_showMessage)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: _buildActionButtons(),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+        // Skill/Item detail area - DYNAMIC POSITION (like before)
+        // Shows bar info above detail, positioned normally at bottom
+        if (_selectedSkill != null || _selectedItem != null)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Character info bar above skill/item detail
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: _selectedSkill != null
+                        ? (_selectedSkill!.effect == SkillEffect.heal
+                              ? _buildCharacterInfo(
+                                  _battleState.player,
+                                  isPlayer: true,
+                                  isHit: _isPlayerHit,
+                                  previewDamage: null,
+                                  previewHeal: 30,
+                                )
+                              : _buildCharacterInfo(
+                                  _battleState.enemy,
+                                  isPlayer: false,
+                                  isHit: _isEnemyHit,
+                                  previewDamage: _selectedSkill!
+                                      .calculateDamage(
+                                        _battleState.player.skill,
+                                      ),
+                                  previewHeal: null,
+                                ))
+                        : _buildCharacterInfo(
+                            _battleState.player,
+                            isPlayer: true,
+                            isHit: _isPlayerHit,
+                            previewDamage: null,
+                            previewHeal: _selectedItem!.hpRestore,
+                          ),
+                  ),
+                  // Skill or Item detail below
+                  _selectedSkill != null
+                      ? _buildSkillDetail()
+                      : _buildItemDetail(),
+                ],
+              ),
+            ),
+          ),
 
         // Skill list overlay (only when showing list, not detail)
         if (_showSkillList && _selectedSkill == null)
@@ -470,6 +493,29 @@ class _BattleScreenState extends State<BattleScreen>
 
         // Victory/Defeat overlay
         if (_battleState.isBattleOver) _buildBattleEndOverlay(),
+
+        // Pause button (pojok kanan atas, layer atas)
+        Positioned(
+          top: 8,
+          left: 35,
+          child: PauseButton(
+            onPause: () {
+              _audioManager.playSfx(AssetManager.sfxClick);
+              setState(() => _isPaused = true);
+            },
+          ),
+        ),
+
+        // Pause overlay (layer paling atas)
+        if (_isPaused)
+          PauseOverlay(
+            onResume: () {
+              setState(() => _isPaused = false);
+            },
+            onMainMenu: () {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+          ),
       ],
     );
   }
@@ -795,14 +841,18 @@ class _BattleScreenState extends State<BattleScreen>
           color: Colors.black,
           border: Border.all(color: Colors.white, width: 2),
         ),
-        child: Text(
-          _currentMessage,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white,
-            fontFamily: 'Unifont',
-            fontSize: 16,
-            height: 1.5,
+        child: Center(
+          // Gunakan Center untuk menempatkan teks di tengah
+          child: Text(
+            _currentMessage,
+            textAlign:
+                TextAlign.center, // Untuk meratakan teks secara horizontal
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'Unifont',
+              fontSize: 16,
+              height: 1.5,
+            ),
           ),
         ),
       ),

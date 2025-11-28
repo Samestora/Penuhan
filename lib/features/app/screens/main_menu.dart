@@ -212,6 +212,8 @@ class __EmbarkContentState extends State<_EmbarkContent> {
                   playerMaxHp: 150,
                   playerXp: 0,
                   playerMaxXp: 150,
+                  playerMp: 50,
+                  playerMaxMp: 50,
                   playerAttack: 10,
                   playerSkill: 10,
                   gold: 0,

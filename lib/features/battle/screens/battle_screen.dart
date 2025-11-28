@@ -67,6 +67,8 @@ class _BattleScreenState extends State<BattleScreen>
       maxHp: progress?.playerMaxHp ?? 150,
       currentXp: progress?.playerXp ?? 150,
       maxXp: progress?.playerMaxXp ?? 150,
+      currentMp: progress?.playerMp ?? 50,
+      maxMp: progress?.playerMaxMp ?? 50,
       attack: progress?.playerAttack ?? 10,
       skill: progress?.playerSkill ?? 10,
     );
@@ -79,6 +81,8 @@ class _BattleScreenState extends State<BattleScreen>
       maxHp: monster.maxHp,
       currentXp: 0,
       maxXp: 100,
+      currentMp: 0,
+      maxMp: 0,
       attack: monster.attack,
       skill: monster.skillStat,
     );
@@ -291,38 +295,6 @@ class _BattleScreenState extends State<BattleScreen>
   Widget _buildUILayer(double screenHeight) {
     return Stack(
       children: [
-        // Base UI layout
-        Column(
-          children: [
-            // Top bar with back button
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {
-                      _audioManager.playSfx(AssetManager.sfxClick);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  Text(
-                    widget.dungeon.name.toString().split('.').last,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Unifont',
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // Spacer for battle area (sprites are on layer 2)
-            const Spacer(),
-          ],
-        ),
-
         // Enemy info bar - STATIC POSITION (only for action buttons & battle message)
         // Hidden when viewing skill/item detail
         if (_selectedSkill == null && _selectedItem == null)
@@ -594,6 +566,9 @@ class _BattleScreenState extends State<BattleScreen>
                 ),
               ],
             ),
+            const SizedBox(height: 8),
+            // MP Bar similar style to HP bar (blue color)
+            _buildStatBar('MP', character.mpPercentage, Colors.blue),
           ],
         ],
       ),
@@ -1026,6 +1001,7 @@ class _BattleScreenState extends State<BattleScreen>
     final skill = _selectedSkill!;
     final playerSkillStat = _battleState.player.skill;
     final estimatedDamage = skill.calculateDamage(playerSkillStat);
+    final canUse = _battleState.player.currentMp >= skill.skillCost;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1067,13 +1043,27 @@ class _BattleScreenState extends State<BattleScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatInfo('Cost', '${skill.skillCost} SP'),
+              _buildStatInfo('Cost', '${skill.skillCost} MP'),
               if (skill.effect != SkillEffect.heal)
                 _buildStatInfo('Damage', '~$estimatedDamage')
               else
                 _buildStatInfo('Heal', '30 HP'),
             ],
           ),
+          if (!canUse) ...[
+            const SizedBox(height: 8),
+            Center(
+              child: Text(
+                l10n.notEnoughMP,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Unifont',
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
           const Spacer(),
           Row(
             children: [
@@ -1107,9 +1097,11 @@ class _BattleScreenState extends State<BattleScreen>
               const SizedBox(width: 8),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
-                    _useSkill(skill);
-                  },
+                  onPressed: canUse
+                      ? () {
+                          _useSkill(skill);
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
@@ -1178,6 +1170,8 @@ class _BattleScreenState extends State<BattleScreen>
         )!.battlePlayerHeals(_battleState.player.name, actualHeal);
       } else {
         // Damage skill
+        // Spend MP (already validated in UI)
+        _battleState.player.spendMp(skill.skillCost);
         final damage = skill.calculateDamage(_battleState.player.skill);
         _battleState.enemy.takeDamage(damage);
         log = AppLocalizations.of(context)!.battlePlayerUsesSkill(
@@ -1521,14 +1515,28 @@ class _BattleScreenState extends State<BattleScreen>
       String log = '';
 
       // Use the item effect
+      final messages = <String>[];
       if (item.hpRestore != null) {
         final oldHp = _battleState.player.currentHp;
         _battleState.player.heal(item.hpRestore!);
         final actualHeal = _battleState.player.currentHp - oldHp;
-        log = AppLocalizations.of(
-          context,
-        )!.battlePlayerHeals(_battleState.player.name, actualHeal);
+        messages.add(
+          AppLocalizations.of(
+            context,
+          )!.battlePlayerHeals(_battleState.player.name, actualHeal),
+        );
       }
+      if (item.mpRestore != null) {
+        final oldMp = _battleState.player.currentMp;
+        _battleState.player.restoreMp(item.mpRestore!);
+        final actualRestore = _battleState.player.currentMp - oldMp;
+        messages.add(
+          AppLocalizations.of(
+            context,
+          )!.battlePlayerRestoresMp(_battleState.player.name, actualRestore),
+        );
+      }
+      log = messages.join('\n');
 
       // Remove item from local inventory
       final itemIndex = _currentInventory.indexWhere(
@@ -1664,6 +1672,8 @@ class _BattleScreenState extends State<BattleScreen>
                       playerMaxHp: _battleState.player.maxHp,
                       playerXp: _battleState.player.currentXp,
                       playerMaxXp: _battleState.player.maxXp,
+                      playerMp: _battleState.player.currentMp,
+                      playerMaxMp: _battleState.player.maxMp,
                       playerAttack: _battleState.player.attack,
                       playerSkill: _battleState.player.skill,
                       gold: (widget.gameProgress?.gold ?? 0) + goldReward,

@@ -7,6 +7,8 @@ class GameProgress {
   final int playerMaxHp;
   final int playerXp;
   final int playerMaxXp;
+  final int playerMp;
+  final int playerMaxMp;
   final int playerAttack;
   final int playerSkill;
   final int gold;
@@ -19,6 +21,8 @@ class GameProgress {
     required this.playerMaxHp,
     required this.playerXp,
     required this.playerMaxXp,
+    this.playerMp = 50,
+    this.playerMaxMp = 50,
     required this.playerAttack,
     required this.playerSkill,
     this.gold = 0,
@@ -32,6 +36,8 @@ class GameProgress {
     int? playerMaxHp,
     int? playerXp,
     int? playerMaxXp,
+    int? playerMp,
+    int? playerMaxMp,
     int? playerAttack,
     int? playerSkill,
     int? gold,
@@ -44,6 +50,8 @@ class GameProgress {
       playerMaxHp: playerMaxHp ?? this.playerMaxHp,
       playerXp: playerXp ?? this.playerXp,
       playerMaxXp: playerMaxXp ?? this.playerMaxXp,
+      playerMp: playerMp ?? this.playerMp,
+      playerMaxMp: playerMaxMp ?? this.playerMaxMp,
       playerAttack: playerAttack ?? this.playerAttack,
       playerSkill: playerSkill ?? this.playerSkill,
       gold: gold ?? this.gold,
@@ -55,6 +63,12 @@ class GameProgress {
   GameProgress restoreHp(int amount) {
     final newHp = (playerHp + amount).clamp(0, playerMaxHp);
     return copyWith(playerHp: newHp);
+  }
+
+  // Helper untuk restore MP
+  GameProgress restoreMp(int amount) {
+    final newMp = (playerMp + amount).clamp(0, playerMaxMp);
+    return copyWith(playerMp: newMp);
   }
 
   // Helper untuk next floor
@@ -95,6 +109,9 @@ class GameProgress {
     // Apply item effects
     if (item.hpRestore != null) {
       newProgress = newProgress.restoreHp(item.hpRestore!);
+    }
+    if (item.mpRestore != null) {
+      newProgress = newProgress.restoreMp(item.mpRestore!);
     }
     if (item.attackBoost != null) {
       newProgress = newProgress.copyWith(

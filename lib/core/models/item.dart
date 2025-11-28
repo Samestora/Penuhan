@@ -9,6 +9,7 @@ class Item {
   final String description;
   final ItemType type;
   final int? hpRestore;
+  final int? mpRestore;
   final int? attackBoost;
   final int? skillBoost;
 
@@ -18,6 +19,7 @@ class Item {
     required this.description,
     required this.type,
     this.hpRestore,
+    this.mpRestore,
     this.attackBoost,
     this.skillBoost,
   });
@@ -30,6 +32,8 @@ class Item {
         return l10n.itemHealthPotionName;
       case 'super_health_potion':
         return l10n.itemSuperHealthPotionName;
+      case 'mp_potion':
+        return l10n.itemMpPotionName;
       case 'attack_scroll':
         return l10n.itemAttackScrollName;
       case 'skill_scroll':
@@ -47,6 +51,8 @@ class Item {
         return l10n.itemHealthPotionDesc;
       case 'super_health_potion':
         return l10n.itemSuperHealthPotionDesc;
+      case 'mp_potion':
+        return l10n.itemMpPotionDesc;
       case 'attack_scroll':
         return l10n.itemAttackScrollDesc;
       case 'skill_scroll':
@@ -73,6 +79,14 @@ class Item {
     hpRestore: 100,
   );
 
+  static const mpPotion = Item(
+    id: 'mp_potion',
+    name: 'MP Potion',
+    description: 'Restores 50 MP',
+    type: ItemType.potion,
+    mpRestore: 50,
+  );
+
   static const attackScroll = Item(
     id: 'attack_scroll',
     name: 'Attack Scroll',
@@ -93,6 +107,7 @@ class Item {
   static const allItems = [
     healthPotion,
     superHealthPotion,
+    mpPotion,
     attackScroll,
     skillScroll,
   ];
@@ -108,6 +123,7 @@ class ShopItem {
   static const shopItems = [
     ShopItem(item: Item.healthPotion, price: 20),
     ShopItem(item: Item.superHealthPotion, price: 50),
+    ShopItem(item: Item.mpPotion, price: 40),
     ShopItem(item: Item.attackScroll, price: 100),
     ShopItem(item: Item.skillScroll, price: 100),
   ];

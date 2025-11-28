@@ -150,7 +150,7 @@
     "skillSelectTitle": "SELECT SKILL",
     "skillCancel": "CANCEL",
     "skillAttack": "ATTACK",
-    "skillCost": "Cost: {cost} SP",
+    "skillCost": "Cost: {cost} MP",
     "@skillCost": {
         "placeholders": {
             "cost": {"type": "int"}
@@ -165,6 +165,7 @@
             "damage": {"type": "int"}
         }
     },
+    "notEnoughMP": "Not enough MP",
     "skillFireballName": "Fireball",
     "skillFireballDesc": "Launch a blazing fireball\\nDeals 150% skill damage",
     "skillIceSpearName": "Ice Spear",
@@ -227,5 +228,9 @@
     "itemAttackScrollName": "Attack Scroll",
     "itemAttackScrollDesc": "Permanently increases Attack by 5",
     "itemSkillScrollName": "Skill Scroll",
-    "itemSkillScrollDesc": "Permanently increases Skill by 5"
+    "itemSkillScrollDesc": "Permanently increases Skill by 5",
+    "itemMpPotionName": "MP Potion",
+    "itemMpPotionDesc": "Restores 50 MP"
+    ,"battlePlayerRestoresMp": "{playerName} restores {amount} MP!"
+    ,"@battlePlayerRestoresMp": {"placeholders": {"playerName": {"type": "String"}, "amount": {"type": "int"}}}
 }

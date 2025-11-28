@@ -32,6 +32,7 @@ class FloorSelectionScreen extends StatefulWidget {
 class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
   late AudioManager _audioManager;
   late List<FloorOption> _options;
+  late GameProgress _progress;
   bool _showStatusDialog = false;
   bool _showItemDialog = false;
   bool _isPaused = false;
@@ -41,6 +42,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
   void initState() {
     super.initState();
     _options = widget.options ?? FloorOption.generateRandomOptions();
+    _progress = widget.gameProgress;
   }
 
   @override
@@ -58,7 +60,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
           MaterialPageRoute(
             builder: (_) => BattleScreen(
               dungeon: widget.dungeon,
-              gameProgress: widget.gameProgress,
+              gameProgress: _progress,
             ),
           ),
         );
@@ -68,7 +70,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
           MaterialPageRoute(
             builder: (_) => ShopScreen(
               dungeon: widget.dungeon,
-              gameProgress: widget.gameProgress,
+              gameProgress: _progress,
             ),
           ),
         );
@@ -78,7 +80,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
           MaterialPageRoute(
             builder: (_) => RestingScreen(
               dungeon: widget.dungeon,
-              gameProgress: widget.gameProgress,
+              gameProgress: _progress,
               initialTab: 0, // Open status tab
             ),
           ),
@@ -181,7 +183,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
           Text(
             AppLocalizations.of(
               context,
-            )!.floorNumber(widget.gameProgress.currentFloor),
+            )!.floorNumber(_progress.currentFloor),
             style: const TextStyle(
               fontFamily: 'Unifont',
               fontSize: 18,
@@ -293,25 +295,29 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
         children: [
           _buildStatRow(
             l10n.restingHp,
-            '${widget.gameProgress.playerHp}/${widget.gameProgress.playerMaxHp}',
+            '${_progress.playerHp}/${_progress.playerMaxHp}',
           ),
           _buildStatRow(
             l10n.restingXp,
-            '${widget.gameProgress.playerXp}/${widget.gameProgress.playerMaxXp}',
+            '${_progress.playerXp}/${_progress.playerMaxXp}',
+          ),
+          _buildStatRow(
+            'MP',
+            '${_progress.playerMp}/${_progress.playerMaxMp}',
           ),
           _buildStatRow(
             l10n.restingAttack,
-            '${widget.gameProgress.playerAttack}',
+            '${_progress.playerAttack}',
           ),
           _buildStatRow(
             l10n.restingSkill,
-            '${widget.gameProgress.playerSkill}',
+            '${_progress.playerSkill}',
           ),
-          _buildStatRow(l10n.restingGold, '${widget.gameProgress.gold}'),
+          _buildStatRow(l10n.restingGold, '${_progress.gold}'),
           const SizedBox(height: 8),
           _buildStatRow(
             l10n.restingFloor,
-            '${widget.gameProgress.currentFloor}/${widget.gameProgress.maxFloor}',
+            '${_progress.currentFloor}/${_progress.maxFloor}',
           ),
         ],
       ),
@@ -320,7 +326,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
 
   Widget _buildItemDialog() {
     final l10n = AppLocalizations.of(context)!;
-    final inventory = widget.gameProgress.inventory;
+    final inventory = _progress.inventory;
     return _buildDialog(
       title: l10n.floorItem,
       child: inventory.isEmpty
@@ -495,30 +501,20 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
 
     // Check if player can benefit from this item
     if (item.hpRestore != null &&
-        widget.gameProgress.playerHp >= widget.gameProgress.playerMaxHp) {
+        _progress.playerHp >= _progress.playerMaxHp) {
       // HP already full, can't use potion
       _showCannotUseItemDialog();
       return;
     }
 
     // Use the item and update game progress
-    final updatedProgress = widget.gameProgress.useItem(itemId);
+    final updatedProgress = _progress.useItem(itemId);
 
-    // Close dialog and refresh with new progress
+    // Close dialog and update local progress without reload
     setState(() {
+      _progress = updatedProgress;
       _showItemDialog = false;
     });
-
-    // Navigate to same screen with updated progress and same options
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (_) => FloorSelectionScreen(
-          dungeon: widget.dungeon,
-          gameProgress: updatedProgress,
-          options: _options,
-        ),
-      ),
-    );
   }
 
   void _showCannotUseItemDialog() {

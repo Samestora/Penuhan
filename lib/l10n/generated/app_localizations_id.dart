@@ -170,7 +170,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String skillCost(int cost) {
-    return 'Biaya: $cost SP';
+    return 'Biaya: $cost MP';
   }
 
   @override
@@ -186,6 +186,9 @@ class AppLocalizationsId extends AppLocalizations {
   String skillEstimatedDamage(int damage) {
     return '~$damage';
   }
+
+  @override
+  String get notEnoughMP => 'MP tidak cukup';
 
   @override
   String get skillFireballName => 'Bola Api';
@@ -342,4 +345,15 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get itemSkillScrollDesc =>
       'Meningkatkan Skill secara permanen sebesar 5';
+
+  @override
+  String get itemMpPotionName => 'Ramuan MP';
+
+  @override
+  String get itemMpPotionDesc => 'Memulihkan 50 MP';
+
+  @override
+  String battlePlayerRestoresMp(String playerName, int amount) {
+    return '$playerName memulihkan $amount MP!';
+  }
 }

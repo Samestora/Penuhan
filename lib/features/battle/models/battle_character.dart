@@ -4,6 +4,8 @@ class BattleCharacter {
   int maxHp;
   int currentXp;
   int maxXp;
+  int currentMp;
+  int maxMp;
   int attack;
   int skill;
 
@@ -13,6 +15,8 @@ class BattleCharacter {
     required this.maxHp,
     required this.currentXp,
     required this.maxXp,
+    required this.currentMp,
+    required this.maxMp,
     required this.attack,
     required this.skill,
   });
@@ -21,6 +25,7 @@ class BattleCharacter {
 
   double get hpPercentage => currentHp / maxHp;
   double get xpPercentage => currentXp / maxXp;
+  double get mpPercentage => maxMp == 0 ? 0 : currentMp / maxMp;
 
   void takeDamage(int damage) {
     currentHp = (currentHp - damage).clamp(0, maxHp);
@@ -28,6 +33,16 @@ class BattleCharacter {
 
   void heal(int amount) {
     currentHp = (currentHp + amount).clamp(0, maxHp);
+  }
+
+  void restoreMp(int amount) {
+    currentMp = (currentMp + amount).clamp(0, maxMp);
+  }
+
+  bool spendMp(int cost) {
+    if (currentMp < cost) return false;
+    currentMp = (currentMp - cost).clamp(0, maxMp);
+    return true;
   }
 
   void gainXp(int amount) {

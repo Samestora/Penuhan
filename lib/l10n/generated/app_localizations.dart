@@ -377,7 +377,7 @@ abstract class AppLocalizations {
   /// No description provided for @skillCost.
   ///
   /// In en, this message translates to:
-  /// **'Cost: {cost} SP'**
+  /// **'Cost: {cost} MP'**
   String skillCost(int cost);
 
   /// No description provided for @skillCostLabel.
@@ -403,6 +403,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'~{damage}'**
   String skillEstimatedDamage(int damage);
+
+  /// No description provided for @notEnoughMP.
+  ///
+  /// In en, this message translates to:
+  /// **'Not enough MP'**
+  String get notEnoughMP;
 
   /// No description provided for @skillFireballName.
   ///
@@ -691,6 +697,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Permanently increases Skill by 5'**
   String get itemSkillScrollDesc;
+
+  /// No description provided for @itemMpPotionName.
+  ///
+  /// In en, this message translates to:
+  /// **'MP Potion'**
+  String get itemMpPotionName;
+
+  /// No description provided for @itemMpPotionDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Restores 50 MP'**
+  String get itemMpPotionDesc;
+
+  /// No description provided for @battlePlayerRestoresMp.
+  ///
+  /// In en, this message translates to:
+  /// **'{playerName} restores {amount} MP!'**
+  String battlePlayerRestoresMp(String playerName, int amount);
 }
 
 class _AppLocalizationsDelegate

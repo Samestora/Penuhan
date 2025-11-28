@@ -33,11 +33,13 @@ class _RestingScreenState extends State<RestingScreen> {
   late int _selectedTab;
   bool _isPaused = false;
   bool _showSettings = false;
+  late GameProgress _progress;
 
   @override
   void initState() {
     super.initState();
     _selectedTab = widget.initialTab;
+    _progress = widget.gameProgress;
   }
 
   @override
@@ -227,23 +229,27 @@ class _RestingScreenState extends State<RestingScreen> {
             const SizedBox(height: 16),
             _buildStatRow(
               AppLocalizations.of(context)!.restingHp,
-              '${widget.gameProgress.playerHp}/${widget.gameProgress.playerMaxHp}',
+              '${_progress.playerHp}/${_progress.playerMaxHp}',
             ),
             _buildStatRow(
               AppLocalizations.of(context)!.restingXp,
-              '${widget.gameProgress.playerXp}/${widget.gameProgress.playerMaxXp}',
+              '${_progress.playerXp}/${_progress.playerMaxXp}',
+            ),
+            _buildStatRow(
+              'MP',
+              '${_progress.playerMp}/${_progress.playerMaxMp}',
             ),
             _buildStatRow(
               AppLocalizations.of(context)!.restingAttack,
-              '${widget.gameProgress.playerAttack}',
+              '${_progress.playerAttack}',
             ),
             _buildStatRow(
               AppLocalizations.of(context)!.restingSkill,
-              '${widget.gameProgress.playerSkill}',
+              '${_progress.playerSkill}',
             ),
             _buildStatRow(
               AppLocalizations.of(context)!.restingGold,
-              '${widget.gameProgress.gold}',
+              '${_progress.gold}',
             ),
             const SizedBox(height: 16),
             const Divider(color: Colors.white),
@@ -260,7 +266,7 @@ class _RestingScreenState extends State<RestingScreen> {
             const SizedBox(height: 16),
             _buildStatRow(
               AppLocalizations.of(context)!.restingFloor,
-              '${widget.gameProgress.currentFloor}/${widget.gameProgress.maxFloor}',
+              '${_progress.currentFloor}/${_progress.maxFloor}',
             ),
             _buildStatRow('Dungeon', widget.dungeon.name.getName(context)),
           ],
@@ -298,7 +304,7 @@ class _RestingScreenState extends State<RestingScreen> {
   }
 
   Widget _buildItemTab() {
-    if (widget.gameProgress.inventory.isEmpty) {
+    if (_progress.inventory.isEmpty) {
       return Center(
         child: Container(
           padding: const EdgeInsets.all(24),
@@ -337,9 +343,9 @@ class _RestingScreenState extends State<RestingScreen> {
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: widget.gameProgress.inventory.length,
+      itemCount: _progress.inventory.length,
       itemBuilder: (context, index) {
-        final inventoryItem = widget.gameProgress.inventory[index];
+        final inventoryItem = _progress.inventory[index];
         final item = Item.allItems.firstWhere(
           (i) => i.id == inventoryItem.itemId,
         );
@@ -423,16 +429,7 @@ class _RestingScreenState extends State<RestingScreen> {
   void _useItem(String itemId) {
     _audioManager.playSfx(AssetManager.sfxClick);
     setState(() {
-      final updatedProgress = widget.gameProgress.useItem(itemId);
-      // Update parent dengan progress baru
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => RestingScreen(
-            dungeon: widget.dungeon,
-            gameProgress: updatedProgress,
-          ),
-        ),
-      );
+      _progress = _progress.useItem(itemId);
     });
   }
 
@@ -571,7 +568,7 @@ class _RestingScreenState extends State<RestingScreen> {
 
   Widget _buildNextFloorButton() {
     final isLastFloor =
-        widget.gameProgress.currentFloor >= widget.gameProgress.maxFloor;
+        _progress.currentFloor >= _progress.maxFloor;
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: MonochromeButton(
@@ -587,7 +584,7 @@ class _RestingScreenState extends State<RestingScreen> {
               MaterialPageRoute(
                 builder: (_) => FloorSelectionScreen(
                   dungeon: widget.dungeon,
-                  gameProgress: widget.gameProgress.nextFloor(),
+                  gameProgress: _progress.nextFloor(),
                 ),
               ),
             );

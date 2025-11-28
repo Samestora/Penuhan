@@ -21,13 +21,15 @@ If the below task's hyperlink exists then you can continue the implementation or
 - [x] Store
 - [x] Spells & Skills
 - [x] Player
-- [] Adding MP mechanism
+- [x] Adding MP mechanism
 - [x] Enemy can use skill
 - [x] Fix bar info player
 - [x] Adding skills list on rest area
 - [x] Can use item on floor selection
 - [x] Adding pause mechanism
-- []
+- [] Changing dungeon mechanism
+- [] Adding level up mechanism
+- [] Adding up stats when level up
 
 ## Quality of Life
 

@@ -28,29 +28,19 @@ class _ShopScreenState extends State<ShopScreen> {
   late AudioManager _audioManager;
   bool _isPaused = false;
   bool _showSettings = false;
+  late GameProgress _progress;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _audioManager = context.read<AudioManager>();
+    _progress = widget.gameProgress;
   }
 
   void _buyItem(ShopItem shopItem) {
     _audioManager.playSfx(AssetManager.sfxClick);
     setState(() {
-      final updatedProgress = widget.gameProgress.buyItem(
-        shopItem.item,
-        shopItem.price,
-      );
-      // Refresh dengan progress baru
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => ShopScreen(
-            dungeon: widget.dungeon,
-            gameProgress: updatedProgress,
-          ),
-        ),
-      );
+      _progress = _progress.buyItem(shopItem.item, shopItem.price);
     });
   }
 
@@ -129,7 +119,7 @@ class _ShopScreenState extends State<ShopScreen> {
           Text(
             AppLocalizations.of(
               context,
-            )!.floorNumber(widget.gameProgress.currentFloor),
+            )!.floorNumber(_progress.currentFloor),
             style: const TextStyle(
               fontFamily: 'Unifont',
               fontSize: 18,
@@ -145,7 +135,7 @@ class _ShopScreenState extends State<ShopScreen> {
               Text(
                 AppLocalizations.of(
                   context,
-                )!.shopGold(widget.gameProgress.gold),
+                )!.shopGold(_progress.gold),
                 style: const TextStyle(
                   fontFamily: 'Unifont',
                   fontSize: 16,
@@ -175,7 +165,7 @@ class _ShopScreenState extends State<ShopScreen> {
       itemCount: ShopItem.shopItems.length,
       itemBuilder: (context, index) {
         final shopItem = ShopItem.shopItems[index];
-        final canAfford = widget.gameProgress.gold >= shopItem.price;
+        final canAfford = _progress.gold >= shopItem.price;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
@@ -268,7 +258,7 @@ class _ShopScreenState extends State<ShopScreen> {
             MaterialPageRoute(
               builder: (_) => FloorSelectionScreen(
                 dungeon: widget.dungeon,
-                gameProgress: widget.gameProgress.nextFloor(),
+                gameProgress: _progress.nextFloor(),
               ),
             ),
           );

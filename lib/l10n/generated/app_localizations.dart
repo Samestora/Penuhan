@@ -332,6 +332,12 @@ abstract class AppLocalizations {
   /// **'{enemyName} attacks for {damage} damage!'**
   String battleEnemyAttacks(String enemyName, int damage);
 
+  /// No description provided for @battleEnemyUsesSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'{enemyName} uses {skillName} for {damage} damage!'**
+  String battleEnemyUsesSkill(String enemyName, String skillName, int damage);
+
   /// No description provided for @battleVictoryMessage.
   ///
   /// In en, this message translates to:

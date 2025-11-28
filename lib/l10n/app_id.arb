@@ -89,6 +89,14 @@
             "damage": {"type": "int"}
         }
     },
+    "battleEnemyUsesSkill": "{enemyName} menggunakan {skillName} dengan {damage} damage!",
+    "@battleEnemyUsesSkill": {
+        "placeholders": {
+            "enemyName": {"type": "String"},
+            "skillName": {"type": "String"},
+            "damage": {"type": "int"}
+        }
+    },
     "battleVictoryMessage": "Menang! {enemyName} telah dikalahkan!",
     "@battleVictoryMessage": {
         "placeholders": {

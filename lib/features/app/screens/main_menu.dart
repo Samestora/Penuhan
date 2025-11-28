@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 import 'package:penuhan/core/models/dungeon.dart';
 import 'package:penuhan/core/models/game_progress.dart';
 import 'package:penuhan/features/app/screens/resting_screen.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:penuhan/core/utils/hive_constants.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:penuhan/core/widgets/monochrome_button.dart';
-import 'package:penuhan/core/widgets/monochrome_dropdown.dart';
 import 'package:penuhan/core/widgets/monochrome_modal.dart';
+import 'package:penuhan/core/widgets/settings_content.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/features/app/widgets/dungeon_card.dart';
 
@@ -159,7 +157,7 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
         // The builder returns your custom widget, which will be shown as a dialog.
         return MonochromeModal(
           title: AppLocalizations.of(context)!.mainMenuSettings,
-          child: const _SettingsContent(),
+          child: const SettingsContent(),
         );
       },
     );
@@ -236,111 +234,7 @@ class __EmbarkContentState extends State<_EmbarkContent> {
   }
 }
 
-class _SettingsContent extends StatefulWidget {
-  const _SettingsContent();
-
-  @override
-  State<_SettingsContent> createState() => __SettingsContentState();
-}
-
-class __SettingsContentState extends State<_SettingsContent> {
-  // Define the master map of all available languages here,
-  // outside of the build method, for better performance.
-  final Map<String, String> _allLanguages = {
-    'en': 'English',
-    'id': 'Bahasa Indonesia',
-    // 'br': 'Português', // Example
-    // 'kr': '한국어', // Example
-    // 'jp': '日本語', // Example
-    // 'ru': 'Русский', // Example
-  };
-
-  @override
-  Widget build(BuildContext context) {
-    final audioManager = context.watch<AudioManager>();
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // This builder handles the audio toggles.
-        ValueListenableBuilder(
-          valueListenable: Hive.box(
-            settingsBoxName,
-          ).listenable(keys: [bgmEnabledKey, sfxEnabledKey]),
-          builder: (context, box, child) {
-            // ... (Your existing SwitchListTile code for music and SFX)
-            // This part remains unchanged.
-            return Column(
-              children: [
-                SwitchListTile(
-                  title: Text(AppLocalizations.of(context)!.settingsMusic),
-                  value: box.get(bgmEnabledKey, defaultValue: true),
-                  onChanged: (value) {
-                    audioManager.toggleBgm();
-                    audioManager.playSfx(AssetManager.sfxClick);
-                  },
-                  activeThumbColor: Colors.white,
-                  inactiveTrackColor: Colors.grey.shade700,
-                ),
-                SwitchListTile(
-                  title: Text(AppLocalizations.of(context)!.settingsSfx),
-                  value: box.get(sfxEnabledKey, defaultValue: true),
-                  onChanged: (value) {
-                    audioManager.toggleSfx();
-                    audioManager.playSfx(AssetManager.sfxClick);
-                  },
-                  activeThumbColor: Colors.white,
-                  inactiveTrackColor: Colors.grey.shade700,
-                ),
-              ],
-            );
-          },
-        ),
-        const SizedBox(height: 20),
-
-        // This builder listens to the language key to update the dropdown.
-        ValueListenableBuilder(
-          valueListenable: Hive.box(
-            settingsBoxName,
-          ).listenable(keys: [languageKey]),
-          builder: (context, box, child) {
-            final currentLangCode = box.get(languageKey, defaultValue: 'en');
-            final audioManager = context.watch<AudioManager>();
-
-            // Create a new map that will hold the ordered languages.
-            // Using a LinkedHashMap ensures insertion order is preserved.
-            final Map<String, String> orderedLanguages = {};
-
-            // 1. Add the currently selected language first.
-            if (_allLanguages.containsKey(currentLangCode)) {
-              orderedLanguages[currentLangCode] =
-                  _allLanguages[currentLangCode]!;
-            }
-
-            // 2. Add the rest of the languages from the master list.
-            _allLanguages.forEach((key, value) {
-              if (key != currentLangCode) {
-                orderedLanguages[key] = value;
-              }
-            });
-
-            return MonochromeDropdown(
-              value: currentLangCode,
-              // Pass the newly ordered map to the dropdown.
-              items: orderedLanguages,
-              onChanged: (newLangCode) {
-                if (newLangCode != null) {
-                  audioManager.playSfx(AssetManager.sfxClick);
-                  box.put(languageKey, newLangCode);
-                }
-              },
-            );
-          },
-        ),
-      ],
-    );
-  }
-}
+// Settings content moved to core/widgets/settings_content.dart for reuse
 
 class _AboutContent extends StatefulWidget {
   const _AboutContent();

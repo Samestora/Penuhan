@@ -144,6 +144,11 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String battleEnemyUsesSkill(String enemyName, String skillName, int damage) {
+    return '$enemyName menggunakan $skillName dengan $damage damage!';
+  }
+
+  @override
   String battleVictoryMessage(String enemyName) {
     return 'Menang! $enemyName telah dikalahkan!';
   }

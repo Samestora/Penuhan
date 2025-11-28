@@ -35,6 +35,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
   bool _showStatusDialog = false;
   bool _showItemDialog = false;
   bool _isPaused = false;
+  bool _showSettings = false;
 
   @override
   void initState() {
@@ -132,13 +133,25 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
               ),
             ),
 
-            if (_isPaused)
+            if (_isPaused && !_showSettings)
               PauseOverlay(
                 onResume: () {
-                  setState(() => _isPaused = false);
+                  setState(() {
+                    _isPaused = false;
+                    _showSettings = false;
+                  });
+                },
+                onOption: () {
+                  setState(() => _showSettings = true);
                 },
                 onMainMenu: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
+            if (_isPaused && _showSettings)
+              SettingsOverlay(
+                onClose: () {
+                  setState(() => _showSettings = false);
                 },
               ),
           ],

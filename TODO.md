@@ -22,11 +22,11 @@ If the below task's hyperlink exists then you can continue the implementation or
 - [x] Spells & Skills
 - [x] Player
 - [] Adding MP mechanism
-- [] Enemy can use skill
+- [x] Enemy can use skill
 - [x] Fix bar info player
 - [x] Adding skills list on rest area
 - [x] Can use item on floor selection
-- [] Adding pause mechanism
+- [x] Adding pause mechanism
 - []
 
 ## Quality of Life

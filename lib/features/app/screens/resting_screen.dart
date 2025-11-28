@@ -32,6 +32,7 @@ class _RestingScreenState extends State<RestingScreen> {
   late AudioManager _audioManager;
   late int _selectedTab;
   bool _isPaused = false;
+  bool _showSettings = false;
 
   @override
   void initState() {
@@ -73,13 +74,25 @@ class _RestingScreenState extends State<RestingScreen> {
               ),
             ),
 
-            if (_isPaused)
+            if (_isPaused && !_showSettings)
               PauseOverlay(
                 onResume: () {
-                  setState(() => _isPaused = false);
+                  setState(() {
+                    _isPaused = false;
+                    _showSettings = false;
+                  });
+                },
+                onOption: () {
+                  setState(() => _showSettings = true);
                 },
                 onMainMenu: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
+            if (_isPaused && _showSettings)
+              SettingsOverlay(
+                onClose: () {
+                  setState(() => _showSettings = false);
                 },
               ),
           ],

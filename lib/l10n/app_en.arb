@@ -131,6 +131,14 @@
             "damage": {"type": "int"}
         }
     },
+    "battleEnemyUsesSkill": "{enemyName} uses {skillName} for {damage} damage!",
+    "@battleEnemyUsesSkill": {
+        "placeholders": {
+            "enemyName": {"type": "String"},
+            "skillName": {"type": "String"},
+            "damage": {"type": "int"}
+        }
+    },
     "battleVictoryMessage": "Victory! {enemyName} has been defeated!",
     "@battleVictoryMessage": {
         "placeholders": {

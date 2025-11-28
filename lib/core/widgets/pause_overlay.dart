@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:penuhan/core/widgets/monochrome_modal.dart';
+import 'package:penuhan/core/widgets/settings_content.dart';
+import 'package:penuhan/l10n/generated/app_localizations.dart';
 
 class PauseButton extends StatelessWidget {
   final VoidCallback onPause;
@@ -180,7 +183,13 @@ class PauseOverlay extends StatelessWidget {
                   label: 'OPTION',
                   onPressed: () {
                     audioManager.playSfx(AssetManager.sfxClick);
-                    onOption!();
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => MonochromeModal(
+                        title: AppLocalizations.of(ctx)!.mainMenuSettings,
+                        child: const SettingsContent(),
+                      ),
+                    );
                   },
                 ),
                 const SizedBox(height: 12),
@@ -208,6 +217,96 @@ class PauseOverlay extends StatelessWidget {
   }
 
   Widget _buildPauseButton({
+    required String label,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        padding: const EdgeInsets.symmetric(vertical: 16),
+        shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+        side: const BorderSide(color: Colors.white, width: 2),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontFamily: 'Unifont',
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsOverlay extends StatefulWidget {
+  final VoidCallback onClose;
+
+  const SettingsOverlay({super.key, required this.onClose});
+
+  @override
+  State<SettingsOverlay> createState() => _SettingsOverlayState();
+}
+
+class _SettingsOverlayState extends State<SettingsOverlay> {
+  @override
+  Widget build(BuildContext context) {
+    final audioManager = context.read<AudioManager>();
+    final bgmOn = audioManager.isBgmEnabled;
+    final sfxOn = audioManager.isSfxEnabled;
+
+    return Container(
+      color: Colors.black.withOpacity(0.85),
+      child: Center(
+        child: Container(
+          margin: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(32),
+          decoration: BoxDecoration(
+            color: Colors.black,
+            border: Border.all(color: Colors.white, width: 4),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'SETTINGS',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Unifont',
+                  fontSize: 28,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 24),
+              _buildSettingButton(
+                label: 'BGM: ${bgmOn ? 'ON' : 'OFF'}',
+                onPressed: () async {
+                  await audioManager.toggleBgm();
+                  setState(() {});
+                },
+              ),
+              const SizedBox(height: 12),
+              _buildSettingButton(
+                label: 'SFX: ${sfxOn ? 'ON' : 'OFF'}',
+                onPressed: () async {
+                  await audioManager.toggleSfx();
+                  setState(() {});
+                },
+              ),
+              const SizedBox(height: 24),
+              _buildSettingButton(label: 'BACK', onPressed: widget.onClose),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSettingButton({
     required String label,
     required VoidCallback onPressed,
   }) {

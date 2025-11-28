@@ -9,6 +9,7 @@ import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/resting_screen.dart';
+import 'package:penuhan/features/battle/models/monster_registry.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
@@ -38,6 +39,7 @@ class _BattleScreenState extends State<BattleScreen>
   String _currentMessage = '';
   List<InventoryItem> _currentInventory = [];
   bool _isPaused = false;
+  bool _showSettings = false;
 
   @override
   void initState() {
@@ -69,15 +71,16 @@ class _BattleScreenState extends State<BattleScreen>
       skill: progress?.playerSkill ?? 10,
     );
 
-    // Initialize enemy based on dungeon difficulty
+    // Initialize enemy from monster registry
+    final monster = MonsterRegistry.forDungeon(widget.dungeon);
     final enemy = BattleCharacter(
-      name: _getEnemyName(),
-      currentHp: _getEnemyHp(),
-      maxHp: _getEnemyHp(),
+      name: monster.name,
+      currentHp: monster.maxHp,
+      maxHp: monster.maxHp,
       currentXp: 0,
       maxXp: 100,
-      attack: _getEnemyAttack(),
-      skill: _getEnemySkill(),
+      attack: monster.attack,
+      skill: monster.skillStat,
     );
 
     _battleState = BattleState(
@@ -87,49 +90,7 @@ class _BattleScreenState extends State<BattleScreen>
     );
   }
 
-  String _getEnemyName() {
-    switch (widget.dungeon) {
-      case Dungeon.sunkenCitadel:
-        return 'Goblin';
-      case Dungeon.whisperingCrypt:
-        return 'Skeleton';
-      case Dungeon.dragonsMaw:
-        return 'Dragon';
-    }
-  }
-
-  int _getEnemyHp() {
-    switch (widget.dungeon.difficulty) {
-      case DungeonDifficulty.easy:
-        return 100;
-      case DungeonDifficulty.normal:
-        return 150;
-      case DungeonDifficulty.hard:
-        return 200;
-    }
-  }
-
-  int _getEnemyAttack() {
-    switch (widget.dungeon.difficulty) {
-      case DungeonDifficulty.easy:
-        return 8;
-      case DungeonDifficulty.normal:
-        return 12;
-      case DungeonDifficulty.hard:
-        return 18;
-    }
-  }
-
-  int _getEnemySkill() {
-    switch (widget.dungeon.difficulty) {
-      case DungeonDifficulty.easy:
-        return 5;
-      case DungeonDifficulty.normal:
-        return 10;
-      case DungeonDifficulty.hard:
-        return 15;
-    }
-  }
+  // Obsolete enemy stat helpers removed; using MonsterRegistry and _battleState.enemy
 
   void _performAction(BattleAction action) {
     if (_battleState.isBattleOver) return;
@@ -184,11 +145,28 @@ class _BattleScreenState extends State<BattleScreen>
           if (mounted) {
             setState(() {
               _isEnemyHit = false;
-              int enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
-              _battleState.player.takeDamage(enemyDamage);
-              log = AppLocalizations.of(
-                context,
-              )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+              final monster = MonsterRegistry.forDungeon(widget.dungeon);
+              final bool useSkill =
+                  monster.skills.isNotEmpty && Random().nextBool();
+
+              int enemyDamage;
+              if (useSkill) {
+                final skill =
+                    monster.skills[Random().nextInt(monster.skills.length)];
+                enemyDamage = skill.calculateDamage(_battleState.enemy.skill);
+                _battleState.player.takeDamage(enemyDamage);
+                log = AppLocalizations.of(context)!.battleEnemyUsesSkill(
+                  _battleState.enemy.name,
+                  skill.getLocalizedName(context),
+                  enemyDamage,
+                );
+              } else {
+                enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
+                _battleState.player.takeDamage(enemyDamage);
+                log = AppLocalizations.of(
+                  context,
+                )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+              }
               _isPlayerHit = true;
               _shakeController.forward(from: 0);
               _audioManager.playSfx(AssetManager.sfxClick);
@@ -506,14 +484,26 @@ class _BattleScreenState extends State<BattleScreen>
           ),
         ),
 
-        // Pause overlay (layer paling atas)
-        if (_isPaused)
+        // Pause overlay or Settings overlay
+        if (_isPaused && !_showSettings)
           PauseOverlay(
             onResume: () {
-              setState(() => _isPaused = false);
+              setState(() {
+                _isPaused = false;
+                _showSettings = false;
+              });
+            },
+            onOption: () {
+              setState(() => _showSettings = true);
             },
             onMainMenu: () {
               Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+          ),
+        if (_isPaused && _showSettings)
+          SettingsOverlay(
+            onClose: () {
+              setState(() => _showSettings = false);
             },
           ),
       ],
@@ -1223,11 +1213,29 @@ class _BattleScreenState extends State<BattleScreen>
           if (mounted) {
             setState(() {
               _isEnemyHit = false;
-              int enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
-              _battleState.player.takeDamage(enemyDamage);
-              String enemyLog = AppLocalizations.of(
-                context,
-              )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+              final monster = MonsterRegistry.forDungeon(widget.dungeon);
+              final bool useSkill =
+                  monster.skills.isNotEmpty && Random().nextBool();
+
+              int enemyDamage;
+              String enemyLog;
+              if (useSkill) {
+                final skill =
+                    monster.skills[Random().nextInt(monster.skills.length)];
+                enemyDamage = skill.calculateDamage(_battleState.enemy.skill);
+                _battleState.player.takeDamage(enemyDamage);
+                enemyLog = AppLocalizations.of(context)!.battleEnemyUsesSkill(
+                  _battleState.enemy.name,
+                  skill.getLocalizedName(context),
+                  enemyDamage,
+                );
+              } else {
+                enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
+                _battleState.player.takeDamage(enemyDamage);
+                enemyLog = AppLocalizations.of(
+                  context,
+                )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+              }
               _isPlayerHit = true;
               _shakeController.forward(from: 0);
               _audioManager.playSfx(AssetManager.sfxClick);
@@ -1629,7 +1637,11 @@ class _BattleScreenState extends State<BattleScreen>
               ),
               const SizedBox(height: 24),
               Text(
-                _battleState.battleLog,
+                isVictory
+                    ? AppLocalizations.of(
+                        context,
+                      )!.battleVictoryMessage(_battleState.enemy.name)
+                    : AppLocalizations.of(context)!.battleDefeatMessage,
                 style: const TextStyle(
                   color: Colors.white,
                   fontFamily: 'Unifont',

@@ -27,6 +27,7 @@ class ShopScreen extends StatefulWidget {
 class _ShopScreenState extends State<ShopScreen> {
   late AudioManager _audioManager;
   bool _isPaused = false;
+  bool _showSettings = false;
 
   @override
   void didChangeDependencies() {
@@ -80,13 +81,25 @@ class _ShopScreenState extends State<ShopScreen> {
               ),
             ),
 
-            if (_isPaused)
+            if (_isPaused && !_showSettings)
               PauseOverlay(
                 onResume: () {
-                  setState(() => _isPaused = false);
+                  setState(() {
+                    _isPaused = false;
+                    _showSettings = false;
+                  });
+                },
+                onOption: () {
+                  setState(() => _showSettings = true);
                 },
                 onMainMenu: () {
                   Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
+            if (_isPaused && _showSettings)
+              SettingsOverlay(
+                onClose: () {
+                  setState(() => _showSettings = false);
                 },
               ),
           ],

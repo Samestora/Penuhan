@@ -167,15 +167,15 @@
     },
     "notEnoughMP": "Not enough MP",
     "skillFireballName": "Fireball",
-    "skillFireballDesc": "Launch a blazing fireball\\nDeals 150% skill damage",
+    "skillFireballDesc": "Launch a blazing fireball Deals 150% skill damage",
     "skillIceSpearName": "Ice Spear",
-    "skillIceSpearDesc": "Pierce with frozen spear\\nDeals 120% skill damage",
+    "skillIceSpearDesc": "Pierce with frozen spear Deals 120% skill damage",
     "skillThunderStrikeName": "Thunder Strike",
-    "skillThunderStrikeDesc": "Call down lightning\\nDeals 200% skill damage",
+    "skillThunderStrikeDesc": "Call down lightning Deals 200% skill damage",
     "skillQuickStrikeName": "Quick Strike",
-    "skillQuickStrikeDesc": "Swift precise attack\\nDeals 100% skill damage",
+    "skillQuickStrikeDesc": "Swift precise attack Deals 100% skill damage",
     "skillHealingLightName": "Healing Light",
-    "skillHealingLightDesc": "Restore your vitality\\nHeals 30 HP",
+    "skillHealingLightDesc": "Restore your vitality Heals 30 HP",
     "floorChoosePath": "CHOOSE YOUR PATH",
     "floorMonster": "Monster",
     "floorMonsterDesc": "Fight a monster and earn rewards",
@@ -230,7 +230,31 @@
     "itemSkillScrollName": "Skill Scroll",
     "itemSkillScrollDesc": "Permanently increases Skill by 5",
     "itemMpPotionName": "MP Potion",
-    "itemMpPotionDesc": "Restores 50 MP"
-    ,"battlePlayerRestoresMp": "{playerName} restores {amount} MP!"
-    ,"@battlePlayerRestoresMp": {"placeholders": {"playerName": {"type": "String"}, "amount": {"type": "int"}}}
+    "itemMpPotionDesc": "Restores 50 MP",
+    "battlePlayerRestoresMp": "{playerName} restores {amount} MP!",
+    "@battlePlayerRestoresMp": {
+        "placeholders": {
+            "playerName": {"type": "String"},
+            "amount": {"type": "int"}
+        }
+    },
+    "statUpgradeTitle": "LEVEL UP!",
+    "statUpgradeLevel": "Level {level}",
+    "@statUpgradeLevel": {
+        "placeholders": {
+            "level": {"type": "int"}
+        }
+    },
+    "statUpgradePointsAvailable": "Points Available: {points}",
+    "@statUpgradePointsAvailable": {
+        "placeholders": {
+            "points": {"type": "int"}
+        }
+    },
+    "statUpgradeMaxHp": "Max HP",
+    "statUpgradeMaxMp": "Max MP",
+    "statUpgradeAttack": "Attack",
+    "statUpgradeSkill": "Skill",
+    "statUpgradeConfirm": "Confirm",
+    "statUpgradeAllocateAll": "You must allocate all points before continuing"
 }

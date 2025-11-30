@@ -354,4 +354,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String battlePlayerRestoresMp(String playerName, int amount) {
     return '$playerName restores $amount MP!';
   }
+
+  @override
+  String get statUpgradeTitle => 'LEVEL UP!';
+
+  @override
+  String statUpgradeLevel(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String statUpgradePointsAvailable(int points) {
+    return 'Points Available: $points';
+  }
+
+  @override
+  String get statUpgradeMaxHp => 'Max HP';
+
+  @override
+  String get statUpgradeMaxMp => 'Max MP';
+
+  @override
+  String get statUpgradeAttack => 'Attack';
+
+  @override
+  String get statUpgradeSkill => 'Skill';
+
+  @override
+  String get statUpgradeConfirm => 'Confirm';
+
+  @override
+  String get statUpgradeAllocateAll =>
+      'You must allocate all points before continuing';
 }

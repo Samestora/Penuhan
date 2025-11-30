@@ -287,6 +287,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildStatRow('Level', '${_progress.playerLevel}'),
           _buildStatRow(
             l10n.restingHp,
             '${_progress.playerHp}/${_progress.playerMaxHp}',

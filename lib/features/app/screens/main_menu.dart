@@ -208,6 +208,7 @@ class __EmbarkContentState extends State<_EmbarkContent> {
                 final initialProgress = GameProgress(
                   currentFloor: 1,
                   maxFloor: 5,
+                  playerLevel: 1,
                   playerHp: 150,
                   playerMaxHp: 150,
                   playerXp: 0,

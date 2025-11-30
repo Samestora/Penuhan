@@ -28,8 +28,15 @@ If the below task's hyperlink exists then you can continue the implementation or
 - [x] Can use item on floor selection
 - [x] Adding pause mechanism
 - [x] Changing dungeon mechanism
-- [] Adding level up mechanism
-- [] Adding up stats when level up
+- [x] Adding level up mechanism
+- [x] Adding up stats when level up
+- [] Adding defense stat
+- [] Fix item stat buff
+- [] Adding more variation of items stat buff
+- [] Adding boss each 10 floors
+- [] Adding more variation of monsters
+- [] Improve level design
+- [] Improve UI game
 
 ## Quality of Life
 

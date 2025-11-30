@@ -188,7 +188,31 @@
     "itemSkillScrollName": "Gulungan Skill",
     "itemSkillScrollDesc": "Meningkatkan Skill secara permanen sebesar 5",
     "itemMpPotionName": "Ramuan MP",
-    "itemMpPotionDesc": "Memulihkan 50 MP"
-    ,"battlePlayerRestoresMp": "{playerName} memulihkan {amount} MP!"
-    ,"@battlePlayerRestoresMp": {"placeholders": {"playerName": {"type": "String"}, "amount": {"type": "int"}}}
+    "itemMpPotionDesc": "Memulihkan 50 MP",
+    "battlePlayerRestoresMp": "{playerName} memulihkan {amount} MP!",
+    "@battlePlayerRestoresMp": {
+        "placeholders": {
+            "playerName": {"type": "String"},
+            "amount": {"type": "int"}
+        }
+    },
+    "statUpgradeTitle": "NAIK LEVEL!",
+    "statUpgradeLevel": "Level {level}",
+    "@statUpgradeLevel": {
+        "placeholders": {
+            "level": {"type": "int"}
+        }
+    },
+    "statUpgradePointsAvailable": "Poin Tersedia: {points}",
+    "@statUpgradePointsAvailable": {
+        "placeholders": {
+            "points": {"type": "int"}
+        }
+    },
+    "statUpgradeMaxHp": "HP Maks",
+    "statUpgradeMaxMp": "MP Maks",
+    "statUpgradeAttack": "Serangan",
+    "statUpgradeSkill": "Skill",
+    "statUpgradeConfirm": "Konfirmasi",
+    "statUpgradeAllocateAll": "Anda harus mengalokasikan semua poin sebelum melanjutkan"
 }

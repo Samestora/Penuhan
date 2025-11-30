@@ -356,4 +356,36 @@ class AppLocalizationsId extends AppLocalizations {
   String battlePlayerRestoresMp(String playerName, int amount) {
     return '$playerName memulihkan $amount MP!';
   }
+
+  @override
+  String get statUpgradeTitle => 'NAIK LEVEL!';
+
+  @override
+  String statUpgradeLevel(int level) {
+    return 'Level $level';
+  }
+
+  @override
+  String statUpgradePointsAvailable(int points) {
+    return 'Poin Tersedia: $points';
+  }
+
+  @override
+  String get statUpgradeMaxHp => 'HP Maks';
+
+  @override
+  String get statUpgradeMaxMp => 'MP Maks';
+
+  @override
+  String get statUpgradeAttack => 'Serangan';
+
+  @override
+  String get statUpgradeSkill => 'Skill';
+
+  @override
+  String get statUpgradeConfirm => 'Konfirmasi';
+
+  @override
+  String get statUpgradeAllocateAll =>
+      'Anda harus mengalokasikan semua poin sebelum melanjutkan';
 }

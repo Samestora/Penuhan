@@ -227,6 +227,7 @@ class _RestingScreenState extends State<RestingScreen> {
               ),
             ),
             const SizedBox(height: 16),
+            _buildStatRow('Level', '${_progress.playerLevel}'),
             _buildStatRow(
               AppLocalizations.of(context)!.restingHp,
               '${_progress.playerHp}/${_progress.playerMaxHp}',

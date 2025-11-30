@@ -3,6 +3,7 @@ import 'item.dart';
 class GameProgress {
   final int currentFloor;
   final int maxFloor;
+  final int playerLevel;
   final int playerHp;
   final int playerMaxHp;
   final int playerXp;
@@ -17,6 +18,7 @@ class GameProgress {
   GameProgress({
     required this.currentFloor,
     required this.maxFloor,
+    this.playerLevel = 1,
     required this.playerHp,
     required this.playerMaxHp,
     required this.playerXp,
@@ -32,6 +34,7 @@ class GameProgress {
   GameProgress copyWith({
     int? currentFloor,
     int? maxFloor,
+    int? playerLevel,
     int? playerHp,
     int? playerMaxHp,
     int? playerXp,
@@ -46,6 +49,7 @@ class GameProgress {
     return GameProgress(
       currentFloor: currentFloor ?? this.currentFloor,
       maxFloor: maxFloor ?? this.maxFloor,
+      playerLevel: playerLevel ?? this.playerLevel,
       playerHp: playerHp ?? this.playerHp,
       playerMaxHp: playerMaxHp ?? this.playerMaxHp,
       playerXp: playerXp ?? this.playerXp,
@@ -74,6 +78,33 @@ class GameProgress {
   // Helper untuk next floor
   GameProgress nextFloor() {
     return copyWith(currentFloor: currentFloor + 1);
+  }
+
+  // Tambah XP dan cek apakah level up (return jumlah level yang naik)
+  GameProgressWithLevelUp addXp(int amount) {
+    int newXp = playerXp + amount;
+    int newLevel = playerLevel;
+    int newMaxXp = playerMaxXp;
+    int levelsGained = 0;
+
+    while (newXp >= newMaxXp) {
+      newXp -= newMaxXp;
+      newLevel += 1;
+      levelsGained += 1;
+      // Naikkan kebutuhan XP berikutnya (kurva sederhana)
+      newMaxXp = (newMaxXp * 1.25).round();
+    }
+
+    final updatedProgress = copyWith(
+      playerXp: newXp,
+      playerLevel: newLevel,
+      playerMaxXp: newMaxXp,
+    );
+
+    return GameProgressWithLevelUp(
+      progress: updatedProgress,
+      levelsGained: levelsGained,
+    );
   }
 
   // Helper untuk buy item
@@ -150,4 +181,12 @@ class GameProgress {
     );
     return item.quantity;
   }
+}
+
+// Helper class untuk return hasil addXp dengan info level up
+class GameProgressWithLevelUp {
+  final GameProgress progress;
+  final int levelsGained;
+
+  GameProgressWithLevelUp({required this.progress, required this.levelsGained});
 }

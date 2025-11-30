@@ -9,6 +9,7 @@ import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/resting_screen.dart';
+import 'package:penuhan/features/app/screens/stat_upgrade_screen.dart';
 import 'package:penuhan/features/battle/models/monster_registry.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -145,7 +146,7 @@ class _BattleScreenState extends State<BattleScreen>
         // Enemy's turn
         _battleState.phase = BattlePhase.enemyTurn;
 
-        Future.delayed(const Duration(milliseconds: 1500), () {
+        Future.delayed(const Duration(milliseconds: 900), () {
           if (mounted) {
             setState(() {
               _isEnemyHit = false;
@@ -189,7 +190,7 @@ class _BattleScreenState extends State<BattleScreen>
               }
 
               // Hide message after enemy action completes
-              Future.delayed(const Duration(milliseconds: 1500), () {
+              Future.delayed(const Duration(milliseconds: 900), () {
                 if (mounted) {
                   setState(() {
                     _isPlayerHit = false;
@@ -1203,7 +1204,7 @@ class _BattleScreenState extends State<BattleScreen>
         // Enemy's turn
         _battleState.phase = BattlePhase.enemyTurn;
 
-        Future.delayed(const Duration(milliseconds: 1500), () {
+        Future.delayed(const Duration(milliseconds: 900), () {
           if (mounted) {
             setState(() {
               _isEnemyHit = false;
@@ -1248,7 +1249,7 @@ class _BattleScreenState extends State<BattleScreen>
               }
 
               // Hide message after enemy action completes
-              Future.delayed(const Duration(milliseconds: 1500), () {
+              Future.delayed(const Duration(milliseconds: 900), () {
                 if (mounted) {
                   setState(() {
                     _isPlayerHit = false;
@@ -1566,7 +1567,7 @@ class _BattleScreenState extends State<BattleScreen>
       // Enemy's turn
       _battleState.phase = BattlePhase.enemyTurn;
 
-      Future.delayed(const Duration(milliseconds: 1500), () {
+      Future.delayed(const Duration(milliseconds: 900), () {
         if (mounted) {
           setState(() {
             int enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
@@ -1592,7 +1593,7 @@ class _BattleScreenState extends State<BattleScreen>
             }
 
             // Hide message after enemy action completes
-            Future.delayed(const Duration(milliseconds: 1500), () {
+            Future.delayed(const Duration(milliseconds: 900), () {
               if (mounted) {
                 setState(() {
                   _isPlayerHit = false;
@@ -1662,12 +1663,14 @@ class _BattleScreenState extends State<BattleScreen>
                 onPressed: () {
                   _audioManager.playSfx(AssetManager.sfxClick);
                   if (isVictory) {
-                    // Victory: Navigate to Resting Screen
+                    // Victory: Navigate to Stat Upgrade Screen if leveled up, otherwise Resting Screen
                     final goldReward =
                         30 + (widget.gameProgress?.currentFloor ?? 1) * 10;
-                    final updatedProgress = GameProgress(
+                    // Grant XP reward and carry battle-updated stats
+                    final baseProgress = GameProgress(
                       currentFloor: widget.gameProgress?.currentFloor ?? 1,
                       maxFloor: widget.gameProgress?.maxFloor ?? 5,
+                      playerLevel: widget.gameProgress?.playerLevel ?? 1,
                       playerHp: _battleState.player.currentHp,
                       playerMaxHp: _battleState.player.maxHp,
                       playerXp: _battleState.player.currentXp,
@@ -1680,14 +1683,33 @@ class _BattleScreenState extends State<BattleScreen>
                       inventory:
                           _currentInventory, // Use updated inventory from battle
                     );
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (_) => RestingScreen(
-                          dungeon: widget.dungeon,
-                          gameProgress: updatedProgress,
+                    final xpReward =
+                        20 + (widget.gameProgress?.currentFloor ?? 1) * 5;
+                    final xpResult = baseProgress.addXp(xpReward);
+
+                    // Check if player leveled up
+                    if (xpResult.levelsGained > 0) {
+                      // Navigate to stat upgrade screen
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (_) => StatUpgradeScreen(
+                            progress: xpResult.progress,
+                            levelsGained: xpResult.levelsGained,
+                            dungeon: widget.dungeon,
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    } else {
+                      // No level up, go directly to resting screen
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (_) => RestingScreen(
+                            dungeon: widget.dungeon,
+                            gameProgress: xpResult.progress,
+                          ),
+                        ),
+                      );
+                    }
                   } else {
                     // Defeat: Return to main menu
                     Navigator.of(context).popUntil((route) => route.isFirst);

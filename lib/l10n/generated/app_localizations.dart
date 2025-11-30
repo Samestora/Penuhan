@@ -715,6 +715,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{playerName} restores {amount} MP!'**
   String battlePlayerRestoresMp(String playerName, int amount);
+
+  /// No description provided for @statUpgradeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'LEVEL UP!'**
+  String get statUpgradeTitle;
+
+  /// No description provided for @statUpgradeLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Level {level}'**
+  String statUpgradeLevel(int level);
+
+  /// No description provided for @statUpgradePointsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Points Available: {points}'**
+  String statUpgradePointsAvailable(int points);
+
+  /// No description provided for @statUpgradeMaxHp.
+  ///
+  /// In en, this message translates to:
+  /// **'Max HP'**
+  String get statUpgradeMaxHp;
+
+  /// No description provided for @statUpgradeMaxMp.
+  ///
+  /// In en, this message translates to:
+  /// **'Max MP'**
+  String get statUpgradeMaxMp;
+
+  /// No description provided for @statUpgradeAttack.
+  ///
+  /// In en, this message translates to:
+  /// **'Attack'**
+  String get statUpgradeAttack;
+
+  /// No description provided for @statUpgradeSkill.
+  ///
+  /// In en, this message translates to:
+  /// **'Skill'**
+  String get statUpgradeSkill;
+
+  /// No description provided for @statUpgradeConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get statUpgradeConfirm;
+
+  /// No description provided for @statUpgradeAllocateAll.
+  ///
+  /// In en, this message translates to:
+  /// **'You must allocate all points before continuing'**
+  String get statUpgradeAllocateAll;
 }
 
 class _AppLocalizationsDelegate

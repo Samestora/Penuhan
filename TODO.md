@@ -33,8 +33,9 @@ If the below task's hyperlink exists then you can continue the implementation or
 - [x] Adding defense stat
 - [x] Fix item stat buff
 - [x] Adding more variation of items stat buff
-- [] Adding boss each 10 floors
-- [] Adding more variation of monsters
+- [x] Adding boss each 10 floors
+- [x] Adding more variation of monsters
+- [] Adding more variation of skills
 - [] Improve level design
 - [] Improve UI game
 

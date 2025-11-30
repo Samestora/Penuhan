@@ -540,39 +540,6 @@ class _RestingScreenState extends State<RestingScreen> {
     );
   }
 
-  Widget _buildSkillStat(String label, String value, Color color) {
-    return Row(
-      children: [
-        Container(
-          width: 8,
-          height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            border: Border.all(color: Colors.white, width: 1),
-          ),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          '$label: ',
-          style: const TextStyle(
-            color: Colors.grey,
-            fontFamily: 'Unifont',
-            fontSize: 11,
-          ),
-        ),
-        Text(
-          value,
-          style: const TextStyle(
-            color: Colors.white,
-            fontFamily: 'Unifont',
-            fontSize: 11,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _buildNextFloorButton() {
     return Padding(
       padding: const EdgeInsets.all(24.0),

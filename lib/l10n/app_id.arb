@@ -141,6 +141,8 @@
     "floorShopDesc": "Beli item dengan gold",
     "floorRest": "Istirahat",
     "floorRestDesc": "Pulihkan HP dan kelola inventory",
+    "floorBoss": "Boss",
+    "floorBossDesc": "Hadapi boss lantai untuk hadiah besar",
     "floorStatus": "STATUS",
     "floorItem": "ITEM",
     "floorNumber": "LANTAI {floor}",

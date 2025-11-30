@@ -246,6 +246,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get floorRestDesc => 'Pulihkan HP dan kelola inventory';
 
   @override
+  String get floorBoss => 'Boss';
+
+  @override
+  String get floorBossDesc => 'Hadapi boss lantai untuk hadiah besar';
+
+  @override
   String get floorStatus => 'STATUS';
 
   @override

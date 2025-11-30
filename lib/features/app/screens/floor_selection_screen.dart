@@ -41,8 +41,10 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
   @override
   void initState() {
     super.initState();
-    _options = widget.options ?? FloorOption.generateRandomOptions();
     _progress = widget.gameProgress;
+    _options =
+        widget.options ??
+        FloorOption.generateRandomOptions(currentFloor: _progress.currentFloor);
   }
 
   @override
@@ -58,8 +60,11 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
       case FloorOptionType.battle:
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (_) =>
-                BattleScreen(dungeon: widget.dungeon, gameProgress: _progress),
+            builder: (_) => BattleScreen(
+              dungeon: widget.dungeon,
+              gameProgress: _progress,
+              isBossBattle: option.isBoss,
+            ),
           ),
         );
         break;

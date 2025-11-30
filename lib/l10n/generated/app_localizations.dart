@@ -512,6 +512,18 @@ abstract class AppLocalizations {
   /// **'Restore HP and manage inventory'**
   String get floorRestDesc;
 
+  /// No description provided for @floorBoss.
+  ///
+  /// In en, this message translates to:
+  /// **'Boss'**
+  String get floorBoss;
+
+  /// No description provided for @floorBossDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Face the floor boss for massive rewards'**
+  String get floorBossDesc;
+
   /// No description provided for @floorStatus.
   ///
   /// In en, this message translates to:

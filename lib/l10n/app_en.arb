@@ -183,6 +183,8 @@
     "floorShopDesc": "Buy items with your gold",
     "floorRest": "Rest",
     "floorRestDesc": "Restore HP and manage inventory",
+    "floorBoss": "Boss",
+    "floorBossDesc": "Face the floor boss for massive rewards",
     "floorStatus": "STATUS",
     "floorItem": "ITEM",
     "floorNumber": "FLOOR {floor}",

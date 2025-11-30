@@ -246,6 +246,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get floorRestDesc => 'Restore HP and manage inventory';
 
   @override
+  String get floorBoss => 'Boss';
+
+  @override
+  String get floorBossDesc => 'Face the floor boss for massive rewards';
+
+  @override
   String get floorStatus => 'STATUS';
 
   @override

@@ -10,6 +10,7 @@ import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/resting_screen.dart';
 import 'package:penuhan/features/app/screens/stat_upgrade_screen.dart';
+import 'package:penuhan/features/battle/models/monster.dart';
 import 'package:penuhan/features/battle/models/monster_registry.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -18,8 +19,14 @@ import 'dart:math';
 class BattleScreen extends StatefulWidget {
   final Dungeon dungeon;
   final GameProgress? gameProgress;
+  final bool isBossBattle;
 
-  const BattleScreen({super.key, required this.dungeon, this.gameProgress});
+  const BattleScreen({
+    super.key,
+    required this.dungeon,
+    this.gameProgress,
+    this.isBossBattle = false,
+  });
 
   @override
   State<BattleScreen> createState() => _BattleScreenState();
@@ -30,6 +37,7 @@ class _BattleScreenState extends State<BattleScreen>
   late BattleState _battleState;
   late AudioManager _audioManager;
   late AnimationController _shakeController;
+  late Monster _activeMonster;
   bool _isPlayerHit = false;
   bool _isEnemyHit = false;
   bool _showSkillList = false;
@@ -75,8 +83,12 @@ class _BattleScreenState extends State<BattleScreen>
       defense: progress?.playerDefense ?? 5,
     );
 
-    // Initialize enemy from monster registry
-    final monster = MonsterRegistry.forDungeon(widget.dungeon);
+    // Initialize enemy from monster registry (boss if applicable)
+    final monster = MonsterRegistry.forBattle(
+      widget.dungeon,
+      isBoss: widget.isBossBattle,
+    );
+    _activeMonster = monster;
     final enemy = BattleCharacter(
       name: monster.name,
       currentHp: monster.maxHp,
@@ -152,14 +164,13 @@ class _BattleScreenState extends State<BattleScreen>
           if (mounted) {
             setState(() {
               _isEnemyHit = false;
-              final monster = MonsterRegistry.forDungeon(widget.dungeon);
               final bool useSkill =
-                  monster.skills.isNotEmpty && Random().nextBool();
+                  _activeMonster.skills.isNotEmpty && Random().nextBool();
 
               int enemyDamage;
               if (useSkill) {
-                final skill =
-                    monster.skills[Random().nextInt(monster.skills.length)];
+                final skill = _activeMonster
+                    .skills[Random().nextInt(_activeMonster.skills.length)];
                 enemyDamage = skill.calculateDamage(_battleState.enemy.skill);
                 _battleState.player.takeDamage(enemyDamage);
                 log = AppLocalizations.of(context)!.battleEnemyUsesSkill(
@@ -1208,15 +1219,14 @@ class _BattleScreenState extends State<BattleScreen>
           if (mounted) {
             setState(() {
               _isEnemyHit = false;
-              final monster = MonsterRegistry.forDungeon(widget.dungeon);
               final bool useSkill =
-                  monster.skills.isNotEmpty && Random().nextBool();
+                  _activeMonster.skills.isNotEmpty && Random().nextBool();
 
               int enemyDamage;
               String enemyLog;
               if (useSkill) {
-                final skill =
-                    monster.skills[Random().nextInt(monster.skills.length)];
+                final skill = _activeMonster
+                    .skills[Random().nextInt(_activeMonster.skills.length)];
                 enemyDamage = skill.calculateDamage(_battleState.enemy.skill);
                 _battleState.player.takeDamage(enemyDamage);
                 enemyLog = AppLocalizations.of(context)!.battleEnemyUsesSkill(
@@ -1664,8 +1674,11 @@ class _BattleScreenState extends State<BattleScreen>
                   _audioManager.playSfx(AssetManager.sfxClick);
                   if (isVictory) {
                     // Victory: Navigate to Stat Upgrade Screen if leveled up, otherwise Resting Screen
-                    final goldReward =
+                    final baseGold =
                         30 + (widget.gameProgress?.currentFloor ?? 1) * 10;
+                    final goldReward = widget.isBossBattle
+                        ? (baseGold * 1.5).round()
+                        : baseGold;
                     // Grant XP reward and carry battle-updated stats
                     final baseProgress = GameProgress(
                       currentFloor: widget.gameProgress?.currentFloor ?? 1,
@@ -1687,8 +1700,11 @@ class _BattleScreenState extends State<BattleScreen>
                         widget.gameProgress?.purchasedBoostItemIds ?? const [],
                       ),
                     );
-                    final xpReward =
+                    final baseXp =
                         20 + (widget.gameProgress?.currentFloor ?? 1) * 5;
+                    final xpReward = widget.isBossBattle
+                        ? (baseXp * 1.5).round()
+                        : baseXp;
                     final xpResult = baseProgress.addXp(xpReward);
 
                     // Check if player leveled up

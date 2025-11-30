@@ -6,6 +6,7 @@ class Monster {
   final int maxHp;
   final int attack;
   final int skillStat;
+  final int defense;
   final List<Skill> skills;
 
   const Monster({
@@ -14,6 +15,7 @@ class Monster {
     required this.maxHp,
     required this.attack,
     required this.skillStat,
+    required this.defense,
     required this.skills,
   });
 }

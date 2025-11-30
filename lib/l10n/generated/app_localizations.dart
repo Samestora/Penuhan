@@ -419,7 +419,7 @@ abstract class AppLocalizations {
   /// No description provided for @skillFireballDesc.
   ///
   /// In en, this message translates to:
-  /// **'Launch a blazing fireball\\nDeals 150% skill damage'**
+  /// **'Launch a blazing fireball Deals 150% skill damage'**
   String get skillFireballDesc;
 
   /// No description provided for @skillIceSpearName.
@@ -431,7 +431,7 @@ abstract class AppLocalizations {
   /// No description provided for @skillIceSpearDesc.
   ///
   /// In en, this message translates to:
-  /// **'Pierce with frozen spear\\nDeals 120% skill damage'**
+  /// **'Pierce with frozen spear Deals 120% skill damage'**
   String get skillIceSpearDesc;
 
   /// No description provided for @skillThunderStrikeName.
@@ -443,7 +443,7 @@ abstract class AppLocalizations {
   /// No description provided for @skillThunderStrikeDesc.
   ///
   /// In en, this message translates to:
-  /// **'Call down lightning\\nDeals 200% skill damage'**
+  /// **'Call down lightning Deals 200% skill damage'**
   String get skillThunderStrikeDesc;
 
   /// No description provided for @skillQuickStrikeName.
@@ -455,7 +455,7 @@ abstract class AppLocalizations {
   /// No description provided for @skillQuickStrikeDesc.
   ///
   /// In en, this message translates to:
-  /// **'Swift precise attack\\nDeals 100% skill damage'**
+  /// **'Swift precise attack Deals 100% skill damage'**
   String get skillQuickStrikeDesc;
 
   /// No description provided for @skillHealingLightName.
@@ -467,7 +467,7 @@ abstract class AppLocalizations {
   /// No description provided for @skillHealingLightDesc.
   ///
   /// In en, this message translates to:
-  /// **'Restore your vitality\\nHeals 30 HP'**
+  /// **'Restore your vitality Heals 30 HP'**
   String get skillHealingLightDesc;
 
   /// No description provided for @floorChoosePath.
@@ -638,6 +638,18 @@ abstract class AppLocalizations {
   /// **'NOT ENOUGH GOLD'**
   String get shopNotEnoughGold;
 
+  /// No description provided for @shopOwnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'OWNED'**
+  String get shopOwnedLabel;
+
+  /// No description provided for @shopAlreadyOwned.
+  ///
+  /// In en, this message translates to:
+  /// **'You already own this upgrade!'**
+  String get shopAlreadyOwned;
+
   /// No description provided for @shopNextFloor.
   ///
   /// In en, this message translates to:
@@ -697,6 +709,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Permanently increases Skill by 5'**
   String get itemSkillScrollDesc;
+
+  /// No description provided for @itemDefenseScrollName.
+  ///
+  /// In en, this message translates to:
+  /// **'Defense Scroll'**
+  String get itemDefenseScrollName;
+
+  /// No description provided for @itemDefenseScrollDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently increases Defense by 5'**
+  String get itemDefenseScrollDesc;
+
+  /// No description provided for @itemGrandAttackScrollName.
+  ///
+  /// In en, this message translates to:
+  /// **'Blade Manual'**
+  String get itemGrandAttackScrollName;
+
+  /// No description provided for @itemGrandAttackScrollDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently increases Attack by 10'**
+  String get itemGrandAttackScrollDesc;
+
+  /// No description provided for @itemFocusScrollName.
+  ///
+  /// In en, this message translates to:
+  /// **'Focus Scroll'**
+  String get itemFocusScrollName;
+
+  /// No description provided for @itemFocusScrollDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanently increases Skill by 8'**
+  String get itemFocusScrollDesc;
 
   /// No description provided for @itemMpPotionName.
   ///
@@ -758,6 +806,12 @@ abstract class AppLocalizations {
   /// **'Skill'**
   String get statUpgradeSkill;
 
+  /// No description provided for @statUpgradeDefense.
+  ///
+  /// In en, this message translates to:
+  /// **'Defense'**
+  String get statUpgradeDefense;
+
   /// No description provided for @statUpgradeConfirm.
   ///
   /// In en, this message translates to:
@@ -769,6 +823,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You must allocate all points before continuing'**
   String get statUpgradeAllocateAll;
+
+  /// No description provided for @restingDefense.
+  ///
+  /// In en, this message translates to:
+  /// **'Defense'**
+  String get restingDefense;
+
+  /// No description provided for @floorDefense.
+  ///
+  /// In en, this message translates to:
+  /// **'Defense'**
+  String get floorDefense;
 }
 
 class _AppLocalizationsDelegate

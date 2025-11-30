@@ -9,6 +9,7 @@ class MonsterRegistry {
     maxHp: 100,
     attack: 8,
     skillStat: 5,
+    defense: 3,
     skills: [Skill.quickStrike, Skill.fireball],
   );
 
@@ -18,6 +19,7 @@ class MonsterRegistry {
     maxHp: 150,
     attack: 12,
     skillStat: 10,
+    defense: 5,
     skills: [Skill.quickStrike, Skill.iceSpear],
   );
 
@@ -27,6 +29,7 @@ class MonsterRegistry {
     maxHp: 200,
     attack: 18,
     skillStat: 15,
+    defense: 8,
     skills: [Skill.fireball, Skill.thunderStrike],
   );
 

@@ -172,6 +172,8 @@
     },
     "shopBuy": "BELI",
     "shopNotEnoughGold": "GOLD TIDAK CUKUP",
+    "shopOwnedLabel": "DIMILIKI",
+    "shopAlreadyOwned": "Kamu sudah memiliki peningkatan ini!",
     "shopNextFloor": "Lantai Berikutnya",
     "shopPrice": "{price}G",
     "@shopPrice": {
@@ -187,6 +189,12 @@
     "itemAttackScrollDesc": "Meningkatkan Serangan secara permanen sebesar 5",
     "itemSkillScrollName": "Gulungan Skill",
     "itemSkillScrollDesc": "Meningkatkan Skill secara permanen sebesar 5",
+    "itemDefenseScrollName": "Gulungan Pertahanan",
+    "itemDefenseScrollDesc": "Meningkatkan Pertahanan secara permanen sebesar 5",
+    "itemGrandAttackScrollName": "Manual Pedang",
+    "itemGrandAttackScrollDesc": "Meningkatkan Serangan secara permanen sebesar 10",
+    "itemFocusScrollName": "Gulungan Fokus",
+    "itemFocusScrollDesc": "Meningkatkan Skill secara permanen sebesar 8",
     "itemMpPotionName": "Ramuan MP",
     "itemMpPotionDesc": "Memulihkan 50 MP",
     "battlePlayerRestoresMp": "{playerName} memulihkan {amount} MP!",
@@ -213,6 +221,9 @@
     "statUpgradeMaxMp": "MP Maks",
     "statUpgradeAttack": "Serangan",
     "statUpgradeSkill": "Skill",
+    "statUpgradeDefense": "Pertahanan",
     "statUpgradeConfirm": "Konfirmasi",
-    "statUpgradeAllocateAll": "Anda harus mengalokasikan semua poin sebelum melanjutkan"
+    "statUpgradeAllocateAll": "Anda harus mengalokasikan semua poin sebelum melanjutkan",
+    "restingDefense": "Pertahanan",
+    "floorDefense": "Pertahanan"
 }

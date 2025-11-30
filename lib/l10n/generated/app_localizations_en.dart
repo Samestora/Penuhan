@@ -195,34 +195,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get skillFireballDesc =>
-      'Launch a blazing fireball\\nDeals 150% skill damage';
+      'Launch a blazing fireball Deals 150% skill damage';
 
   @override
   String get skillIceSpearName => 'Ice Spear';
 
   @override
   String get skillIceSpearDesc =>
-      'Pierce with frozen spear\\nDeals 120% skill damage';
+      'Pierce with frozen spear Deals 120% skill damage';
 
   @override
   String get skillThunderStrikeName => 'Thunder Strike';
 
   @override
   String get skillThunderStrikeDesc =>
-      'Call down lightning\\nDeals 200% skill damage';
+      'Call down lightning Deals 200% skill damage';
 
   @override
   String get skillQuickStrikeName => 'Quick Strike';
 
   @override
   String get skillQuickStrikeDesc =>
-      'Swift precise attack\\nDeals 100% skill damage';
+      'Swift precise attack Deals 100% skill damage';
 
   @override
   String get skillHealingLightName => 'Healing Light';
 
   @override
-  String get skillHealingLightDesc => 'Restore your vitality\\nHeals 30 HP';
+  String get skillHealingLightDesc => 'Restore your vitality Heals 30 HP';
 
   @override
   String get floorChoosePath => 'CHOOSE YOUR PATH';
@@ -313,6 +313,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get shopNotEnoughGold => 'NOT ENOUGH GOLD';
 
   @override
+  String get shopOwnedLabel => 'OWNED';
+
+  @override
+  String get shopAlreadyOwned => 'You already own this upgrade!';
+
+  @override
   String get shopNextFloor => 'Next Floor';
 
   @override
@@ -343,6 +349,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get itemSkillScrollDesc => 'Permanently increases Skill by 5';
+
+  @override
+  String get itemDefenseScrollName => 'Defense Scroll';
+
+  @override
+  String get itemDefenseScrollDesc => 'Permanently increases Defense by 5';
+
+  @override
+  String get itemGrandAttackScrollName => 'Blade Manual';
+
+  @override
+  String get itemGrandAttackScrollDesc => 'Permanently increases Attack by 10';
+
+  @override
+  String get itemFocusScrollName => 'Focus Scroll';
+
+  @override
+  String get itemFocusScrollDesc => 'Permanently increases Skill by 8';
 
   @override
   String get itemMpPotionName => 'MP Potion';
@@ -381,9 +405,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statUpgradeSkill => 'Skill';
 
   @override
+  String get statUpgradeDefense => 'Defense';
+
+  @override
   String get statUpgradeConfirm => 'Confirm';
 
   @override
   String get statUpgradeAllocateAll =>
       'You must allocate all points before continuing';
+
+  @override
+  String get restingDefense => 'Defense';
+
+  @override
+  String get floorDefense => 'Defense';
 }

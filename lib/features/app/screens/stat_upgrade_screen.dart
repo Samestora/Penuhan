@@ -28,6 +28,7 @@ class _StatUpgradeScreenState extends State<StatUpgradeScreen> {
   late int _maxMpBonus;
   late int _attackBonus;
   late int _skillBonus;
+  late int _defenseBonus;
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _StatUpgradeScreenState extends State<StatUpgradeScreen> {
     _maxMpBonus = 0;
     _attackBonus = 0;
     _skillBonus = 0;
+    _defenseBonus = 0;
   }
 
   void _incrementStat(String stat) {
@@ -56,6 +58,9 @@ class _StatUpgradeScreenState extends State<StatUpgradeScreen> {
           break;
         case 'skill':
           _skillBonus += 1; // Each point = +1 Skill
+          break;
+        case 'defense':
+          _defenseBonus += 1; // Each point = +1 Defense
           break;
       }
       _availablePoints--;
@@ -89,6 +94,12 @@ class _StatUpgradeScreenState extends State<StatUpgradeScreen> {
             _availablePoints++;
           }
           break;
+        case 'defense':
+          if (_defenseBonus > 0) {
+            _defenseBonus -= 1;
+            _availablePoints++;
+          }
+          break;
       }
     });
   }
@@ -100,6 +111,7 @@ class _StatUpgradeScreenState extends State<StatUpgradeScreen> {
       playerMaxMp: widget.progress.playerMaxMp + _maxMpBonus,
       playerAttack: widget.progress.playerAttack + _attackBonus,
       playerSkill: widget.progress.playerSkill + _skillBonus,
+      playerDefense: widget.progress.playerDefense + _defenseBonus,
       // Restore HP/MP to new max values
       playerHp: widget.progress.playerMaxHp + _maxHpBonus,
       playerMp: widget.progress.playerMaxMp + _maxMpBonus,
@@ -209,6 +221,14 @@ class _StatUpgradeScreenState extends State<StatUpgradeScreen> {
                         _skillBonus,
                         'skill',
                         _skillBonus,
+                      ),
+                      const SizedBox(height: 12),
+                      _buildStatRow(
+                        l10n.statUpgradeDefense,
+                        widget.progress.playerDefense,
+                        _defenseBonus,
+                        'defense',
+                        _defenseBonus,
                       ),
                       const SizedBox(height: 24),
 

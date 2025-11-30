@@ -8,6 +8,7 @@ class BattleCharacter {
   int maxMp;
   int attack;
   int skill;
+  int defense;
 
   BattleCharacter({
     required this.name,
@@ -19,6 +20,7 @@ class BattleCharacter {
     required this.maxMp,
     required this.attack,
     required this.skill,
+    required this.defense,
   });
 
   bool get isAlive => currentHp > 0;
@@ -27,8 +29,17 @@ class BattleCharacter {
   double get xpPercentage => currentXp / maxXp;
   double get mpPercentage => maxMp == 0 ? 0 : currentMp / maxMp;
 
+  // Calculate actual damage after defense reduction
+  // Formula: damage = rawDamage * (100 / (100 + defense))
+  int calculateDamageReduction(int rawDamage) {
+    final damageMultiplier = 100 / (100 + defense);
+    final actualDamage = (rawDamage * damageMultiplier).round();
+    return actualDamage.clamp(1, rawDamage); // Minimum 1 damage
+  }
+
   void takeDamage(int damage) {
-    currentHp = (currentHp - damage).clamp(0, maxHp);
+    final actualDamage = calculateDamageReduction(damage);
+    currentHp = (currentHp - actualDamage).clamp(0, maxHp);
   }
 
   void heal(int amount) {

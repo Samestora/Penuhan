@@ -214,6 +214,8 @@
     },
     "shopBuy": "BUY",
     "shopNotEnoughGold": "NOT ENOUGH GOLD",
+    "shopOwnedLabel": "OWNED",
+    "shopAlreadyOwned": "You already own this upgrade!",
     "shopNextFloor": "Next Floor",
     "shopPrice": "{price}G",
     "@shopPrice": {
@@ -229,6 +231,12 @@
     "itemAttackScrollDesc": "Permanently increases Attack by 5",
     "itemSkillScrollName": "Skill Scroll",
     "itemSkillScrollDesc": "Permanently increases Skill by 5",
+    "itemDefenseScrollName": "Defense Scroll",
+    "itemDefenseScrollDesc": "Permanently increases Defense by 5",
+    "itemGrandAttackScrollName": "Blade Manual",
+    "itemGrandAttackScrollDesc": "Permanently increases Attack by 10",
+    "itemFocusScrollName": "Focus Scroll",
+    "itemFocusScrollDesc": "Permanently increases Skill by 8",
     "itemMpPotionName": "MP Potion",
     "itemMpPotionDesc": "Restores 50 MP",
     "battlePlayerRestoresMp": "{playerName} restores {amount} MP!",
@@ -255,6 +263,9 @@
     "statUpgradeMaxMp": "Max MP",
     "statUpgradeAttack": "Attack",
     "statUpgradeSkill": "Skill",
+    "statUpgradeDefense": "Defense",
     "statUpgradeConfirm": "Confirm",
-    "statUpgradeAllocateAll": "You must allocate all points before continuing"
+    "statUpgradeAllocateAll": "You must allocate all points before continuing",
+    "restingDefense": "Defense",
+    "floorDefense": "Defense"
 }

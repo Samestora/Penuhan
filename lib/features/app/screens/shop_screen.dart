@@ -39,9 +39,60 @@ class _ShopScreenState extends State<ShopScreen> {
 
   void _buyItem(ShopItem shopItem) {
     _audioManager.playSfx(AssetManager.sfxClick);
+
+    final l10n = AppLocalizations.of(context)!;
+    final item = shopItem.item;
+
+    if (item.isPassiveBoost && _progress.hasPurchasedBoost(item.id)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.shopAlreadyOwned,
+            style: const TextStyle(
+              fontFamily: 'Unifont',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          backgroundColor: Colors.orange,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     setState(() {
       _progress = _progress.buyItem(shopItem.item, shopItem.price);
     });
+
+    // Show feedback for passive boost items
+    if (item.isPassiveBoost) {
+      String message = '';
+      if (item.attackBoost != null) {
+        message = 'Attack +${item.attackBoost}!';
+      } else if (item.skillBoost != null) {
+        message = 'Skill +${item.skillBoost}!';
+      } else if (item.defenseBoost != null) {
+        message = 'Defense +${item.defenseBoost}!';
+      }
+
+      if (message.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              message,
+              style: const TextStyle(
+                fontFamily: 'Unifont',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -162,6 +213,10 @@ class _ShopScreenState extends State<ShopScreen> {
       itemBuilder: (context, index) {
         final shopItem = ShopItem.shopItems[index];
         final canAfford = _progress.gold >= shopItem.price;
+        final isPassiveBoost = shopItem.item.isPassiveBoost;
+        final alreadyOwned =
+            isPassiveBoost && _progress.hasPurchasedBoost(shopItem.item.id);
+        final buttonEnabled = canAfford && !alreadyOwned;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
@@ -211,7 +266,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: canAfford ? () => _buyItem(shopItem) : null,
+                    onPressed: buttonEnabled ? () => _buyItem(shopItem) : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
@@ -224,9 +279,9 @@ class _ShopScreenState extends State<ShopScreen> {
                       side: const BorderSide(color: Colors.white, width: 2),
                     ),
                     child: Text(
-                      canAfford
-                          ? AppLocalizations.of(context)!.shopBuy
-                          : AppLocalizations.of(context)!.shopNotEnoughGold,
+                      alreadyOwned
+                          ? AppLocalizations.of(context)!.shopOwnedLabel
+                          : AppLocalizations.of(context)!.shopBuy,
                       style: const TextStyle(
                         fontFamily: 'Unifont',
                         fontSize: 14,

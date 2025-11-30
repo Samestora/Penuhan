@@ -299,6 +299,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
           _buildStatRow('MP', '${_progress.playerMp}/${_progress.playerMaxMp}'),
           _buildStatRow(l10n.restingAttack, '${_progress.playerAttack}'),
           _buildStatRow(l10n.restingSkill, '${_progress.playerSkill}'),
+          _buildStatRow(l10n.floorDefense, '${_progress.playerDefense}'),
           _buildStatRow(l10n.restingGold, '${_progress.gold}'),
           const SizedBox(height: 8),
           _buildStatRow(l10n.restingFloor, '${_progress.currentFloor}'),
@@ -375,8 +376,8 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      // Use button (only for potions)
-                      if (item.type == ItemType.potion)
+                      // Use button (only for consumable items - potions)
+                      if (item.isConsumable)
                         SizedBox(
                           width: 60,
                           height: 32,

@@ -30,9 +30,9 @@ If the below task's hyperlink exists then you can continue the implementation or
 - [x] Changing dungeon mechanism
 - [x] Adding level up mechanism
 - [x] Adding up stats when level up
-- [] Adding defense stat
-- [] Fix item stat buff
-- [] Adding more variation of items stat buff
+- [x] Adding defense stat
+- [x] Fix item stat buff
+- [x] Adding more variation of items stat buff
 - [] Adding boss each 10 floors
 - [] Adding more variation of monsters
 - [] Improve level design

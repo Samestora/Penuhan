@@ -217,7 +217,9 @@ class __EmbarkContentState extends State<_EmbarkContent> {
                   playerMaxMp: 50,
                   playerAttack: 10,
                   playerSkill: 10,
+                  playerDefense: 5,
                   gold: 0,
+                  purchasedBoostItemIds: const [],
                 );
 
                 Navigator.of(context).push(

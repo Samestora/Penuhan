@@ -72,6 +72,7 @@ class _BattleScreenState extends State<BattleScreen>
       maxMp: progress?.playerMaxMp ?? 50,
       attack: progress?.playerAttack ?? 10,
       skill: progress?.playerSkill ?? 10,
+      defense: progress?.playerDefense ?? 5,
     );
 
     // Initialize enemy from monster registry
@@ -86,6 +87,7 @@ class _BattleScreenState extends State<BattleScreen>
       maxMp: 0,
       attack: monster.attack,
       skill: monster.skillStat,
+      defense: monster.defense,
     );
 
     _battleState = BattleState(
@@ -382,6 +384,7 @@ class _BattleScreenState extends State<BattleScreen>
                                   isHit: _isPlayerHit,
                                   previewDamage: null,
                                   previewHeal: 30,
+                                  hidePlayerMp: true,
                                 )
                               : _buildCharacterInfo(
                                   _battleState.enemy,
@@ -489,6 +492,7 @@ class _BattleScreenState extends State<BattleScreen>
     required bool isHit,
     int? previewDamage,
     int? previewHeal,
+    bool hidePlayerMp = false,
   }) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -544,25 +548,20 @@ class _BattleScreenState extends State<BattleScreen>
                 )
               : _buildStatBar('HP', character.hpPercentage, Colors.red),
 
-          // XP Bar (only for player)
-          if (isPlayer) ...[
+          // MP Bar (only for player) - hide if hidePlayerMp is true
+          if (isPlayer && !hidePlayerMp) ...[
             const SizedBox(height: 8),
+            // MP text indicator (sama seperti HP)
             Row(
               children: [
-                const Text(
-                  'XP: ',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Unifont',
-                    fontSize: 12,
-                  ),
-                ),
+                // Menggunakan Spacer agar elemen lain di kiri dan teks di kanan
+                Spacer(),
                 Text(
-                  '${character.currentXp}/${character.maxXp}',
+                  '${character.currentMp}/${character.maxMp}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontFamily: 'Unifont',
-                    fontSize: 12,
+                    fontSize: 14,
                   ),
                 ),
               ],
@@ -1160,6 +1159,9 @@ class _BattleScreenState extends State<BattleScreen>
     setState(() {
       String log = '';
 
+      // Spend MP first (for all skills)
+      _battleState.player.spendMp(skill.skillCost);
+
       if (skill.effect == SkillEffect.heal) {
         // Healing skill
         final healAmount = 30;
@@ -1171,8 +1173,6 @@ class _BattleScreenState extends State<BattleScreen>
         )!.battlePlayerHeals(_battleState.player.name, actualHeal);
       } else {
         // Damage skill
-        // Spend MP (already validated in UI)
-        _battleState.player.spendMp(skill.skillCost);
         final damage = skill.calculateDamage(_battleState.player.skill);
         _battleState.enemy.takeDamage(damage);
         log = AppLocalizations.of(context)!.battlePlayerUsesSkill(
@@ -1679,9 +1679,13 @@ class _BattleScreenState extends State<BattleScreen>
                       playerMaxMp: _battleState.player.maxMp,
                       playerAttack: _battleState.player.attack,
                       playerSkill: _battleState.player.skill,
+                      playerDefense: _battleState.player.defense,
                       gold: (widget.gameProgress?.gold ?? 0) + goldReward,
                       inventory:
                           _currentInventory, // Use updated inventory from battle
+                      purchasedBoostItemIds: List<String>.from(
+                        widget.gameProgress?.purchasedBoostItemIds ?? const [],
+                      ),
                     );
                     final xpReward =
                         20 + (widget.gameProgress?.currentFloor ?? 1) * 5;

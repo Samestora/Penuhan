@@ -249,6 +249,10 @@ class _RestingScreenState extends State<RestingScreen> {
               '${_progress.playerSkill}',
             ),
             _buildStatRow(
+              AppLocalizations.of(context)!.restingDefense,
+              '${_progress.playerDefense}',
+            ),
+            _buildStatRow(
               AppLocalizations.of(context)!.restingGold,
               '${_progress.gold}',
             ),
@@ -399,28 +403,30 @@ class _RestingScreenState extends State<RestingScreen> {
                 ),
               ),
             ),
-            trailing: ElevatedButton(
-              onPressed: () => _useItem(item.id),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
-              ),
-              child: Text(
-                AppLocalizations.of(context)!.restingUse,
-                style: const TextStyle(
-                  fontFamily: 'Unifont',
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+            trailing: item.isConsumable
+                ? ElevatedButton(
+                    onPressed: () => _useItem(item.id),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.restingUse,
+                      style: const TextStyle(
+                        fontFamily: 'Unifont',
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                : null,
           ),
         );
       },

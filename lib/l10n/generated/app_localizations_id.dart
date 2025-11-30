@@ -313,6 +313,12 @@ class AppLocalizationsId extends AppLocalizations {
   String get shopNotEnoughGold => 'GOLD TIDAK CUKUP';
 
   @override
+  String get shopOwnedLabel => 'DIMILIKI';
+
+  @override
+  String get shopAlreadyOwned => 'Kamu sudah memiliki peningkatan ini!';
+
+  @override
   String get shopNextFloor => 'Lantai Berikutnya';
 
   @override
@@ -345,6 +351,27 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String get itemSkillScrollDesc =>
       'Meningkatkan Skill secara permanen sebesar 5';
+
+  @override
+  String get itemDefenseScrollName => 'Gulungan Pertahanan';
+
+  @override
+  String get itemDefenseScrollDesc =>
+      'Meningkatkan Pertahanan secara permanen sebesar 5';
+
+  @override
+  String get itemGrandAttackScrollName => 'Manual Pedang';
+
+  @override
+  String get itemGrandAttackScrollDesc =>
+      'Meningkatkan Serangan secara permanen sebesar 10';
+
+  @override
+  String get itemFocusScrollName => 'Gulungan Fokus';
+
+  @override
+  String get itemFocusScrollDesc =>
+      'Meningkatkan Skill secara permanen sebesar 8';
 
   @override
   String get itemMpPotionName => 'Ramuan MP';
@@ -383,9 +410,18 @@ class AppLocalizationsId extends AppLocalizations {
   String get statUpgradeSkill => 'Skill';
 
   @override
+  String get statUpgradeDefense => 'Pertahanan';
+
+  @override
   String get statUpgradeConfirm => 'Konfirmasi';
 
   @override
   String get statUpgradeAllocateAll =>
       'Anda harus mengalokasikan semua poin sebelum melanjutkan';
+
+  @override
+  String get restingDefense => 'Pertahanan';
+
+  @override
+  String get floorDefense => 'Pertahanan';
 }

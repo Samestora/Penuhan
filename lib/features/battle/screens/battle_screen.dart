@@ -7,7 +7,11 @@ import 'package:penuhan/core/models/game_progress.dart';
 import 'package:penuhan/core/models/item.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
+import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/resting_screen.dart';
+import 'package:penuhan/features/app/screens/stat_upgrade_screen.dart';
+import 'package:penuhan/features/battle/models/monster.dart';
+import 'package:penuhan/features/battle/models/monster_registry.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
@@ -15,8 +19,14 @@ import 'dart:math';
 class BattleScreen extends StatefulWidget {
   final Dungeon dungeon;
   final GameProgress? gameProgress;
+  final bool isBossBattle;
 
-  const BattleScreen({super.key, required this.dungeon, this.gameProgress});
+  const BattleScreen({
+    super.key,
+    required this.dungeon,
+    this.gameProgress,
+    this.isBossBattle = false,
+  });
 
   @override
   State<BattleScreen> createState() => _BattleScreenState();
@@ -27,6 +37,7 @@ class _BattleScreenState extends State<BattleScreen>
   late BattleState _battleState;
   late AudioManager _audioManager;
   late AnimationController _shakeController;
+  late Monster _activeMonster;
   bool _isPlayerHit = false;
   bool _isEnemyHit = false;
   bool _showSkillList = false;
@@ -36,6 +47,8 @@ class _BattleScreenState extends State<BattleScreen>
   bool _showMessage = false;
   String _currentMessage = '';
   List<InventoryItem> _currentInventory = [];
+  bool _isPaused = false;
+  bool _showSettings = false;
 
   @override
   void initState() {
@@ -63,19 +76,30 @@ class _BattleScreenState extends State<BattleScreen>
       maxHp: progress?.playerMaxHp ?? 150,
       currentXp: progress?.playerXp ?? 150,
       maxXp: progress?.playerMaxXp ?? 150,
+      currentMp: progress?.playerMp ?? 50,
+      maxMp: progress?.playerMaxMp ?? 50,
       attack: progress?.playerAttack ?? 10,
       skill: progress?.playerSkill ?? 10,
+      defense: progress?.playerDefense ?? 5,
     );
 
-    // Initialize enemy based on dungeon difficulty
+    // Initialize enemy from monster registry (boss if applicable)
+    final monster = MonsterRegistry.forBattle(
+      widget.dungeon,
+      isBoss: widget.isBossBattle,
+    );
+    _activeMonster = monster;
     final enemy = BattleCharacter(
-      name: _getEnemyName(),
-      currentHp: _getEnemyHp(),
-      maxHp: _getEnemyHp(),
+      name: monster.name,
+      currentHp: monster.maxHp,
+      maxHp: monster.maxHp,
       currentXp: 0,
       maxXp: 100,
-      attack: _getEnemyAttack(),
-      skill: _getEnemySkill(),
+      currentMp: 0,
+      maxMp: 0,
+      attack: monster.attack,
+      skill: monster.skillStat,
+      defense: monster.defense,
     );
 
     _battleState = BattleState(
@@ -85,49 +109,7 @@ class _BattleScreenState extends State<BattleScreen>
     );
   }
 
-  String _getEnemyName() {
-    switch (widget.dungeon) {
-      case Dungeon.sunkenCitadel:
-        return 'Goblin';
-      case Dungeon.whisperingCrypt:
-        return 'Skeleton';
-      case Dungeon.dragonsMaw:
-        return 'Dragon';
-    }
-  }
-
-  int _getEnemyHp() {
-    switch (widget.dungeon.difficulty) {
-      case DungeonDifficulty.easy:
-        return 100;
-      case DungeonDifficulty.normal:
-        return 150;
-      case DungeonDifficulty.hard:
-        return 200;
-    }
-  }
-
-  int _getEnemyAttack() {
-    switch (widget.dungeon.difficulty) {
-      case DungeonDifficulty.easy:
-        return 8;
-      case DungeonDifficulty.normal:
-        return 12;
-      case DungeonDifficulty.hard:
-        return 18;
-    }
-  }
-
-  int _getEnemySkill() {
-    switch (widget.dungeon.difficulty) {
-      case DungeonDifficulty.easy:
-        return 5;
-      case DungeonDifficulty.normal:
-        return 10;
-      case DungeonDifficulty.hard:
-        return 15;
-    }
-  }
+  // Obsolete enemy stat helpers removed; using MonsterRegistry and _battleState.enemy
 
   void _performAction(BattleAction action) {
     if (_battleState.isBattleOver) return;
@@ -178,15 +160,31 @@ class _BattleScreenState extends State<BattleScreen>
         // Enemy's turn
         _battleState.phase = BattlePhase.enemyTurn;
 
-        Future.delayed(const Duration(milliseconds: 1500), () {
+        Future.delayed(const Duration(milliseconds: 900), () {
           if (mounted) {
             setState(() {
               _isEnemyHit = false;
-              int enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
-              _battleState.player.takeDamage(enemyDamage);
-              log = AppLocalizations.of(
-                context,
-              )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+              final bool useSkill =
+                  _activeMonster.skills.isNotEmpty && Random().nextBool();
+
+              int enemyDamage;
+              if (useSkill) {
+                final skill = _activeMonster
+                    .skills[Random().nextInt(_activeMonster.skills.length)];
+                enemyDamage = skill.calculateDamage(_battleState.enemy.skill);
+                _battleState.player.takeDamage(enemyDamage);
+                log = AppLocalizations.of(context)!.battleEnemyUsesSkill(
+                  _battleState.enemy.name,
+                  skill.getLocalizedName(context),
+                  enemyDamage,
+                );
+              } else {
+                enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
+                _battleState.player.takeDamage(enemyDamage);
+                log = AppLocalizations.of(
+                  context,
+                )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+              }
               _isPlayerHit = true;
               _shakeController.forward(from: 0);
               _audioManager.playSfx(AssetManager.sfxClick);
@@ -205,7 +203,7 @@ class _BattleScreenState extends State<BattleScreen>
               }
 
               // Hide message after enemy action completes
-              Future.delayed(const Duration(milliseconds: 1500), () {
+              Future.delayed(const Duration(milliseconds: 900), () {
                 if (mounted) {
                   setState(() {
                     _isPlayerHit = false;
@@ -251,7 +249,7 @@ class _BattleScreenState extends State<BattleScreen>
             _buildSpritesLayer(screenHeight, screenWidth),
 
             // LAYER 3: UI (buttons, info bars, overlays)
-            _buildUILayer(),
+            _buildUILayer(screenHeight),
           ],
         ),
       ),
@@ -308,133 +306,123 @@ class _BattleScreenState extends State<BattleScreen>
     );
   }
 
-  Widget _buildUILayer() {
+  Widget _buildUILayer(double screenHeight) {
     return Stack(
       children: [
-        // Base UI layout
-        Column(
-          children: [
-            // Top bar with back button
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () {
-                      _audioManager.playSfx(AssetManager.sfxClick);
-                      Navigator.pop(context);
-                    },
-                  ),
-                  Text(
-                    widget.dungeon.name.toString().split('.').last,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'Unifont',
-                      fontSize: 16,
+        // Enemy info bar - STATIC POSITION (only for action buttons & battle message)
+        // Hidden when viewing skill/item detail
+        if (_selectedSkill == null && _selectedItem == null)
+          Positioned(
+            left: 24,
+            right: 24,
+            top:
+                screenHeight *
+                0.1, // Di atas player bar - responsif untuk semua device
+            child: _buildCharacterInfo(
+              _battleState.enemy,
+              isPlayer: false,
+              isHit: _isEnemyHit,
+              previewDamage: null,
+              previewHeal: null,
+            ),
+          ),
+
+        // Player info bar - STATIC POSITION (only for action buttons & battle message)
+        // Hidden when viewing skill/item detail
+        if (_selectedSkill == null && _selectedItem == null)
+          Positioned(
+            left: 24,
+            right: 24,
+            bottom:
+                screenHeight *
+                0.17, // 27% dari tinggi layar - responsif untuk semua device
+            child: _buildCharacterInfo(
+              _battleState.player,
+              isPlayer: true,
+              isHit: _isPlayerHit,
+              previewDamage: null,
+              previewHeal: null,
+            ),
+          ),
+
+        // Action area - STATIC POSITION (only for action buttons & battle message)
+        // Hidden when viewing skill/item detail
+        if (_selectedSkill == null && _selectedItem == null)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height:
+                screenHeight *
+                0.18, // 25% dari tinggi layar - responsif untuk semua device
+            child: Column(
+              children: [
+                // Battle message (shown during actions)
+                if (_showMessage) Expanded(child: _buildBattleMessage()),
+
+                // Action buttons (hidden during actions)
+                if (!_showMessage)
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: _buildActionButtons(),
                     ),
                   ),
+              ],
+            ),
+          ),
+
+        // Skill/Item detail area - DYNAMIC POSITION (like before)
+        // Shows bar info above detail, positioned normally at bottom
+        if (_selectedSkill != null || _selectedItem != null)
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Character info bar above skill/item detail
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 16.0),
+                    child: _selectedSkill != null
+                        ? (_selectedSkill!.effect == SkillEffect.heal
+                              ? _buildCharacterInfo(
+                                  _battleState.player,
+                                  isPlayer: true,
+                                  isHit: _isPlayerHit,
+                                  previewDamage: null,
+                                  previewHeal: 30,
+                                  hidePlayerMp: true,
+                                )
+                              : _buildCharacterInfo(
+                                  _battleState.enemy,
+                                  isPlayer: false,
+                                  isHit: _isEnemyHit,
+                                  previewDamage: _selectedSkill!
+                                      .calculateDamage(
+                                        _battleState.player.skill,
+                                      ),
+                                  previewHeal: null,
+                                ))
+                        : _buildCharacterInfo(
+                            _battleState.player,
+                            isPlayer: true,
+                            isHit: _isPlayerHit,
+                            previewDamage: null,
+                            previewHeal: _selectedItem!.hpRestore,
+                          ),
+                  ),
+                  // Skill or Item detail below
+                  _selectedSkill != null
+                      ? _buildSkillDetail()
+                      : _buildItemDetail(),
                 ],
               ),
             ),
-
-            // Enemy info at top (only when NOT viewing skill detail)
-            if (_selectedSkill == null &&
-                !(_selectedSkill != null &&
-                    _selectedSkill!.effect == SkillEffect.heal))
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 16,
-                ),
-                child: _buildCharacterInfo(
-                  _battleState.enemy,
-                  isPlayer: false,
-                  isHit: _isEnemyHit,
-                  previewDamage: null,
-                  previewHeal: null,
-                ),
-              ),
-
-            // Spacer for battle area (sprites are on layer 2)
-            const Spacer(),
-
-            // Player info at bottom (only when NOT viewing skill detail)
-            if (_selectedSkill == null)
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24.0,
-                  vertical: 8,
-                ),
-                child: _buildCharacterInfo(
-                  _battleState.player,
-                  isPlayer: true,
-                  isHit: _isPlayerHit,
-                  previewDamage: null,
-                  previewHeal: null,
-                ),
-              ),
-
-            // Battle message (shown during actions)
-            if (_showMessage) _buildBattleMessage(),
-
-            // Action buttons or skill detail or item detail (hidden during actions)
-            if (!_showMessage)
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: _selectedSkill != null
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Character info bar above skill detail
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: _selectedSkill!.effect == SkillEffect.heal
-                                ? _buildCharacterInfo(
-                                    _battleState.player,
-                                    isPlayer: true,
-                                    isHit: _isPlayerHit,
-                                    previewDamage: null,
-                                    previewHeal: 30,
-                                  )
-                                : _buildCharacterInfo(
-                                    _battleState.enemy,
-                                    isPlayer: false,
-                                    isHit: _isEnemyHit,
-                                    previewDamage: _selectedSkill!
-                                        .calculateDamage(
-                                          _battleState.player.skill,
-                                        ),
-                                    previewHeal: null,
-                                  ),
-                          ),
-                          // Skill detail below
-                          _buildSkillDetail(),
-                        ],
-                      )
-                    : _selectedItem != null
-                    ? Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // Player info bar above item detail (items restore HP)
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0),
-                            child: _buildCharacterInfo(
-                              _battleState.player,
-                              isPlayer: true,
-                              isHit: _isPlayerHit,
-                              previewDamage: null,
-                              previewHeal: _selectedItem!.hpRestore,
-                            ),
-                          ),
-                          // Item detail below
-                          _buildItemDetail(),
-                        ],
-                      )
-                    : _buildActionButtons(),
-              ),
-          ],
-        ),
+          ),
 
         // Skill list overlay (only when showing list, not detail)
         if (_showSkillList && _selectedSkill == null)
@@ -470,6 +458,41 @@ class _BattleScreenState extends State<BattleScreen>
 
         // Victory/Defeat overlay
         if (_battleState.isBattleOver) _buildBattleEndOverlay(),
+
+        // Pause button (pojok kanan atas, layer atas)
+        Positioned(
+          top: 8,
+          left: 35,
+          child: PauseButton(
+            onPause: () {
+              _audioManager.playSfx(AssetManager.sfxClick);
+              setState(() => _isPaused = true);
+            },
+          ),
+        ),
+
+        // Pause overlay or Settings overlay
+        if (_isPaused && !_showSettings)
+          PauseOverlay(
+            onResume: () {
+              setState(() {
+                _isPaused = false;
+                _showSettings = false;
+              });
+            },
+            onOption: () {
+              setState(() => _showSettings = true);
+            },
+            onMainMenu: () {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+            },
+          ),
+        if (_isPaused && _showSettings)
+          SettingsOverlay(
+            onClose: () {
+              setState(() => _showSettings = false);
+            },
+          ),
       ],
     );
   }
@@ -480,6 +503,7 @@ class _BattleScreenState extends State<BattleScreen>
     required bool isHit,
     int? previewDamage,
     int? previewHeal,
+    bool hidePlayerMp = false,
   }) {
     return Container(
       padding: const EdgeInsets.all(12),
@@ -535,29 +559,27 @@ class _BattleScreenState extends State<BattleScreen>
                 )
               : _buildStatBar('HP', character.hpPercentage, Colors.red),
 
-          // XP Bar (only for player)
-          if (isPlayer) ...[
+          // MP Bar (only for player) - hide if hidePlayerMp is true
+          if (isPlayer && !hidePlayerMp) ...[
             const SizedBox(height: 8),
+            // MP text indicator (sama seperti HP)
             Row(
               children: [
-                const Text(
-                  'XP: ',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontFamily: 'Unifont',
-                    fontSize: 12,
-                  ),
-                ),
+                // Menggunakan Spacer agar elemen lain di kiri dan teks di kanan
+                Spacer(),
                 Text(
-                  '${character.currentXp}/${character.maxXp}',
+                  '${character.currentMp}/${character.maxMp}',
                   style: const TextStyle(
                     color: Colors.white,
                     fontFamily: 'Unifont',
-                    fontSize: 12,
+                    fontSize: 14,
                   ),
                 ),
               ],
             ),
+            const SizedBox(height: 8),
+            // MP Bar similar style to HP bar (blue color)
+            _buildStatBar('MP', character.mpPercentage, Colors.blue),
           ],
         ],
       ),
@@ -795,14 +817,18 @@ class _BattleScreenState extends State<BattleScreen>
           color: Colors.black,
           border: Border.all(color: Colors.white, width: 2),
         ),
-        child: Text(
-          _currentMessage,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white,
-            fontFamily: 'Unifont',
-            fontSize: 16,
-            height: 1.5,
+        child: Center(
+          // Gunakan Center untuk menempatkan teks di tengah
+          child: Text(
+            _currentMessage,
+            textAlign:
+                TextAlign.center, // Untuk meratakan teks secara horizontal
+            style: const TextStyle(
+              color: Colors.white,
+              fontFamily: 'Unifont',
+              fontSize: 16,
+              height: 1.5,
+            ),
           ),
         ),
       ),
@@ -986,6 +1012,7 @@ class _BattleScreenState extends State<BattleScreen>
     final skill = _selectedSkill!;
     final playerSkillStat = _battleState.player.skill;
     final estimatedDamage = skill.calculateDamage(playerSkillStat);
+    final canUse = _battleState.player.currentMp >= skill.skillCost;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -1027,13 +1054,27 @@ class _BattleScreenState extends State<BattleScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildStatInfo('Cost', '${skill.skillCost} SP'),
+              _buildStatInfo('Cost', '${skill.skillCost} MP'),
               if (skill.effect != SkillEffect.heal)
                 _buildStatInfo('Damage', '~$estimatedDamage')
               else
                 _buildStatInfo('Heal', '30 HP'),
             ],
           ),
+          if (!canUse) ...[
+            const SizedBox(height: 8),
+            Center(
+              child: Text(
+                l10n.notEnoughMP,
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Unifont',
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
           const Spacer(),
           Row(
             children: [
@@ -1067,9 +1108,11 @@ class _BattleScreenState extends State<BattleScreen>
               const SizedBox(width: 8),
               Expanded(
                 child: ElevatedButton(
-                  onPressed: () {
-                    _useSkill(skill);
-                  },
+                  onPressed: canUse
+                      ? () {
+                          _useSkill(skill);
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: Colors.black,
@@ -1127,6 +1170,9 @@ class _BattleScreenState extends State<BattleScreen>
     setState(() {
       String log = '';
 
+      // Spend MP first (for all skills)
+      _battleState.player.spendMp(skill.skillCost);
+
       if (skill.effect == SkillEffect.heal) {
         // Healing skill
         final healAmount = 30;
@@ -1169,15 +1215,32 @@ class _BattleScreenState extends State<BattleScreen>
         // Enemy's turn
         _battleState.phase = BattlePhase.enemyTurn;
 
-        Future.delayed(const Duration(milliseconds: 1500), () {
+        Future.delayed(const Duration(milliseconds: 900), () {
           if (mounted) {
             setState(() {
               _isEnemyHit = false;
-              int enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
-              _battleState.player.takeDamage(enemyDamage);
-              String enemyLog = AppLocalizations.of(
-                context,
-              )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+              final bool useSkill =
+                  _activeMonster.skills.isNotEmpty && Random().nextBool();
+
+              int enemyDamage;
+              String enemyLog;
+              if (useSkill) {
+                final skill = _activeMonster
+                    .skills[Random().nextInt(_activeMonster.skills.length)];
+                enemyDamage = skill.calculateDamage(_battleState.enemy.skill);
+                _battleState.player.takeDamage(enemyDamage);
+                enemyLog = AppLocalizations.of(context)!.battleEnemyUsesSkill(
+                  _battleState.enemy.name,
+                  skill.getLocalizedName(context),
+                  enemyDamage,
+                );
+              } else {
+                enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
+                _battleState.player.takeDamage(enemyDamage);
+                enemyLog = AppLocalizations.of(
+                  context,
+                )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+              }
               _isPlayerHit = true;
               _shakeController.forward(from: 0);
               _audioManager.playSfx(AssetManager.sfxClick);
@@ -1196,7 +1259,7 @@ class _BattleScreenState extends State<BattleScreen>
               }
 
               // Hide message after enemy action completes
-              Future.delayed(const Duration(milliseconds: 1500), () {
+              Future.delayed(const Duration(milliseconds: 900), () {
                 if (mounted) {
                   setState(() {
                     _isPlayerHit = false;
@@ -1463,14 +1526,28 @@ class _BattleScreenState extends State<BattleScreen>
       String log = '';
 
       // Use the item effect
+      final messages = <String>[];
       if (item.hpRestore != null) {
         final oldHp = _battleState.player.currentHp;
         _battleState.player.heal(item.hpRestore!);
         final actualHeal = _battleState.player.currentHp - oldHp;
-        log = AppLocalizations.of(
-          context,
-        )!.battlePlayerHeals(_battleState.player.name, actualHeal);
+        messages.add(
+          AppLocalizations.of(
+            context,
+          )!.battlePlayerHeals(_battleState.player.name, actualHeal),
+        );
       }
+      if (item.mpRestore != null) {
+        final oldMp = _battleState.player.currentMp;
+        _battleState.player.restoreMp(item.mpRestore!);
+        final actualRestore = _battleState.player.currentMp - oldMp;
+        messages.add(
+          AppLocalizations.of(
+            context,
+          )!.battlePlayerRestoresMp(_battleState.player.name, actualRestore),
+        );
+      }
+      log = messages.join('\n');
 
       // Remove item from local inventory
       final itemIndex = _currentInventory.indexWhere(
@@ -1500,7 +1577,7 @@ class _BattleScreenState extends State<BattleScreen>
       // Enemy's turn
       _battleState.phase = BattlePhase.enemyTurn;
 
-      Future.delayed(const Duration(milliseconds: 1500), () {
+      Future.delayed(const Duration(milliseconds: 900), () {
         if (mounted) {
           setState(() {
             int enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
@@ -1526,7 +1603,7 @@ class _BattleScreenState extends State<BattleScreen>
             }
 
             // Hide message after enemy action completes
-            Future.delayed(const Duration(milliseconds: 1500), () {
+            Future.delayed(const Duration(milliseconds: 900), () {
               if (mounted) {
                 setState(() {
                   _isPlayerHit = false;
@@ -1579,7 +1656,11 @@ class _BattleScreenState extends State<BattleScreen>
               ),
               const SizedBox(height: 24),
               Text(
-                _battleState.battleLog,
+                isVictory
+                    ? AppLocalizations.of(
+                        context,
+                      )!.battleVictoryMessage(_battleState.enemy.name)
+                    : AppLocalizations.of(context)!.battleDefeatMessage,
                 style: const TextStyle(
                   color: Colors.white,
                   fontFamily: 'Unifont',
@@ -1592,30 +1673,63 @@ class _BattleScreenState extends State<BattleScreen>
                 onPressed: () {
                   _audioManager.playSfx(AssetManager.sfxClick);
                   if (isVictory) {
-                    // Victory: Navigate to Resting Screen
-                    final goldReward =
+                    // Victory: Navigate to Stat Upgrade Screen if leveled up, otherwise Resting Screen
+                    final baseGold =
                         30 + (widget.gameProgress?.currentFloor ?? 1) * 10;
-                    final updatedProgress = GameProgress(
+                    final goldReward = widget.isBossBattle
+                        ? (baseGold * 1.5).round()
+                        : baseGold;
+                    // Grant XP reward and carry battle-updated stats
+                    final baseProgress = GameProgress(
                       currentFloor: widget.gameProgress?.currentFloor ?? 1,
                       maxFloor: widget.gameProgress?.maxFloor ?? 5,
+                      playerLevel: widget.gameProgress?.playerLevel ?? 1,
                       playerHp: _battleState.player.currentHp,
                       playerMaxHp: _battleState.player.maxHp,
                       playerXp: _battleState.player.currentXp,
                       playerMaxXp: _battleState.player.maxXp,
+                      playerMp: _battleState.player.currentMp,
+                      playerMaxMp: _battleState.player.maxMp,
                       playerAttack: _battleState.player.attack,
                       playerSkill: _battleState.player.skill,
+                      playerDefense: _battleState.player.defense,
                       gold: (widget.gameProgress?.gold ?? 0) + goldReward,
                       inventory:
                           _currentInventory, // Use updated inventory from battle
-                    );
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (_) => RestingScreen(
-                          dungeon: widget.dungeon,
-                          gameProgress: updatedProgress,
-                        ),
+                      purchasedBoostItemIds: List<String>.from(
+                        widget.gameProgress?.purchasedBoostItemIds ?? const [],
                       ),
                     );
+                    final baseXp =
+                        20 + (widget.gameProgress?.currentFloor ?? 1) * 5;
+                    final xpReward = widget.isBossBattle
+                        ? (baseXp * 1.5).round()
+                        : baseXp;
+                    final xpResult = baseProgress.addXp(xpReward);
+
+                    // Check if player leveled up
+                    if (xpResult.levelsGained > 0) {
+                      // Navigate to stat upgrade screen
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (_) => StatUpgradeScreen(
+                            progress: xpResult.progress,
+                            levelsGained: xpResult.levelsGained,
+                            dungeon: widget.dungeon,
+                          ),
+                        ),
+                      );
+                    } else {
+                      // No level up, go directly to resting screen
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                          builder: (_) => RestingScreen(
+                            dungeon: widget.dungeon,
+                            gameProgress: xpResult.progress,
+                          ),
+                        ),
+                      );
+                    }
                   } else {
                     // Defeat: Return to main menu
                     Navigator.of(context).popUntil((route) => route.isFirst);

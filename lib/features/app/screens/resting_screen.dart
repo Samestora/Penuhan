@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:penuhan/core/models/dungeon.dart';
 import 'package:penuhan/core/models/game_progress.dart';
 import 'package:penuhan/core/models/item.dart';
+import 'package:penuhan/features/battle/models/skill.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/core/widgets/monochrome_button.dart';
+import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/floor_selection_screen.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -29,11 +31,15 @@ class RestingScreen extends StatefulWidget {
 class _RestingScreenState extends State<RestingScreen> {
   late AudioManager _audioManager;
   late int _selectedTab;
+  bool _isPaused = false;
+  bool _showSettings = false;
+  late GameProgress _progress;
 
   @override
   void initState() {
     super.initState();
     _selectedTab = widget.initialTab;
+    _progress = widget.gameProgress;
   }
 
   @override
@@ -47,12 +53,50 @@ class _RestingScreenState extends State<RestingScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            _buildHeader(),
-            _buildTabButtons(),
-            Expanded(child: _buildContent()),
-            _buildNextFloorButton(),
+            Column(
+              children: [
+                _buildHeader(),
+                _buildTabButtons(),
+                Expanded(child: _buildContent()),
+                _buildNextFloorButton(),
+              ],
+            ),
+
+            // Pause button (pojok kanan atas, layer atas)
+            Positioned(
+              top: 8,
+              left: 35,
+              child: PauseButton(
+                onPause: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  setState(() => _isPaused = true);
+                },
+              ),
+            ),
+
+            if (_isPaused && !_showSettings)
+              PauseOverlay(
+                onResume: () {
+                  setState(() {
+                    _isPaused = false;
+                    _showSettings = false;
+                  });
+                },
+                onOption: () {
+                  setState(() => _showSettings = true);
+                },
+                onMainMenu: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
+            if (_isPaused && _showSettings)
+              SettingsOverlay(
+                onClose: () {
+                  setState(() => _showSettings = false);
+                },
+              ),
           ],
         ),
       ),
@@ -110,6 +154,13 @@ class _RestingScreenState extends State<RestingScreen> {
               1,
             ),
           ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _buildTabButton(
+              AppLocalizations.of(context)!.skillSelectTitle,
+              2,
+            ),
+          ),
         ],
       ),
     );
@@ -148,6 +199,8 @@ class _RestingScreenState extends State<RestingScreen> {
         return _buildStatusTab();
       case 1:
         return _buildItemTab();
+      case 2:
+        return _buildSkillTab();
       default:
         return const SizedBox();
     }
@@ -174,25 +227,34 @@ class _RestingScreenState extends State<RestingScreen> {
               ),
             ),
             const SizedBox(height: 16),
+            _buildStatRow('Level', '${_progress.playerLevel}'),
             _buildStatRow(
               AppLocalizations.of(context)!.restingHp,
-              '${widget.gameProgress.playerHp}/${widget.gameProgress.playerMaxHp}',
+              '${_progress.playerHp}/${_progress.playerMaxHp}',
             ),
             _buildStatRow(
               AppLocalizations.of(context)!.restingXp,
-              '${widget.gameProgress.playerXp}/${widget.gameProgress.playerMaxXp}',
+              '${_progress.playerXp}/${_progress.playerMaxXp}',
+            ),
+            _buildStatRow(
+              'MP',
+              '${_progress.playerMp}/${_progress.playerMaxMp}',
             ),
             _buildStatRow(
               AppLocalizations.of(context)!.restingAttack,
-              '${widget.gameProgress.playerAttack}',
+              '${_progress.playerAttack}',
             ),
             _buildStatRow(
               AppLocalizations.of(context)!.restingSkill,
-              '${widget.gameProgress.playerSkill}',
+              '${_progress.playerSkill}',
+            ),
+            _buildStatRow(
+              AppLocalizations.of(context)!.restingDefense,
+              '${_progress.playerDefense}',
             ),
             _buildStatRow(
               AppLocalizations.of(context)!.restingGold,
-              '${widget.gameProgress.gold}',
+              '${_progress.gold}',
             ),
             const SizedBox(height: 16),
             const Divider(color: Colors.white),
@@ -209,7 +271,7 @@ class _RestingScreenState extends State<RestingScreen> {
             const SizedBox(height: 16),
             _buildStatRow(
               AppLocalizations.of(context)!.restingFloor,
-              '${widget.gameProgress.currentFloor}/${widget.gameProgress.maxFloor}',
+              '${_progress.currentFloor}',
             ),
             _buildStatRow('Dungeon', widget.dungeon.name.getName(context)),
           ],
@@ -247,7 +309,7 @@ class _RestingScreenState extends State<RestingScreen> {
   }
 
   Widget _buildItemTab() {
-    if (widget.gameProgress.inventory.isEmpty) {
+    if (_progress.inventory.isEmpty) {
       return Center(
         child: Container(
           padding: const EdgeInsets.all(24),
@@ -286,9 +348,9 @@ class _RestingScreenState extends State<RestingScreen> {
 
     return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: widget.gameProgress.inventory.length,
+      itemCount: _progress.inventory.length,
       itemBuilder: (context, index) {
-        final inventoryItem = widget.gameProgress.inventory[index];
+        final inventoryItem = _progress.inventory[index];
         final item = Item.allItems.firstWhere(
           (i) => i.id == inventoryItem.itemId,
         );
@@ -341,28 +403,30 @@ class _RestingScreenState extends State<RestingScreen> {
                 ),
               ),
             ),
-            trailing: ElevatedButton(
-              onPressed: () => _useItem(item.id),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.zero,
-                ),
-              ),
-              child: Text(
-                AppLocalizations.of(context)!.restingUse,
-                style: const TextStyle(
-                  fontFamily: 'Unifont',
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+            trailing: item.isConsumable
+                ? ElevatedButton(
+                    onPressed: () => _useItem(item.id),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.black,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.restingUse,
+                      style: const TextStyle(
+                        fontFamily: 'Unifont',
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                : null,
           ),
         );
       },
@@ -372,42 +436,125 @@ class _RestingScreenState extends State<RestingScreen> {
   void _useItem(String itemId) {
     _audioManager.playSfx(AssetManager.sfxClick);
     setState(() {
-      final updatedProgress = widget.gameProgress.useItem(itemId);
-      // Update parent dengan progress baru
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => RestingScreen(
-            dungeon: widget.dungeon,
-            gameProgress: updatedProgress,
-          ),
-        ),
-      );
+      _progress = _progress.useItem(itemId);
     });
   }
 
+  Widget _buildSkillTab() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: Skill.allSkills.length,
+      itemBuilder: (context, index) {
+        final skill = Skill.allSkills[index];
+        final l10n = AppLocalizations.of(context)!;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.white, width: 2),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Skill name and SP cost
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        skill.getLocalizedName(context),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Unifont',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        border: Border.all(color: Colors.white, width: 1),
+                      ),
+                      child: Text(
+                        l10n.skillCost(skill.skillCost),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Unifont',
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                // Skill description
+                Text(
+                  skill.getLocalizedDescription(context),
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontFamily: 'Unifont',
+                    fontSize: 13,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Skill stats
+                // Row(
+                //   children: [
+                //     if (skill.effect != SkillEffect.heal) ...[
+                //       _buildSkillStat(
+                //         l10n.skillDamageLabel,
+                //         '${(skill.damageMultiplier * 100).toInt()}%',
+                //         Colors.red,
+                //       ),
+                //       const SizedBox(width: 16),
+                //     ],
+                //     if (skill.effect == SkillEffect.heal) ...[
+                //       _buildSkillStat(
+                //         l10n.skillHealLabel,
+                //         '30 HP',
+                //         Colors.green,
+                //       ),
+                //       const SizedBox(width: 16),
+                //     ],
+                //     _buildSkillStat(
+                //       l10n.skillCostLabel,
+                //       '${skill.skillCost} SP',
+                //       Colors.blue,
+                //     ),
+                //   ],
+                // ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildNextFloorButton() {
-    final isLastFloor =
-        widget.gameProgress.currentFloor >= widget.gameProgress.maxFloor;
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: MonochromeButton(
-        text: isLastFloor
-            ? AppLocalizations.of(context)!.restingFinishDungeon
-            : AppLocalizations.of(context)!.restingNextFloor,
+        text: AppLocalizations.of(context)!.restingNextFloor,
         onPressed: () {
           _audioManager.playSfx(AssetManager.sfxClick);
-          if (isLastFloor) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          } else {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) => FloorSelectionScreen(
-                  dungeon: widget.dungeon,
-                  gameProgress: widget.gameProgress.nextFloor(),
-                ),
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (_) => FloorSelectionScreen(
+                dungeon: widget.dungeon,
+                gameProgress: _progress.nextFloor(),
               ),
-            );
-          }
+            ),
+          );
         },
       ),
     );

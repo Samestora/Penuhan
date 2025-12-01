@@ -5,6 +5,7 @@ import 'package:penuhan/core/models/item.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/core/widgets/monochrome_button.dart';
+import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/floor_selection_screen.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
@@ -25,30 +26,73 @@ class ShopScreen extends StatefulWidget {
 
 class _ShopScreenState extends State<ShopScreen> {
   late AudioManager _audioManager;
+  bool _isPaused = false;
+  bool _showSettings = false;
+  late GameProgress _progress;
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _audioManager = context.read<AudioManager>();
+    _progress = widget.gameProgress;
   }
 
   void _buyItem(ShopItem shopItem) {
     _audioManager.playSfx(AssetManager.sfxClick);
-    setState(() {
-      final updatedProgress = widget.gameProgress.buyItem(
-        shopItem.item,
-        shopItem.price,
-      );
-      // Refresh dengan progress baru
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => ShopScreen(
-            dungeon: widget.dungeon,
-            gameProgress: updatedProgress,
+
+    final l10n = AppLocalizations.of(context)!;
+    final item = shopItem.item;
+
+    if (item.isPassiveBoost && _progress.hasPurchasedBoost(item.id)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            l10n.shopAlreadyOwned,
+            style: const TextStyle(
+              fontFamily: 'Unifont',
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
           ),
+          backgroundColor: Colors.orange,
+          duration: const Duration(seconds: 2),
         ),
       );
+      return;
+    }
+
+    setState(() {
+      _progress = _progress.buyItem(shopItem.item, shopItem.price);
     });
+
+    // Show feedback for passive boost items
+    if (item.isPassiveBoost) {
+      String message = '';
+      if (item.attackBoost != null) {
+        message = 'Attack +${item.attackBoost}!';
+      } else if (item.skillBoost != null) {
+        message = 'Skill +${item.skillBoost}!';
+      } else if (item.defenseBoost != null) {
+        message = 'Defense +${item.defenseBoost}!';
+      }
+
+      if (message.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              message,
+              style: const TextStyle(
+                fontFamily: 'Unifont',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -56,11 +100,49 @@ class _ShopScreenState extends State<ShopScreen> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            _buildHeader(),
-            Expanded(child: _buildShopContent()),
-            _buildNextFloorButton(),
+            Column(
+              children: [
+                _buildHeader(),
+                Expanded(child: _buildShopContent()),
+                _buildNextFloorButton(),
+              ],
+            ),
+
+            // Pause button (pojok kanan atas, layer atas)
+            Positioned(
+              top: 8,
+              left: 35,
+              child: PauseButton(
+                onPause: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  setState(() => _isPaused = true);
+                },
+              ),
+            ),
+
+            if (_isPaused && !_showSettings)
+              PauseOverlay(
+                onResume: () {
+                  setState(() {
+                    _isPaused = false;
+                    _showSettings = false;
+                  });
+                },
+                onOption: () {
+                  setState(() => _showSettings = true);
+                },
+                onMainMenu: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
+            if (_isPaused && _showSettings)
+              SettingsOverlay(
+                onClose: () {
+                  setState(() => _showSettings = false);
+                },
+              ),
           ],
         ),
       ),
@@ -86,9 +168,7 @@ class _ShopScreenState extends State<ShopScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            AppLocalizations.of(
-              context,
-            )!.floorNumber(widget.gameProgress.currentFloor),
+            AppLocalizations.of(context)!.floorNumber(_progress.currentFloor),
             style: const TextStyle(
               fontFamily: 'Unifont',
               fontSize: 18,
@@ -102,9 +182,7 @@ class _ShopScreenState extends State<ShopScreen> {
               const Icon(Icons.monetization_on, color: Colors.yellow, size: 20),
               const SizedBox(width: 8),
               Text(
-                AppLocalizations.of(
-                  context,
-                )!.shopGold(widget.gameProgress.gold),
+                AppLocalizations.of(context)!.shopGold(_progress.gold),
                 style: const TextStyle(
                   fontFamily: 'Unifont',
                   fontSize: 16,
@@ -134,7 +212,11 @@ class _ShopScreenState extends State<ShopScreen> {
       itemCount: ShopItem.shopItems.length,
       itemBuilder: (context, index) {
         final shopItem = ShopItem.shopItems[index];
-        final canAfford = widget.gameProgress.gold >= shopItem.price;
+        final canAfford = _progress.gold >= shopItem.price;
+        final isPassiveBoost = shopItem.item.isPassiveBoost;
+        final alreadyOwned =
+            isPassiveBoost && _progress.hasPurchasedBoost(shopItem.item.id);
+        final buttonEnabled = canAfford && !alreadyOwned;
 
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
@@ -184,7 +266,7 @@ class _ShopScreenState extends State<ShopScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: canAfford ? () => _buyItem(shopItem) : null,
+                    onPressed: buttonEnabled ? () => _buyItem(shopItem) : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
@@ -197,9 +279,9 @@ class _ShopScreenState extends State<ShopScreen> {
                       side: const BorderSide(color: Colors.white, width: 2),
                     ),
                     child: Text(
-                      canAfford
-                          ? AppLocalizations.of(context)!.shopBuy
-                          : AppLocalizations.of(context)!.shopNotEnoughGold,
+                      alreadyOwned
+                          ? AppLocalizations.of(context)!.shopOwnedLabel
+                          : AppLocalizations.of(context)!.shopBuy,
                       style: const TextStyle(
                         fontFamily: 'Unifont',
                         fontSize: 14,
@@ -227,7 +309,7 @@ class _ShopScreenState extends State<ShopScreen> {
             MaterialPageRoute(
               builder: (_) => FloorSelectionScreen(
                 dungeon: widget.dungeon,
-                gameProgress: widget.gameProgress.nextFloor(),
+                gameProgress: _progress.nextFloor(),
               ),
             ),
           );

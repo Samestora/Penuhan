@@ -6,6 +6,7 @@ import 'package:penuhan/core/models/item.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/core/widgets/monochrome_button.dart';
+import 'package:penuhan/core/widgets/pause_overlay.dart';
 import 'package:penuhan/features/app/screens/resting_screen.dart';
 import 'package:penuhan/features/app/screens/shop_screen.dart';
 import 'package:penuhan/features/battle/screens/battle_screen.dart';
@@ -15,11 +16,13 @@ import 'package:provider/provider.dart';
 class FloorSelectionScreen extends StatefulWidget {
   final Dungeon dungeon;
   final GameProgress gameProgress;
+  final List<FloorOption>? options;
 
   const FloorSelectionScreen({
     super.key,
     required this.dungeon,
     required this.gameProgress,
+    this.options,
   });
 
   @override
@@ -29,13 +32,19 @@ class FloorSelectionScreen extends StatefulWidget {
 class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
   late AudioManager _audioManager;
   late List<FloorOption> _options;
+  late GameProgress _progress;
   bool _showStatusDialog = false;
   bool _showItemDialog = false;
+  bool _isPaused = false;
+  bool _showSettings = false;
 
   @override
   void initState() {
     super.initState();
-    _options = FloorOption.generateRandomOptions();
+    _progress = widget.gameProgress;
+    _options =
+        widget.options ??
+        FloorOption.generateRandomOptions(currentFloor: _progress.currentFloor);
   }
 
   @override
@@ -53,7 +62,8 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
           MaterialPageRoute(
             builder: (_) => BattleScreen(
               dungeon: widget.dungeon,
-              gameProgress: widget.gameProgress,
+              gameProgress: _progress,
+              isBossBattle: option.isBoss,
             ),
           ),
         );
@@ -61,10 +71,8 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
       case FloorOptionType.shop:
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
-            builder: (_) => ShopScreen(
-              dungeon: widget.dungeon,
-              gameProgress: widget.gameProgress,
-            ),
+            builder: (_) =>
+                ShopScreen(dungeon: widget.dungeon, gameProgress: _progress),
           ),
         );
         break;
@@ -73,7 +81,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
           MaterialPageRoute(
             builder: (_) => RestingScreen(
               dungeon: widget.dungeon,
-              gameProgress: widget.gameProgress,
+              gameProgress: _progress,
               initialTab: 0, // Open status tab
             ),
           ),
@@ -115,6 +123,40 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
             _buildSideButtons(),
             if (_showStatusDialog) _buildStatusDialog(),
             if (_showItemDialog) _buildItemDialog(),
+
+            // Pause button (pojok kanan atas, layer atas)
+            Positioned(
+              top: 8,
+              left: 35,
+              child: PauseButton(
+                onPause: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  setState(() => _isPaused = true);
+                },
+              ),
+            ),
+
+            if (_isPaused && !_showSettings)
+              PauseOverlay(
+                onResume: () {
+                  setState(() {
+                    _isPaused = false;
+                    _showSettings = false;
+                  });
+                },
+                onOption: () {
+                  setState(() => _showSettings = true);
+                },
+                onMainMenu: () {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },
+              ),
+            if (_isPaused && _showSettings)
+              SettingsOverlay(
+                onClose: () {
+                  setState(() => _showSettings = false);
+                },
+              ),
           ],
         ),
       ),
@@ -140,9 +182,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            AppLocalizations.of(
-              context,
-            )!.floorNumber(widget.gameProgress.currentFloor),
+            AppLocalizations.of(context)!.floorNumber(_progress.currentFloor),
             style: const TextStyle(
               fontFamily: 'Unifont',
               fontSize: 18,
@@ -252,28 +292,22 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _buildStatRow('Level', '${_progress.playerLevel}'),
           _buildStatRow(
             l10n.restingHp,
-            '${widget.gameProgress.playerHp}/${widget.gameProgress.playerMaxHp}',
+            '${_progress.playerHp}/${_progress.playerMaxHp}',
           ),
           _buildStatRow(
             l10n.restingXp,
-            '${widget.gameProgress.playerXp}/${widget.gameProgress.playerMaxXp}',
+            '${_progress.playerXp}/${_progress.playerMaxXp}',
           ),
-          _buildStatRow(
-            l10n.restingAttack,
-            '${widget.gameProgress.playerAttack}',
-          ),
-          _buildStatRow(
-            l10n.restingSkill,
-            '${widget.gameProgress.playerSkill}',
-          ),
-          _buildStatRow(l10n.restingGold, '${widget.gameProgress.gold}'),
+          _buildStatRow('MP', '${_progress.playerMp}/${_progress.playerMaxMp}'),
+          _buildStatRow(l10n.restingAttack, '${_progress.playerAttack}'),
+          _buildStatRow(l10n.restingSkill, '${_progress.playerSkill}'),
+          _buildStatRow(l10n.floorDefense, '${_progress.playerDefense}'),
+          _buildStatRow(l10n.restingGold, '${_progress.gold}'),
           const SizedBox(height: 8),
-          _buildStatRow(
-            l10n.restingFloor,
-            '${widget.gameProgress.currentFloor}/${widget.gameProgress.maxFloor}',
-          ),
+          _buildStatRow(l10n.restingFloor, '${_progress.currentFloor}'),
         ],
       ),
     );
@@ -281,7 +315,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
 
   Widget _buildItemDialog() {
     final l10n = AppLocalizations.of(context)!;
-    final inventory = widget.gameProgress.inventory;
+    final inventory = _progress.inventory;
     return _buildDialog(
       title: l10n.floorItem,
       child: inventory.isEmpty
@@ -302,21 +336,42 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
                 final item = Item.allItems.firstWhere(
                   (i) => i.id == invItem.itemId,
                 );
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white70, width: 1),
+                  ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // Item info
                       Expanded(
-                        child: Text(
-                          item.getLocalizedName(context),
-                          style: const TextStyle(
-                            fontFamily: 'Unifont',
-                            fontSize: 14,
-                            color: Colors.white,
-                          ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.getLocalizedName(context),
+                              style: const TextStyle(
+                                fontFamily: 'Unifont',
+                                fontSize: 14,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              item.getLocalizedDescription(context),
+                              style: const TextStyle(
+                                fontFamily: 'Unifont',
+                                fontSize: 11,
+                                color: Colors.white70,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      const SizedBox(width: 12),
+                      // Quantity
                       Text(
                         'x${invItem.quantity}',
                         style: const TextStyle(
@@ -325,6 +380,32 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
                           color: Colors.white,
                         ),
                       ),
+                      const SizedBox(width: 12),
+                      // Use button (only for consumable items - potions)
+                      if (item.isConsumable)
+                        SizedBox(
+                          width: 60,
+                          height: 32,
+                          child: ElevatedButton(
+                            onPressed: () => _useItem(item.id),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: Colors.black,
+                              padding: EdgeInsets.zero,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.zero,
+                              ),
+                            ),
+                            child: Text(
+                              l10n.restingUse,
+                              style: const TextStyle(
+                                fontFamily: 'Unifont',
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
                     ],
                   ),
                 );
@@ -395,6 +476,75 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
               fontSize: 14,
               color: Colors.white,
               fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _useItem(String itemId) {
+    _audioManager.playSfx(AssetManager.sfxClick);
+
+    final item = Item.allItems.firstWhere((i) => i.id == itemId);
+
+    // Check if player can benefit from this item
+    if (item.hpRestore != null && _progress.playerHp >= _progress.playerMaxHp) {
+      // HP already full, can't use potion
+      _showCannotUseItemDialog();
+      return;
+    }
+
+    // Use the item and update game progress
+    final updatedProgress = _progress.useItem(itemId);
+
+    // Close dialog and update local progress without reload
+    setState(() {
+      _progress = updatedProgress;
+      _showItemDialog = false;
+    });
+  }
+
+  void _showCannotUseItemDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Colors.black,
+        shape: const RoundedRectangleBorder(
+          side: BorderSide(color: Colors.white, width: 2),
+          borderRadius: BorderRadius.zero,
+        ),
+        title: const Text(
+          'Cannot Use Item',
+          style: TextStyle(
+            fontFamily: 'Unifont',
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: const Text(
+          'HP is already full!',
+          style: TextStyle(
+            fontFamily: 'Unifont',
+            fontSize: 14,
+            color: Colors.white70,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              _audioManager.playSfx(AssetManager.sfxClick);
+              Navigator.of(context).pop();
+            },
+            child: const Text(
+              'OK',
+              style: TextStyle(
+                fontFamily: 'Unifont',
+                fontSize: 14,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],

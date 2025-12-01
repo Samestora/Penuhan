@@ -11,16 +11,33 @@ If the below task's hyperlink exists then you can continue the implementation or
 ## Core
 
 - [x] [About : Widget](lib/screens/main_menu.dart)
-- [] [Game Screen : Screen and GameWidget ](lib/screens/game_play.dart)
+- [x] [Game Screen : Screen and GameWidget ](lib/screens/game_play.dart)
 - [x] [Main Menu : Screens and all the widgets](lib/screens/main_menu.dart)
 - [ ] [Sound : BGM and SFX](lib/utils/audio_manager.dart)
 - [ ] [Images : Sprites, Engine, Spritesheets and etc](assets/images/)
 - [ ] [Save Game (Hive)](lib/models/save_data.dart)
 - [ ] Character class
-- [ ] Battle
-- [ ] Store
-- [ ] Spells & Skills
-- [ ] Player
+- [x] Battle
+- [x] Store
+- [x] Spells & Skills
+- [x] Player
+- [x] Adding MP mechanism
+- [x] Enemy can use skill
+- [x] Fix bar info player
+- [x] Adding skills list on rest area
+- [x] Can use item on floor selection
+- [x] Adding pause mechanism
+- [x] Changing dungeon mechanism
+- [x] Adding level up mechanism
+- [x] Adding up stats when level up
+- [x] Adding defense stat
+- [x] Fix item stat buff
+- [x] Adding more variation of items stat buff
+- [x] Adding boss each 10 floors
+- [x] Adding more variation of monsters
+- [] Adding more variation of skills
+- [] Improve level design
+- [] Improve UI game
 
 ## Quality of Life
 

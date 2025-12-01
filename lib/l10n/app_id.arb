@@ -89,6 +89,14 @@
             "damage": {"type": "int"}
         }
     },
+    "battleEnemyUsesSkill": "{enemyName} menggunakan {skillName} dengan {damage} damage!",
+    "@battleEnemyUsesSkill": {
+        "placeholders": {
+            "enemyName": {"type": "String"},
+            "skillName": {"type": "String"},
+            "damage": {"type": "int"}
+        }
+    },
     "battleVictoryMessage": "Menang! {enemyName} telah dikalahkan!",
     "@battleVictoryMessage": {
         "placeholders": {
@@ -100,7 +108,7 @@
     "skillSelectTitle": "PILIH SKILL",
     "skillCancel": "BATAL",
     "skillAttack": "SERANG",
-    "skillCost": "Biaya: {cost} SP",
+    "skillCost": "Biaya: {cost} MP",
     "@skillCost": {
         "placeholders": {
             "cost": {"type": "int"}
@@ -115,6 +123,7 @@
             "damage": {"type": "int"}
         }
     },
+    "notEnoughMP" : "MP tidak cukup",
     "skillFireballName": "Bola Api",
     "skillFireballDesc": "Luncurkan bola api yang membara Memberikan 150% skill damage",
     "skillIceSpearName": "Tombak Es",
@@ -132,6 +141,8 @@
     "floorShopDesc": "Beli item dengan gold",
     "floorRest": "Istirahat",
     "floorRestDesc": "Pulihkan HP dan kelola inventory",
+    "floorBoss": "Boss",
+    "floorBossDesc": "Hadapi boss lantai untuk hadiah besar",
     "floorStatus": "STATUS",
     "floorItem": "ITEM",
     "floorNumber": "LANTAI {floor}",
@@ -163,6 +174,8 @@
     },
     "shopBuy": "BELI",
     "shopNotEnoughGold": "GOLD TIDAK CUKUP",
+    "shopOwnedLabel": "DIMILIKI",
+    "shopAlreadyOwned": "Kamu sudah memiliki peningkatan ini!",
     "shopNextFloor": "Lantai Berikutnya",
     "shopPrice": "{price}G",
     "@shopPrice": {
@@ -177,5 +190,42 @@
     "itemAttackScrollName": "Gulungan Serangan",
     "itemAttackScrollDesc": "Meningkatkan Serangan secara permanen sebesar 5",
     "itemSkillScrollName": "Gulungan Skill",
-    "itemSkillScrollDesc": "Meningkatkan Skill secara permanen sebesar 5"
+    "itemSkillScrollDesc": "Meningkatkan Skill secara permanen sebesar 5",
+    "itemDefenseScrollName": "Gulungan Pertahanan",
+    "itemDefenseScrollDesc": "Meningkatkan Pertahanan secara permanen sebesar 5",
+    "itemGrandAttackScrollName": "Manual Pedang",
+    "itemGrandAttackScrollDesc": "Meningkatkan Serangan secara permanen sebesar 10",
+    "itemFocusScrollName": "Gulungan Fokus",
+    "itemFocusScrollDesc": "Meningkatkan Skill secara permanen sebesar 8",
+    "itemMpPotionName": "Ramuan MP",
+    "itemMpPotionDesc": "Memulihkan 50 MP",
+    "battlePlayerRestoresMp": "{playerName} memulihkan {amount} MP!",
+    "@battlePlayerRestoresMp": {
+        "placeholders": {
+            "playerName": {"type": "String"},
+            "amount": {"type": "int"}
+        }
+    },
+    "statUpgradeTitle": "NAIK LEVEL!",
+    "statUpgradeLevel": "Level {level}",
+    "@statUpgradeLevel": {
+        "placeholders": {
+            "level": {"type": "int"}
+        }
+    },
+    "statUpgradePointsAvailable": "Poin Tersedia: {points}",
+    "@statUpgradePointsAvailable": {
+        "placeholders": {
+            "points": {"type": "int"}
+        }
+    },
+    "statUpgradeMaxHp": "HP Maks",
+    "statUpgradeMaxMp": "MP Maks",
+    "statUpgradeAttack": "Serangan",
+    "statUpgradeSkill": "Skill",
+    "statUpgradeDefense": "Pertahanan",
+    "statUpgradeConfirm": "Konfirmasi",
+    "statUpgradeAllocateAll": "Anda harus mengalokasikan semua poin sebelum melanjutkan",
+    "restingDefense": "Pertahanan",
+    "floorDefense": "Pertahanan"
 }

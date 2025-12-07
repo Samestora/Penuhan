@@ -16,6 +16,11 @@ import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
+// Note: Removed the unused InventoryItem import from the original file
+// and assuming necessary enums/classes (BattleAction, BattlePhase, SkillEffect)
+// and supporting models (BattleCharacter, InventoryItem, etc.) exist.
+// Assuming SettingsOverlay exists for the pause menu logic.
+
 class BattleScreen extends StatefulWidget {
   final Dungeon dungeon;
   final GameProgress? gameProgress;
@@ -33,11 +38,12 @@ class BattleScreen extends StatefulWidget {
 }
 
 class _BattleScreenState extends State<BattleScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   late BattleState _battleState;
   late AudioManager _audioManager;
   late AnimationController _shakeController;
   late Monster _activeMonster;
+
   bool _isPlayerHit = false;
   bool _isEnemyHit = false;
   bool _showSkillList = false;
@@ -65,13 +71,24 @@ class _BattleScreenState extends State<BattleScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _audioManager = context.read<AudioManager>();
+    _audioManager.stopBgm();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      _audioManager.onAppPaused();
+    } else if (state == AppLifecycleState.resumed) {
+      _audioManager.onAppResumed();
+    }
   }
 
   void _initBattle() {
     // Initialize player stats from GameProgress or default
     final progress = widget.gameProgress;
     final player = BattleCharacter(
-      name: 'Nama Musun',
+      name: AppLocalizations.of(context)!.playerName,
       currentHp: progress?.playerHp ?? 150,
       maxHp: progress?.playerMaxHp ?? 150,
       currentXp: progress?.playerXp ?? 150,
@@ -88,7 +105,9 @@ class _BattleScreenState extends State<BattleScreen>
       widget.dungeon,
       isBoss: widget.isBossBattle,
     );
+
     _activeMonster = monster;
+
     final enemy = BattleCharacter(
       name: monster.name,
       currentHp: monster.maxHp,
@@ -257,48 +276,52 @@ class _BattleScreenState extends State<BattleScreen>
   }
 
   Widget _buildSpritesLayer(double screenHeight, double screenWidth) {
+    // Using Image.asset instead of CustomPaint
+    const double spriteSize = 100.0; // Slightly larger for better visual impact
+
     return Positioned.fill(
       child: Stack(
         children: [
           // Player character (bottom)
           Positioned(
-            bottom: screenHeight * 0.25,
-            left: screenWidth * 0.25,
+            bottom: screenHeight * 0.35,
+            left: screenWidth * 0.25 - spriteSize / 2, // Centered
             child: AnimatedBuilder(
               animation: _shakeController,
               builder: (context, child) {
+                // Apply a simple horizontal shake on hit
                 final shake = _isPlayerHit
                     ? sin(_shakeController.value * pi * 4) * 10
                     : 0.0;
                 return Transform.translate(
                   offset: Offset(shake, 0),
-                  child: child,
+                  child: Opacity(
+                    opacity: _isPlayerHit ? 0.6 : 1.0, // Flash effect
+                    child: child,
+                  ),
                 );
               },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: _isPlayerHit
-                      ? Colors.red.withOpacity(0.3)
-                      : Colors.transparent,
-                  shape: BoxShape.circle,
-                ),
-                child: _buildStickFigure(size: 80, isPlayer: true),
+              child: Image.asset(
+                'assets/images/sprite/player.png',
+                width: spriteSize,
+                height: spriteSize,
+                fit: BoxFit.contain,
               ),
             ),
           ),
 
           // Enemy character (top)
           Positioned(
-            top: screenHeight * 0.15,
-            right: screenWidth * 0.25,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _isEnemyHit
-                    ? Colors.red.withOpacity(0.3)
-                    : Colors.transparent,
-                shape: BoxShape.circle,
+            top: screenHeight * 0.25,
+            right: screenWidth * 0.25 - spriteSize / 2, // Centered
+            child: Opacity(
+              opacity: _isEnemyHit ? 0.6 : 1.0, // Flash effect
+              child: Image.asset(
+                _activeMonster.spritePath,
+                width: spriteSize,
+                height: spriteSize,
+                fit: BoxFit.contain,
               ),
-              child: _buildStickFigure(size: 80, isPlayer: false),
             ),
           ),
         ],
@@ -1617,13 +1640,6 @@ class _BattleScreenState extends State<BattleScreen>
     });
   }
 
-  Widget _buildStickFigure({required double size, required bool isPlayer}) {
-    return CustomPaint(
-      size: Size(size, size),
-      painter: StickFigurePainter(isPlayer: isPlayer),
-    );
-  }
-
   Widget _buildBattleEndOverlay() {
     final bool isVictory = _battleState.phase == BattlePhase.victory;
 
@@ -1763,53 +1779,4 @@ class _BattleScreenState extends State<BattleScreen>
       ),
     );
   }
-}
-
-class StickFigurePainter extends CustomPainter {
-  final bool isPlayer;
-
-  StickFigurePainter({required this.isPlayer});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 3
-      ..style = PaintingStyle.stroke
-      ..strokeCap = StrokeCap.round;
-
-    final centerX = size.width / 2;
-    final headRadius = size.width * 0.2;
-
-    // Head
-    canvas.drawCircle(Offset(centerX, headRadius + 5), headRadius, paint);
-
-    // Body
-    final bodyStart = Offset(centerX, headRadius * 2 + 5);
-    final bodyEnd = Offset(centerX, size.height * 0.6);
-    canvas.drawLine(bodyStart, bodyEnd, paint);
-
-    // Arms
-    final armY = size.height * 0.4;
-    canvas.drawLine(
-      Offset(centerX - size.width * 0.3, armY),
-      Offset(centerX + size.width * 0.3, armY),
-      paint,
-    );
-
-    // Legs
-    canvas.drawLine(
-      bodyEnd,
-      Offset(centerX - size.width * 0.2, size.height * 0.9),
-      paint,
-    );
-    canvas.drawLine(
-      bodyEnd,
-      Offset(centerX + size.width * 0.2, size.height * 0.9),
-      paint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

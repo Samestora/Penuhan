@@ -1,29 +1,23 @@
-enum DungeonDifficulty {
-  easy,
-  normal,
-  hard,
-}
+import 'package:penuhan/core/utils/asset_manager.dart';
 
-enum DungeonName {
-  sunkenCitadel,
-  whisperingCrypt,
-  dragonsMaw,
-}
+enum DungeonDifficulty { easy, normal, hard }
+
+enum DungeonName { sunkenCitadel, whisperingCrypt, dragonsMaw }
 
 enum Dungeon {
   sunkenCitadel(
     name: DungeonName.sunkenCitadel,
-    imageAsset: 'assets/images/sprite/player.png', // Placeholder
+    imageAsset: AssetManager.sunkenCitadel,
     difficulty: DungeonDifficulty.easy,
   ),
-  whisperingCrypt (
+  whisperingCrypt(
     name: DungeonName.whisperingCrypt,
-    imageAsset: 'assets/images/sprite/player.png', // Placeholder
+    imageAsset: AssetManager.whisperingCrypts,
     difficulty: DungeonDifficulty.normal,
   ),
   dragonsMaw(
     name: DungeonName.dragonsMaw,
-    imageAsset: 'assets/images/sprite/player.png', // Placeholder
+    imageAsset: AssetManager.dragonsMaw,
     difficulty: DungeonDifficulty.hard,
   );
 

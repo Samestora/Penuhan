@@ -269,5 +269,6 @@
     "statUpgradeConfirm": "Confirm",
     "statUpgradeAllocateAll": "You must allocate all points before continuing",
     "restingDefense": "Defense",
-    "floorDefense": "Defense"
+    "floorDefense": "Defense",
+    "playerName": "Nameless Hero"
 }

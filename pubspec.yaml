@@ -79,6 +79,7 @@ flutter:
   assets:
     - assets/images/
     - assets/images/engine/
+    - assets/images/dungeon/
     - assets/images/sprite/
     - assets/audio/
     - assets/audio/bgm/

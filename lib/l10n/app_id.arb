@@ -227,5 +227,6 @@
     "statUpgradeConfirm": "Konfirmasi",
     "statUpgradeAllocateAll": "Anda harus mengalokasikan semua poin sebelum melanjutkan",
     "restingDefense": "Pertahanan",
-    "floorDefense": "Pertahanan"
+    "floorDefense": "Pertahanan",
+    "playerName": "Pahlawan Tanpa Nama"
 }

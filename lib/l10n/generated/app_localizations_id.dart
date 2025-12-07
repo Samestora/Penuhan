@@ -430,4 +430,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get floorDefense => 'Pertahanan';
+
+  @override
+  String get playerName => 'Pahlawan Tanpa Nama';
 }

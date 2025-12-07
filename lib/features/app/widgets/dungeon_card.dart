@@ -20,11 +20,11 @@ class DungeonCard extends StatelessWidget {
             children: [
               Image.asset(
                 dungeon.imageAsset,
-                width: 64,
-                height: 64,
+                width: 128,
+                height: 128,
                 fit: BoxFit.cover,
               ),
-              const SizedBox(width: 16.0),
+              const SizedBox(width: 32.0),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

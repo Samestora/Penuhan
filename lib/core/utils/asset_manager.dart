@@ -37,6 +37,7 @@ class AssetManager {
   static const String _imagesPath = 'assets/images';
   static const String _enginePath = 'engine';
   static const String _spritePath = 'sprite';
+  static const String _dungeonPath = 'dungeon';
 
   // SFX files
   static const String sfxClick = '$_audioPath/$_sfxPath/sfx_click.mp3';
@@ -44,6 +45,7 @@ class AssetManager {
 
   // BGM files
   static const String bgmTitle = '$_audioPath/$_bgmPath/bgm_title.mp3';
+  static const String bgmRest = '$_audioPath/$_bgmPath/serenade.mp3';
   static const String bgmDungeonGraveyard =
       '$_audioPath/$_bgmPath/dungeon_graveyard_music.mp3';
 
@@ -55,6 +57,13 @@ class AssetManager {
   // Engine image files
   static const String splashLogo = '$_imagesPath/$_enginePath/sgdc_logo.png';
   static const String gameLogo = '$_imagesPath/$_enginePath/logo.png';
+
+  // Dungeon image files
+  static const String sunkenCitadel =
+      '$_imagesPath/$_dungeonPath/sunken_citadel.png';
+  static const String whisperingCrypts =
+      '$_imagesPath/$_dungeonPath/whispering_crypts.png';
+  static const String dragonsMaw = '$_imagesPath/$_dungeonPath/dragons_maw.png';
 
   // Sprite image files
   static const String playerSprite = '$_imagesPath/$_spritePath/player.png';

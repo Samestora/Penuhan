@@ -847,6 +847,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Defense'**
   String get floorDefense;
+
+  /// No description provided for @playerName.
+  ///
+  /// In en, this message translates to:
+  /// **'Nameless Hero'**
+  String get playerName;
 }
 
 class _AppLocalizationsDelegate

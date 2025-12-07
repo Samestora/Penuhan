@@ -425,4 +425,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get floorDefense => 'Defense';
+
+  @override
+  String get playerName => 'Nameless Hero';
 }

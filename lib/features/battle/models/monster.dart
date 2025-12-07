@@ -1,4 +1,5 @@
 import 'package:penuhan/features/battle/models/skill.dart';
+import 'package:penuhan/core/utils/asset_manager.dart';
 
 class Monster {
   final String id;
@@ -8,8 +9,9 @@ class Monster {
   final int skillStat;
   final int defense;
   final List<Skill> skills;
+  String spritePath = AssetManager.enemySprite;
 
-  const Monster({
+  Monster({
     required this.id,
     required this.name,
     required this.maxHp,

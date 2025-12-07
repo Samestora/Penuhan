@@ -202,6 +202,7 @@ class __EmbarkContentState extends State<_EmbarkContent> {
               dungeon: dungeon,
               onTap: () {
                 audioManager.playSfx(AssetManager.sfxClick);
+                audioManager.stopBgm();
                 Navigator.of(context).pop(); // Close dialog
 
                 // Initialize game progress

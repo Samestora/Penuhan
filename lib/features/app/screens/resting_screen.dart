@@ -28,7 +28,8 @@ class RestingScreen extends StatefulWidget {
   State<RestingScreen> createState() => _RestingScreenState();
 }
 
-class _RestingScreenState extends State<RestingScreen> {
+class _RestingScreenState extends State<RestingScreen>
+    with WidgetsBindingObserver {
   late AudioManager _audioManager;
   late int _selectedTab;
   bool _isPaused = false;
@@ -46,6 +47,17 @@ class _RestingScreenState extends State<RestingScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _audioManager = context.read<AudioManager>();
+    _audioManager.playBgm(AssetManager.bgmRest, looping: true);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused) {
+      _audioManager.onAppPaused();
+    } else if (state == AppLifecycleState.resumed) {
+      _audioManager.onAppResumed();
+    }
   }
 
   @override

@@ -139,6 +139,13 @@
             "damage": {"type": "int"}
         }
     },
+    "battleEnemyHeals": "{enemyName} restores {amount} HP!",
+    "@battleEnemyHeals": {
+        "placeholders": {
+            "enemyName": {"type": "String"},
+            "amount": {"type": "int"}
+        }
+    },
     "battleVictoryMessage": "Victory! {enemyName} has been defeated!",
     "@battleVictoryMessage": {
         "placeholders": {

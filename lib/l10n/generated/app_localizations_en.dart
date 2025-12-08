@@ -149,6 +149,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String battleEnemyHeals(String enemyName, int amount) {
+    return '$enemyName restores $amount HP!';
+  }
+
+  @override
   String battleVictoryMessage(String enemyName) {
     return 'Victory! $enemyName has been defeated!';
   }

@@ -338,6 +338,12 @@ abstract class AppLocalizations {
   /// **'{enemyName} uses {skillName} for {damage} damage!'**
   String battleEnemyUsesSkill(String enemyName, String skillName, int damage);
 
+  /// No description provided for @battleEnemyHeals.
+  ///
+  /// In en, this message translates to:
+  /// **'{enemyName} restores {amount} HP!'**
+  String battleEnemyHeals(String enemyName, int amount);
+
   /// No description provided for @battleVictoryMessage.
   ///
   /// In en, this message translates to:

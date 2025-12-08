@@ -97,6 +97,13 @@
             "damage": {"type": "int"}
         }
     },
+    "battleEnemyHeals": "{enemyName} memulihkan {amount} HP!",
+    "@battleEnemyHeals": {
+        "placeholders": {
+            "enemyName": {"type": "String"},
+            "amount": {"type": "int"}
+        }
+    },
     "battleVictoryMessage": "Menang! {enemyName} telah dikalahkan!",
     "@battleVictoryMessage": {
         "placeholders": {

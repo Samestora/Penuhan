@@ -32,6 +32,9 @@ class BattleCharacter {
   // Calculate actual damage after defense reduction
   // Formula: damage = rawDamage * (100 / (100 + defense))
   int calculateDamageReduction(int rawDamage) {
+    // Handle healing skills or zero damage
+    if (rawDamage <= 0) return 0;
+
     final damageMultiplier = 100 / (100 + defense);
     final actualDamage = (rawDamage * damageMultiplier).round();
     // Ensure minimum 1 damage, maximum is the raw damage

@@ -191,12 +191,21 @@ class _BattleScreenState extends State<BattleScreen>
                 final skill = _activeMonster
                     .skills[Random().nextInt(_activeMonster.skills.length)];
                 enemyDamage = skill.calculateDamage(_battleState.enemy.skill);
-                _battleState.player.takeDamage(enemyDamage);
-                log = AppLocalizations.of(context)!.battleEnemyUsesSkill(
-                  _battleState.enemy.name,
-                  skill.getLocalizedName(context),
-                  enemyDamage,
-                );
+                // Handle skill effects
+                if (skill.effect == SkillEffect.heal) {
+                  final healAmount = 30; // Fixed heal amount for healing light
+                  _battleState.enemy.heal(healAmount);
+                  log = AppLocalizations.of(
+                    context,
+                  )!.battleEnemyHeals(_battleState.enemy.name, healAmount);
+                } else {
+                  _battleState.player.takeDamage(enemyDamage);
+                  log = AppLocalizations.of(context)!.battleEnemyUsesSkill(
+                    _battleState.enemy.name,
+                    skill.getLocalizedName(context),
+                    enemyDamage,
+                  );
+                }
               } else {
                 enemyDamage = _battleState.enemy.attack + Random().nextInt(5);
                 _battleState.player.takeDamage(enemyDamage);

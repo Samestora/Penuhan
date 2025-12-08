@@ -15,7 +15,7 @@ If the below task's hyperlink exists then you can continue the implementation or
 - [x] [Main Menu : Screens and all the widgets](lib/screens/main_menu.dart)
 - [ ] [Sound : BGM and SFX](lib/utils/audio_manager.dart)
 - [ ] [Images : Sprites, Engine, Spritesheets and etc](assets/images/)
-- [ ] [Save Game (Hive)](lib/models/save_data.dart)
+- [x] [Save Game (Hive)](lib/models/save_data.dart)
 - [ ] Character class
 - [x] Battle
 - [x] Store

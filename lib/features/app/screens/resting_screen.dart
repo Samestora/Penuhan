@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:penuhan/core/models/dungeon.dart';
 import 'package:penuhan/core/models/game_progress.dart';
 import 'package:penuhan/core/models/item.dart';
+import 'package:penuhan/core/models/save_data.dart';
+import 'package:penuhan/core/utils/save_manager.dart';
 import 'package:penuhan/features/battle/models/skill.dart';
 import 'package:penuhan/core/utils/audio_manager.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
@@ -95,6 +98,9 @@ class _RestingScreenState extends State<RestingScreen>
                     _isPaused = false;
                     _showSettings = false;
                   });
+                },
+                onSave: () {
+                  _showSaveDialog();
                 },
                 onOption: () {
                   setState(() => _showSettings = true);
@@ -552,6 +558,17 @@ class _RestingScreenState extends State<RestingScreen>
     );
   }
 
+  void _showSaveDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => _SaveContent(
+        dungeon: widget.dungeon,
+        progress: _progress,
+        onClose: () => Navigator.of(context).pop(),
+      ),
+    );
+  }
+
   Widget _buildNextFloorButton() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
@@ -570,5 +587,239 @@ class _RestingScreenState extends State<RestingScreen>
         },
       ),
     );
+  }
+}
+
+class _SaveContent extends StatefulWidget {
+  final Dungeon dungeon;
+  final GameProgress progress;
+  final VoidCallback onClose;
+
+  const _SaveContent({
+    required this.dungeon,
+    required this.progress,
+    required this.onClose,
+  });
+
+  @override
+  State<_SaveContent> createState() => _SaveContentState();
+}
+
+class _SaveContentState extends State<_SaveContent> {
+  late List<SaveData?> _saves;
+
+  @override
+  void initState() {
+    super.initState();
+    _saves = SaveManager.instance.getAllSaves();
+  }
+
+  void _refreshSaves() {
+    setState(() {
+      _saves = SaveManager.instance.getAllSaves();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Dialog(
+      backgroundColor: Colors.black,
+      shape: RoundedRectangleBorder(
+        side: const BorderSide(color: Colors.white, width: 2),
+        borderRadius: BorderRadius.circular(0),
+      ),
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: 500, maxHeight: 600),
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              l10n.saveGame,
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'Unifont',
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.builder(
+                itemCount: 4,
+                itemBuilder: (context, index) {
+                  final slotNumber = index + 1;
+                  final saveData = _saves.length > index ? _saves[index] : null;
+
+                  return _buildSaveSlot(
+                    slotNumber: slotNumber,
+                    saveData: saveData,
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 16),
+            MonochromeButton(text: l10n.back, onPressed: widget.onClose),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSaveSlot({
+    required int slotNumber,
+    required SaveData? saveData,
+  }) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8.0),
+      padding: const EdgeInsets.all(12.0),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.white, width: 2),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${l10n.slot} $slotNumber',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Unifont',
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                if (saveData != null) ...[
+                  Text(
+                    'Level: ${saveData.playerLevel} | Floor: ${saveData.currentFloor}',
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontFamily: 'Unifont',
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    DateFormat('yyyy-MM-dd HH:mm').format(saveData.savedAt),
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontFamily: 'Unifont',
+                      fontSize: 12,
+                    ),
+                  ),
+                ] else
+                  Text(
+                    l10n.emptySlot,
+                    style: const TextStyle(
+                      color: Colors.grey,
+                      fontFamily: 'Unifont',
+                      fontSize: 14,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          MonochromeButton(
+            text: l10n.save,
+            onPressed: () => _saveToSlot(slotNumber, saveData != null),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _saveToSlot(int slotNumber, bool hasExistingSave) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    if (hasExistingSave) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          backgroundColor: Colors.black,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(color: Colors.white, width: 2),
+            borderRadius: BorderRadius.circular(0),
+          ),
+          title: Text(
+            l10n.overwriteSave,
+            style: const TextStyle(color: Colors.white, fontFamily: 'Unifont'),
+          ),
+          content: Text(
+            l10n.overwriteSaveConfirm,
+            style: const TextStyle(color: Colors.white, fontFamily: 'Unifont'),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(
+                l10n.cancel,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Unifont',
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(
+                l10n.confirm,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Unifont',
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed != true) return;
+    }
+
+    try {
+      await SaveManager.instance.saveGame(
+        slotNumber: slotNumber,
+        dungeon: widget.dungeon,
+        progress: widget.progress,
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              l10n.gameSaved,
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'Unifont',
+              ),
+            ),
+            backgroundColor: Colors.green[900],
+          ),
+        );
+
+        _refreshSaves();
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${l10n.error}: $e',
+              style: const TextStyle(
+                color: Colors.white,
+                fontFamily: 'Unifont',
+              ),
+            ),
+            backgroundColor: Colors.red[900],
+          ),
+        );
+      }
+    }
   }
 }

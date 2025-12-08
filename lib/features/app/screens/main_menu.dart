@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:penuhan/core/models/dungeon.dart';
 import 'package:penuhan/core/models/game_progress.dart';
 import 'package:penuhan/features/app/screens/resting_screen.dart';
 import 'package:penuhan/core/utils/asset_manager.dart';
+import 'package:penuhan/core/utils/save_manager.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:penuhan/l10n/generated/app_localizations.dart';
@@ -94,6 +96,16 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
               ),
               const SizedBox(height: 20.0),
 
+              // Load Button
+              MonochromeButton(
+                text: localizations.loadGame,
+                onPressed: () {
+                  _audioManager.playSfx(AssetManager.sfxClick);
+                  _showLoadDialog();
+                },
+              ),
+              const SizedBox(height: 20.0),
+
               // Settings Button - Now enabled!
               MonochromeButton(
                 text: localizations.mainMenuSettings,
@@ -173,6 +185,184 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
           child: const _AboutContent(),
         );
       },
+    );
+  }
+
+  /// Shows the load game dialog
+  void _showLoadDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return MonochromeModal(
+          title: AppLocalizations.of(context)!.loadGame,
+          child: const _LoadContent(),
+        );
+      },
+    );
+  }
+}
+
+class _LoadContent extends StatefulWidget {
+  const _LoadContent();
+
+  @override
+  State<_LoadContent> createState() => __LoadContentState();
+}
+
+class __LoadContentState extends State<_LoadContent> {
+  @override
+  Widget build(BuildContext context) {
+    final audioManager = context.read<AudioManager>();
+    final saveManager = SaveManager.instance;
+    final saves = saveManager.getAllSaves();
+
+    return SizedBox(
+      height: 400,
+      width: 450,
+      child: ListView.builder(
+        itemCount: 4,
+        itemBuilder: (context, index) {
+          final slotNumber = index + 1;
+          final saveData = saves[index];
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.white, width: 2),
+              color: Colors.black,
+            ),
+            child: ListTile(
+              contentPadding: const EdgeInsets.all(16),
+              title: Text(
+                '${AppLocalizations.of(context)!.slot} $slotNumber',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Unifont',
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: saveData != null
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 8),
+                        Text(
+                          'Level ${saveData.playerLevel} • Floor ${saveData.currentFloor}',
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontFamily: 'Unifont',
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          DateFormat(
+                            'yyyy-MM-dd HH:mm',
+                          ).format(saveData.savedAt),
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontFamily: 'Unifont',
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    )
+                  : Text(
+                      AppLocalizations.of(context)!.emptySlot,
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontFamily: 'Unifont',
+                        fontSize: 14,
+                      ),
+                    ),
+              trailing: saveData != null
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.play_arrow,
+                            color: Colors.green,
+                          ),
+                          onPressed: () {
+                            audioManager.playSfx(AssetManager.sfxClick);
+                            audioManager.stopBgm();
+                            Navigator.of(context).pop();
+
+                            final progress = saveData.toGameProgress();
+                            final dungeon = saveData.getDungeon();
+
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => RestingScreen(
+                                  dungeon: dungeon,
+                                  gameProgress: progress,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () async {
+                            audioManager.playSfx(AssetManager.sfxClick);
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                backgroundColor: Colors.black,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                    color: Colors.white,
+                                    width: 2,
+                                  ),
+                                  borderRadius: BorderRadius.zero,
+                                ),
+                                title: const Text(
+                                  'Delete Save?',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: 'Unifont',
+                                  ),
+                                ),
+                                content: const Text(
+                                  'This action cannot be undone.',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontFamily: 'Unifont',
+                                  ),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(false),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () =>
+                                        Navigator.of(context).pop(true),
+                                    child: const Text(
+                                      'Delete',
+                                      style: TextStyle(color: Colors.red),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+
+                            if (confirm == true) {
+                              await saveManager.deleteSave(slotNumber);
+                              setState(() {});
+                            }
+                          },
+                        ),
+                      ],
+                    )
+                  : null,
+            ),
+          );
+        },
+      ),
     );
   }
 }

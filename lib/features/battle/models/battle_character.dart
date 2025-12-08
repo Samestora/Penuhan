@@ -34,7 +34,8 @@ class BattleCharacter {
   int calculateDamageReduction(int rawDamage) {
     final damageMultiplier = 100 / (100 + defense);
     final actualDamage = (rawDamage * damageMultiplier).round();
-    return actualDamage.clamp(1, rawDamage); // Minimum 1 damage
+    // Ensure minimum 1 damage, maximum is the raw damage
+    return actualDamage.clamp(1, rawDamage);
   }
 
   void takeDamage(int damage) {

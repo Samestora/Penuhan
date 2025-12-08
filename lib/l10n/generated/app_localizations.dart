@@ -848,11 +848,119 @@ abstract class AppLocalizations {
   /// **'Defense'**
   String get floorDefense;
 
+  /// No description provided for @pauseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pause'**
+  String get pauseTitle;
+
+  /// No description provided for @pauseResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume'**
+  String get pauseResume;
+
+  /// No description provided for @pauseSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get pauseSave;
+
+  /// No description provided for @pauseSetting.
+  ///
+  /// In en, this message translates to:
+  /// **'Setting'**
+  String get pauseSetting;
+
+  /// No description provided for @pauseMainMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Main Menu'**
+  String get pauseMainMenu;
+
+  /// No description provided for @pauseExitGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Exit Game'**
+  String get pauseExitGame;
+
   /// No description provided for @playerName.
   ///
   /// In en, this message translates to:
   /// **'Nameless Hero'**
   String get playerName;
+
+  /// No description provided for @saveGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Game'**
+  String get saveGame;
+
+  /// No description provided for @loadGame.
+  ///
+  /// In en, this message translates to:
+  /// **'Load Game'**
+  String get loadGame;
+
+  /// No description provided for @slot.
+  ///
+  /// In en, this message translates to:
+  /// **'Slot'**
+  String get slot;
+
+  /// No description provided for @emptySlot.
+  ///
+  /// In en, this message translates to:
+  /// **'Empty Slot'**
+  String get emptySlot;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @overwriteSave.
+  ///
+  /// In en, this message translates to:
+  /// **'Overwrite Save?'**
+  String get overwriteSave;
+
+  /// No description provided for @overwriteSaveConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'This will overwrite the existing save. Continue?'**
+  String get overwriteSaveConfirm;
+
+  /// No description provided for @cancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// No description provided for @confirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirm;
+
+  /// No description provided for @gameSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Game saved successfully!'**
+  String get gameSaved;
+
+  /// No description provided for @error.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
 }
 
 class _AppLocalizationsDelegate

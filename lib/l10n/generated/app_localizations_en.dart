@@ -427,5 +427,60 @@ class AppLocalizationsEn extends AppLocalizations {
   String get floorDefense => 'Defense';
 
   @override
+  String get pauseTitle => 'Pause';
+
+  @override
+  String get pauseResume => 'Resume';
+
+  @override
+  String get pauseSave => 'Save';
+
+  @override
+  String get pauseSetting => 'Setting';
+
+  @override
+  String get pauseMainMenu => 'Main Menu';
+
+  @override
+  String get pauseExitGame => 'Exit Game';
+
+  @override
   String get playerName => 'Nameless Hero';
+
+  @override
+  String get saveGame => 'Save Game';
+
+  @override
+  String get loadGame => 'Load Game';
+
+  @override
+  String get slot => 'Slot';
+
+  @override
+  String get emptySlot => 'Empty Slot';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get overwriteSave => 'Overwrite Save?';
+
+  @override
+  String get overwriteSaveConfirm =>
+      'This will overwrite the existing save. Continue?';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get confirm => 'Confirm';
+
+  @override
+  String get gameSaved => 'Game saved successfully!';
+
+  @override
+  String get error => 'Error';
 }

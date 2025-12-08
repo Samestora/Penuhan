@@ -16,6 +16,5 @@ class PenuhanGame extends FlameGame {
   @override
   FutureOr<void> onLoad() async {
     _audioManager.stopBgm();
-    print('Entering dungeon: ${dungeon.name}');
   }
 }

@@ -432,5 +432,60 @@ class AppLocalizationsId extends AppLocalizations {
   String get floorDefense => 'Pertahanan';
 
   @override
+  String get pauseTitle => 'Jeda';
+
+  @override
+  String get pauseResume => 'Lanjutkan';
+
+  @override
+  String get pauseSave => 'Simpan';
+
+  @override
+  String get pauseSetting => 'Pengaturan';
+
+  @override
+  String get pauseMainMenu => 'Main Menu';
+
+  @override
+  String get pauseExitGame => 'Keluar Game';
+
+  @override
   String get playerName => 'Pahlawan Tanpa Nama';
+
+  @override
+  String get saveGame => 'Simpan Permainan';
+
+  @override
+  String get loadGame => 'Muat Permainan';
+
+  @override
+  String get slot => 'Slot';
+
+  @override
+  String get emptySlot => 'Slot Kosong';
+
+  @override
+  String get save => 'Simpan';
+
+  @override
+  String get back => 'Kembali';
+
+  @override
+  String get overwriteSave => 'Timpa Simpanan?';
+
+  @override
+  String get overwriteSaveConfirm =>
+      'Ini akan menimpa simpanan yang ada. Lanjutkan?';
+
+  @override
+  String get cancel => 'Batal';
+
+  @override
+  String get confirm => 'Konfirmasi';
+
+  @override
+  String get gameSaved => 'Permainan berhasil disimpan!';
+
+  @override
+  String get error => 'Kesalahan';
 }

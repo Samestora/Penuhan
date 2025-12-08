@@ -4,6 +4,8 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:penuhan/core/models/dungeon.dart';
+import 'package:penuhan/core/models/game_progress.dart';
 import 'package:penuhan/core/models/save_data.dart';
 
 const String saveDataBoxName = 'save_data_box';
@@ -14,25 +16,43 @@ class SaveManager {
 
   late Box<SaveData> _saveDataBox;
 
-  // Call this from main.dart before runApp()
   Future<void> initialize() async {
     final appDocumentDir = await getApplicationDocumentsDirectory();
     Hive.init(appDocumentDir.path);
     Hive.registerAdapter(SaveDataAdapter());
+    Hive.registerAdapter(SaveInventoryItemAdapter());
     _saveDataBox = await Hive.openBox<SaveData>(saveDataBoxName);
   }
 
   Box<SaveData> get saveDataBox => _saveDataBox;
 
-  // Creates a brand new save file when an empty slot is clicked
-  Future<void> createNewSave(int slotNumber) async {
-    final newSave = SaveData(
+  Future<void> saveGame({
+    required int slotNumber,
+    required Dungeon dungeon,
+    required GameProgress progress,
+  }) async {
+    final saveData = SaveData.fromGameProgress(
       slotNumber: slotNumber,
-      lastSaved: DateTime.now(),
-      progress: "New Game", // Or "Chapter 1", etc.
+      dungeon: dungeon,
+      progress: progress,
     );
-    // Hive uses a key-value system. We'll use the slot number as the key.
-    await _saveDataBox.put(slotNumber, newSave);
+    await _saveDataBox.put(slotNumber, saveData);
+  }
+
+  SaveData? loadGame(int slotNumber) {
+    return _saveDataBox.get(slotNumber);
+  }
+
+  List<SaveData?> getAllSaves() {
+    return [1, 2, 3, 4].map((slot) => _saveDataBox.get(slot)).toList();
+  }
+
+  Future<void> deleteSave(int slotNumber) async {
+    await _saveDataBox.delete(slotNumber);
+  }
+
+  bool hasSave(int slotNumber) {
+    return _saveDataBox.containsKey(slotNumber);
   }
 
   // Exports all save data to a single .json file

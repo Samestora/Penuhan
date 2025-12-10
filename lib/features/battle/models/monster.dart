@@ -9,9 +9,9 @@ class Monster {
   final int skillStat;
   final int defense;
   final List<Skill> skills;
-  String spritePath = AssetManager.enemySprite;
+  final String spritePath;
 
-  Monster({
+  const Monster({
     required this.id,
     required this.name,
     required this.maxHp,
@@ -19,5 +19,6 @@ class Monster {
     required this.skillStat,
     required this.defense,
     required this.skills,
+    this.spritePath = AssetManager.enemySprite,
   });
 }

@@ -46,6 +46,7 @@ class AssetManager {
   // BGM files
   static const String bgmTitle = '$_audioPath/$_bgmPath/bgm_title.mp3';
   static const String bgmRest = '$_audioPath/$_bgmPath/serenade.mp3';
+  static const String bgmBattle = '$_audioPath/$_bgmPath/battle.ogg';
   static const String bgmDungeonGraveyard =
       '$_audioPath/$_bgmPath/dungeon_graveyard_music.mp3';
 
@@ -68,6 +69,14 @@ class AssetManager {
   // Sprite image files
   static const String playerSprite = '$_imagesPath/$_spritePath/player.png';
   static const String enemySprite = '$_imagesPath/$_spritePath/enemy.png';
+  
+  // Monster sprites
+  static const String goblinSprite = '$_imagesPath/$_spritePath/goblin.png';
+  static const String goblinBerserkerSprite = '$_imagesPath/$_spritePath/goblin_berserker.png';
+  static const String goblinShamanSprite = '$_imagesPath/$_spritePath/goblin_shaman.png';
+  static const String goblinSniperSprite = '$_imagesPath/$_spritePath/goblin_sniper.png';
+  static const String tideSerpentSprite = '$_imagesPath/$_spritePath/tide_serpent.png';
+  static const String coralGolemSprite = '$_imagesPath/$_spritePath/coral_golem.png';
 }
 
 Future<void> precacheCoreAssets(BuildContext context) async {

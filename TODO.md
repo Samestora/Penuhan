@@ -47,4 +47,4 @@ If the below task's hyperlink exists then you can continue the implementation or
 - [x] [Customized widget](lib/widgets/)
 - [x] [Centralized Assets](lib/utils/asset_manager.dart)
 - [ ] ~~Game shaders (GLSL or SKSL)~~ (Dropped due to ungodly amount of BS just to make things work)
-- [ ] [Audio Manager (that is resistant to race condition)](lib/utils/audio_manager.dart)
+- [x] [Audio Manager (that is resistant to race condition)](lib/utils/audio_manager.dart)

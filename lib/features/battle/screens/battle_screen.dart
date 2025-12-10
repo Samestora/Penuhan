@@ -16,11 +16,6 @@ import 'package:penuhan/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'dart:math';
 
-// Note: Removed the unused InventoryItem import from the original file
-// and assuming necessary enums/classes (BattleAction, BattlePhase, SkillEffect)
-// and supporting models (BattleCharacter, InventoryItem, etc.) exist.
-// Assuming SettingsOverlay exists for the pause menu logic.
-
 class BattleScreen extends StatefulWidget {
   final Dungeon dungeon;
   final GameProgress? gameProgress;
@@ -38,10 +33,11 @@ class BattleScreen extends StatefulWidget {
 }
 
 class _BattleScreenState extends State<BattleScreen>
-    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   late BattleState _battleState;
   late AudioManager _audioManager;
-  late AnimationController _shakeController;
+  late AnimationController _playerShakeController;
+  late AnimationController _enemyShakeController;
   late Monster _activeMonster;
 
   bool _isPlayerHit = false;
@@ -61,7 +57,11 @@ class _BattleScreenState extends State<BattleScreen>
     super.initState();
     _initBattle();
     _currentInventory = widget.gameProgress?.inventory ?? [];
-    _shakeController = AnimationController(
+    _playerShakeController = AnimationController(
+      duration: const Duration(milliseconds: 500),
+      vsync: this,
+    );
+    _enemyShakeController = AnimationController(
       duration: const Duration(milliseconds: 500),
       vsync: this,
     );
@@ -71,7 +71,7 @@ class _BattleScreenState extends State<BattleScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _audioManager = context.read<AudioManager>();
-    _audioManager.stopBgm();
+    _audioManager.stopBgm(); 
   }
 
   @override
@@ -146,6 +146,7 @@ class _BattleScreenState extends State<BattleScreen>
             context,
           )!.battlePlayerAttacks(_battleState.player.name, damage);
           _isEnemyHit = true;
+          _enemyShakeController.forward(from: 0);
           _audioManager.playSfx(AssetManager.sfxClick);
           break;
         case BattleAction.skill:
@@ -214,7 +215,7 @@ class _BattleScreenState extends State<BattleScreen>
                 )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
               }
               _isPlayerHit = true;
-              _shakeController.forward(from: 0);
+              _playerShakeController.forward(from: 0);
               _audioManager.playSfx(AssetManager.sfxClick);
 
               _battleState.battleLog = log;
@@ -256,7 +257,8 @@ class _BattleScreenState extends State<BattleScreen>
 
   @override
   void dispose() {
-    _shakeController.dispose();
+    _playerShakeController.dispose();
+    _enemyShakeController.dispose();
     super.dispose();
   }
 
@@ -296,11 +298,11 @@ class _BattleScreenState extends State<BattleScreen>
             bottom: screenHeight * 0.35,
             left: screenWidth * 0.25 - spriteSize / 2, // Centered
             child: AnimatedBuilder(
-              animation: _shakeController,
+              animation: _playerShakeController,
               builder: (context, child) {
                 // Apply a simple horizontal shake on hit
                 final shake = _isPlayerHit
-                    ? sin(_shakeController.value * pi * 4) * 10
+                    ? sin(_playerShakeController.value * pi * 4) * 10
                     : 0.0;
                 return Transform.translate(
                   offset: Offset(shake, 0),
@@ -312,8 +314,8 @@ class _BattleScreenState extends State<BattleScreen>
               },
               child: Image.asset(
                 'assets/images/sprite/player.png',
-                width: spriteSize,
-                height: spriteSize,
+                width: spriteSize + 50,
+                height: spriteSize + 50,
                 fit: BoxFit.contain,
               ),
             ),
@@ -321,14 +323,27 @@ class _BattleScreenState extends State<BattleScreen>
 
           // Enemy character (top)
           Positioned(
-            top: screenHeight * 0.25,
+            top: screenHeight * 0.2,
             right: screenWidth * 0.25 - spriteSize / 2, // Centered
-            child: Opacity(
-              opacity: _isEnemyHit ? 0.6 : 1.0, // Flash effect
+            child: AnimatedBuilder(
+              animation: _enemyShakeController,
+              builder: (context, child) {
+                // Apply a simple horizontal shake on hit
+                final shake = _isEnemyHit
+                    ? sin(_enemyShakeController.value * pi * 4) * 10
+                    : 0.0;
+                return Transform.translate(
+                  offset: Offset(shake, 0),
+                  child: Opacity(
+                    opacity: _isEnemyHit ? 0.6 : 1.0, // Flash effect
+                    child: child,
+                  ),
+                );
+              },
               child: Image.asset(
                 _activeMonster.spritePath,
-                width: spriteSize,
-                height: spriteSize,
+                width: spriteSize + 75,
+                height: spriteSize + 75,
                 fit: BoxFit.contain,
               ),
             ),
@@ -1274,7 +1289,7 @@ class _BattleScreenState extends State<BattleScreen>
                 )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
               }
               _isPlayerHit = true;
-              _shakeController.forward(from: 0);
+              _playerShakeController.forward(from: 0);
               _audioManager.playSfx(AssetManager.sfxClick);
 
               _battleState.battleLog = enemyLog;
@@ -1305,7 +1320,7 @@ class _BattleScreenState extends State<BattleScreen>
       }
 
       if (_isEnemyHit) {
-        _shakeController.forward(from: 0).then((_) {
+        _enemyShakeController.forward(from: 0).then((_) {
           if (mounted) {
             setState(() => _isEnemyHit = false);
           }
@@ -1618,7 +1633,7 @@ class _BattleScreenState extends State<BattleScreen>
               context,
             )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
             _isPlayerHit = true;
-            _shakeController.forward(from: 0);
+            _playerShakeController.forward(from: 0);
             _audioManager.playSfx(AssetManager.sfxClick);
 
             _battleState.battleLog = enemyLog;

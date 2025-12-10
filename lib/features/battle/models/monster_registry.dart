@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:penuhan/core/models/dungeon.dart';
+import 'package:penuhan/core/utils/asset_manager.dart';
 import 'package:penuhan/features/battle/models/monster.dart';
 import 'package:penuhan/features/battle/models/skill.dart';
 
@@ -15,6 +16,7 @@ class MonsterRegistry {
     skillStat: 5,
     defense: 3,
     skills: [Skill.quickStrike, Skill.fireball],
+    spritePath: AssetManager.goblinSprite,
   );
 
   static final goblinScout = Monster(
@@ -35,6 +37,7 @@ class MonsterRegistry {
     skillStat: 12,
     defense: 3,
     skills: [Skill.fireball, Skill.healingLight],
+    spritePath: AssetManager.goblinShamanSprite,
   );
 
   static final goblinBerserker = Monster(
@@ -45,6 +48,7 @@ class MonsterRegistry {
     skillStat: 4,
     defense: 5,
     skills: [Skill.quickStrike],
+    spritePath: AssetManager.goblinBerserkerSprite,
   );
 
   static final goblinSniper = Monster(
@@ -55,6 +59,7 @@ class MonsterRegistry {
     skillStat: 7,
     defense: 2,
     skills: [Skill.quickStrike, Skill.iceSpear],
+    spritePath: AssetManager.goblinSniperSprite,
   );
 
   static final tideSerpent = Monster(
@@ -65,6 +70,7 @@ class MonsterRegistry {
     skillStat: 14,
     defense: 8,
     skills: [Skill.iceSpear, Skill.healingLight],
+    spritePath: AssetManager.tideSerpentSprite,
   );
 
   static final coralGolem = Monster(
@@ -75,6 +81,7 @@ class MonsterRegistry {
     skillStat: 8,
     defense: 15,
     skills: [Skill.quickStrike],
+    spritePath: AssetManager.coralGolemSprite,
   );
 
   static final sirenOracle = Monster(
@@ -312,8 +319,7 @@ class MonsterRegistry {
       goblinBerserker,
       goblinSniper,
       tideSerpent,
-      coralGolem,
-      sirenOracle,
+      coralGolem,      
     ],
     Dungeon.whisperingCrypt: [
       skeleton,

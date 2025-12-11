@@ -101,6 +101,7 @@ class _FloorSelectionScreenState extends State<FloorSelectionScreen> {
   }
 
   void _closeDialogs() {
+    _audioManager.playSfx(AssetManager.sfxDecline);
     setState(() {
       _showStatusDialog = false;
       _showItemDialog = false;

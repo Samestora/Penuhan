@@ -661,7 +661,14 @@ class _SaveContentState extends State<_SaveContent> {
               ),
             ),
             const SizedBox(height: 16),
-            MonochromeButton(text: l10n.back, onPressed: widget.onClose),
+            MonochromeButton(
+              text: l10n.back,
+              onPressed: () {
+                final audioManager = context.read<AudioManager>();
+                audioManager.playSfx(AssetManager.sfxDecline);
+                widget.onClose();
+              },
+            ),
           ],
         ),
       ),
@@ -756,7 +763,11 @@ class _SaveContentState extends State<_SaveContent> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
+              onPressed: () {
+                final audioManager = context.read<AudioManager>();
+                audioManager.playSfx(AssetManager.sfxDecline);
+                Navigator.of(context).pop(false);
+              },
               child: Text(
                 l10n.cancel,
                 style: const TextStyle(

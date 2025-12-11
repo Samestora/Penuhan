@@ -44,13 +44,10 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // Only run this logic once.
-    if (!_isMusicStarted) {
-      // Get the instance from Provider and store it.
+    // Only run this logic once.    
       _audioManager = context.read<AudioManager>();
       _audioManager.playBgm(AssetManager.bgmTitle, looping: true);
       _isMusicStarted = true;
-    }
   }
 
   @override
@@ -89,8 +86,7 @@ class _MainMenuState extends State<MainMenu> with WidgetsBindingObserver {
               // Embark Button
               MonochromeButton(
                 text: localizations.mainMenuEmbark,
-                onPressed: () {
-                  _audioManager.playSfx(AssetManager.sfxClick);
+                onPressed: () {                  
                   _showEmbarkDialog();
                 },
               ),
@@ -334,8 +330,14 @@ class __LoadContentState extends State<_LoadContent> {
                                 ),
                                 actions: [
                                   TextButton(
-                                    onPressed: () =>
-                                        Navigator.of(context).pop(false),
+                                    onPressed: () {
+                                      final audioManager = context
+                                          .read<AudioManager>();
+                                      audioManager.playSfx(
+                                        AssetManager.sfxDecline,
+                                      );
+                                      Navigator.of(context).pop(false);
+                                    },
                                     child: const Text('Cancel'),
                                   ),
                                   TextButton(
@@ -391,7 +393,7 @@ class __EmbarkContentState extends State<_EmbarkContent> {
             child: DungeonCard(
               dungeon: dungeon,
               onTap: () {
-                audioManager.playSfx(AssetManager.sfxClick);
+                audioManager.playSfx(AssetManager.sfxPlayButton);
                 audioManager.stopBgm();
                 Navigator.of(context).pop(); // Close dialog
 

@@ -38,15 +38,51 @@ class AssetManager {
   static const String _enginePath = 'engine';
   static const String _spritePath = 'sprite';
   static const String _dungeonPath = 'dungeon';
+  static const String _animPath = 'assets/anim';
+
+  // Animation files
+  static const String animAttackEffect = '$_animPath/attack_effect.gif';
+  static const String animBiteEffect = '$_animPath/bite_effect.gif';
+  static const String animFireballEffect = '$_animPath/fireball_effect.gif';
+  static const String animFlameBurstEffect =
+      '$_animPath/flame_burst_effect.gif';
+  static const String animHealEffect = '$_animPath/heal_effect.gif';
+  static const String animIceEffect = '$_animPath/ice.gif';
+  static const String animSlashEffect = '$_animPath/slash_effect.gif';
+  static const String animThrustEffect = '$_animPath/thrust_effect.gif';
+  static const String animThunderEffect = '$_animPath/thunder.gif';
 
   // SFX files
   static const String sfxClick = '$_audioPath/$_sfxPath/sfx_click.mp3';
   static const String sfxSlash = '$_audioPath/$_sfxPath/sfx_slash.wav';
+  static const String sfxBasicAttack =
+      '$_audioPath/$_sfxPath/sfx_basic_attack.wav';
+  static const String sfxBuying = '$_audioPath/$_sfxPath/sfx_buying.wav';
+  static const String sfxDecline = '$_audioPath/$_sfxPath/sfx_decline.wav';
+  static const String sfxDefence = '$_audioPath/$_sfxPath/sfx_defence.wav';
+  static const String sfxPlayButton =
+      '$_audioPath/$_sfxPath/sfx_play_button.wav';
+
+  // Skill SFX
+  static const String sfxSkillBite = '$_audioPath/$_sfxPath/sfx_skill_bite.wav';
+  static const String sfxSkillFireball =
+      '$_audioPath/$_sfxPath/sfx_skill_fireball.wav';
+  static const String sfxSkillFlameBurst =
+      '$_audioPath/$_sfxPath/sfx_skill_flame_burst.wav';
+  static const String sfxSkillHeal = '$_audioPath/$_sfxPath/sfx_skill_heal.wav';
+  static const String sfxSkillIce = '$_audioPath/$_sfxPath/sfx_skill_ice.wav';
+  static const String sfxSkillSlash =
+      '$_audioPath/$_sfxPath/sfx_skill_slash.wav';
+  static const String sfxSkillThrust =
+      '$_audioPath/$_sfxPath/sfx_skill_thrust.wav';
+  static const String sfxSkillThunder =
+      '$_audioPath/$_sfxPath/sfx_skill_thunder.wav';
 
   // BGM files
   static const String bgmTitle = '$_audioPath/$_bgmPath/bgm_title.mp3';
   static const String bgmRest = '$_audioPath/$_bgmPath/serenade.mp3';
   static const String bgmBattle = '$_audioPath/$_bgmPath/battle.ogg';
+  static const String bgmBoss = '$_audioPath/$_bgmPath/boss.ogg';
   static const String bgmDungeonGraveyard =
       '$_audioPath/$_bgmPath/dungeon_graveyard_music.mp3';
 
@@ -69,14 +105,32 @@ class AssetManager {
   // Sprite image files
   static const String playerSprite = '$_imagesPath/$_spritePath/player.png';
   static const String enemySprite = '$_imagesPath/$_spritePath/enemy.png';
-  
+
   // Monster sprites
   static const String goblinSprite = '$_imagesPath/$_spritePath/goblin.png';
-  static const String goblinBerserkerSprite = '$_imagesPath/$_spritePath/goblin_berserker.png';
-  static const String goblinShamanSprite = '$_imagesPath/$_spritePath/goblin_shaman.png';
-  static const String goblinSniperSprite = '$_imagesPath/$_spritePath/goblin_sniper.png';
-  static const String tideSerpentSprite = '$_imagesPath/$_spritePath/tide_serpent.png';
-  static const String coralGolemSprite = '$_imagesPath/$_spritePath/coral_golem.png';
+  static const String goblinScoutSprite =
+      '$_imagesPath/$_spritePath/goblin_scout.png';
+  static const String goblinBerserkerSprite =
+      '$_imagesPath/$_spritePath/goblin_berserker.png';
+  static const String goblinShamanSprite =
+      '$_imagesPath/$_spritePath/goblin_shaman.png';
+  static const String goblinSniperSprite =
+      '$_imagesPath/$_spritePath/goblin_sniper.png';
+  static const String tideSerpentSprite =
+      '$_imagesPath/$_spritePath/tide_serpent.png';
+  static const String coralGolemSprite =
+      '$_imagesPath/$_spritePath/coral_golem.png';
+  static const String skeletonSprite = '$_imagesPath/$_spritePath/skeleton.png';
+  static const String skeletonArcherSprite =
+      '$_imagesPath/$_spritePath/skeleton_archer.png';
+  static const String skeletonKnightSprite =
+      '$_imagesPath/$_spritePath/skeleton_knight.png';
+  static const String skeletonMageSprite =
+      '$_imagesPath/$_spritePath/skeleton_mage.png';
+  static const String skeletonWarlockSprite =
+      '$_imagesPath/$_spritePath/skeleton_warlock.png';
+  static const String ghoulSprite = '$_imagesPath/$_spritePath/ghoul.png';
+  static const String wraithSprite = '$_imagesPath/$_spritePath/wraith.png';
 }
 
 Future<void> precacheCoreAssets(BuildContext context) async {

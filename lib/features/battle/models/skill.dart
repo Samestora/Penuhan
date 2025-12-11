@@ -10,6 +10,8 @@ class Skill {
   damageMultiplier; // Multiplier for skill stat (e.g., 150 = 1.5x damage)
   final int? fixedDamage; // Optional fixed damage
   final SkillEffect? effect;
+  final String? sfxPath; // SFX file path
+  final String? animationPath; // Animation file path
 
   const Skill({
     required this.id,
@@ -19,6 +21,8 @@ class Skill {
     required this.damageMultiplier,
     this.fixedDamage,
     this.effect,
+    this.sfxPath,
+    this.animationPath,
   });
 
   // Get localized name
@@ -74,6 +78,8 @@ class Skill {
     description: 'Launch a blazing fireball\nDeals 150% skill damage',
     skillCost: 10,
     damageMultiplier: 150,
+    sfxPath: 'assets/audio/sfx/sfx_skill_fireball.wav',
+    animationPath: 'assets/anim/fireball_effect.gif',
   );
 
   static const iceSpear = Skill(
@@ -82,6 +88,8 @@ class Skill {
     description: 'Pierce with frozen spear\nDeals 120% skill damage',
     skillCost: 8,
     damageMultiplier: 120,
+    sfxPath: 'assets/audio/sfx/sfx_skill_ice.wav',
+    animationPath: 'assets/anim/ice.gif',
   );
 
   static const thunderStrike = Skill(
@@ -90,6 +98,8 @@ class Skill {
     description: 'Call down lightning\nDeals 200% skill damage',
     skillCost: 15,
     damageMultiplier: 200,
+    sfxPath: 'assets/audio/sfx/sfx_skill_thunder.wav',
+    animationPath: 'assets/anim/thunder.gif',
   );
 
   static const quickStrike = Skill(
@@ -98,6 +108,8 @@ class Skill {
     description: 'Swift precise attack\nDeals 100% skill damage',
     skillCost: 5,
     damageMultiplier: 100,
+    sfxPath: 'assets/audio/sfx/sfx_skill_slash.wav',
+    animationPath: 'assets/anim/slash_effect.gif',
   );
 
   static const healingLight = Skill(
@@ -108,6 +120,8 @@ class Skill {
     damageMultiplier: 0,
     fixedDamage: 0,
     effect: SkillEffect.heal,
+    sfxPath: 'assets/audio/sfx/sfx_skill_heal.wav',
+    animationPath: 'assets/anim/heal_effect.gif',
   );
 
   // List of all available skills

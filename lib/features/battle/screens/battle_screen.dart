@@ -52,6 +52,12 @@ class _BattleScreenState extends State<BattleScreen>
   bool _isPaused = false;
   bool _showSettings = false;
 
+  // Animation state
+  bool _showSkillAnimation = false;
+  String? _currentAnimationPath;
+  bool _isPlayerSkillAnimation = true;
+  bool _isHealAnimation = false; // Track if animation is heal type
+
   @override
   void initState() {
     super.initState();
@@ -71,7 +77,11 @@ class _BattleScreenState extends State<BattleScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _audioManager = context.read<AudioManager>();
-    _audioManager.stopBgm(); 
+    // Play appropriate BGM based on battle type
+    final bgm = widget.isBossBattle
+        ? AssetManager.bgmBoss
+        : AssetManager.bgmBattle;
+    _audioManager.playBgm(bgm, looping: true);
   }
 
   @override
@@ -147,7 +157,20 @@ class _BattleScreenState extends State<BattleScreen>
           )!.battlePlayerAttacks(_battleState.player.name, damage);
           _isEnemyHit = true;
           _enemyShakeController.forward(from: 0);
-          _audioManager.playSfx(AssetManager.sfxClick);
+          _audioManager.playSfx(AssetManager.sfxBasicAttack);
+
+          // Show attack animation
+          _showSkillAnimation = true;
+          _currentAnimationPath = AssetManager.animAttackEffect;
+          _isPlayerSkillAnimation = true;
+          _isHealAnimation = false;
+          Future.delayed(const Duration(milliseconds: 800), () {
+            if (mounted) {
+              setState(() {
+                _showSkillAnimation = false;
+              });
+            }
+          });
           break;
         case BattleAction.skill:
           // Show skill list UI
@@ -191,6 +214,29 @@ class _BattleScreenState extends State<BattleScreen>
               if (useSkill) {
                 final skill = _activeMonster
                     .skills[Random().nextInt(_activeMonster.skills.length)];
+
+                // Play skill SFX if available
+                if (skill.sfxPath != null) {
+                  _audioManager.playSfx(skill.sfxPath!);
+                }
+
+                // Show skill animation if available
+                if (skill.animationPath != null) {
+                  _showSkillAnimation = true;
+                  _currentAnimationPath = skill.animationPath;
+                  _isPlayerSkillAnimation = false; // Enemy skill animation
+                  _isHealAnimation = skill.effect == SkillEffect.heal;
+
+                  // Hide animation after 800ms
+                  Future.delayed(const Duration(milliseconds: 800), () {
+                    if (mounted) {
+                      setState(() {
+                        _showSkillAnimation = false;
+                      });
+                    }
+                  });
+                }
+
                 enemyDamage = skill.calculateDamage(_battleState.enemy.skill);
                 // Handle skill effects
                 if (skill.effect == SkillEffect.heal) {
@@ -213,10 +259,23 @@ class _BattleScreenState extends State<BattleScreen>
                 log = AppLocalizations.of(
                   context,
                 )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+                _audioManager.playSfx(AssetManager.sfxBasicAttack);
+
+                // Show attack animation
+                _showSkillAnimation = true;
+                _currentAnimationPath = AssetManager.animAttackEffect;
+                _isPlayerSkillAnimation = false;
+                _isHealAnimation = false;
+                Future.delayed(const Duration(milliseconds: 800), () {
+                  if (mounted) {
+                    setState(() {
+                      _showSkillAnimation = false;
+                    });
+                  }
+                });
               }
               _isPlayerHit = true;
               _playerShakeController.forward(from: 0);
-              _audioManager.playSfx(AssetManager.sfxClick);
 
               _battleState.battleLog = log;
 
@@ -348,6 +407,49 @@ class _BattleScreenState extends State<BattleScreen>
               ),
             ),
           ),
+
+          // Skill Animation Overlay
+          if (_showSkillAnimation && _currentAnimationPath != null)
+            Positioned(
+              // Position based on skill type and who's casting
+              // For heal animations: show on caster (_isHealAnimation = true)
+              // For attack animations: show on target
+              bottom: _isHealAnimation
+                  ? (_isPlayerSkillAnimation
+                        ? (screenHeight * 0.35 - 25) // Player's heal on player
+                        : null) // Enemy's heal (use top)
+                  : (_isPlayerSkillAnimation
+                        ? null // Player's attack on enemy (use top)
+                        : (screenHeight * 0.35 -
+                              25)), // Enemy's attack on player
+              top:
+                  (_isHealAnimation && !_isPlayerSkillAnimation) ||
+                      (!_isHealAnimation && _isPlayerSkillAnimation)
+                  ? (screenHeight * 0.2 +
+                        25) // Enemy's heal or Player's attack on enemy
+                  : null,
+              left: _isHealAnimation
+                  ? (_isPlayerSkillAnimation
+                        ? (screenWidth * 0.25 -
+                              100) // Player's heal on player (left)
+                        : null) // Enemy's heal (use right)
+                  : (_isPlayerSkillAnimation
+                        ? null // Player's attack (use right)
+                        : (screenWidth * 0.25 -
+                              100)), // Enemy's attack on player (left)
+              right:
+                  (_isHealAnimation && !_isPlayerSkillAnimation) ||
+                      (!_isHealAnimation && _isPlayerSkillAnimation)
+                  ? (screenWidth * 0.25 -
+                        100) // Enemy's heal or Player's attack on enemy (right)
+                  : null,
+              child: Image.asset(
+                _currentAnimationPath!,
+                width: 200,
+                height: 200,
+                fit: BoxFit.contain,
+              ),
+            ),
         ],
       ),
     );
@@ -1212,10 +1314,32 @@ class _BattleScreenState extends State<BattleScreen>
   }
 
   void _useSkill(Skill skill) {
-    _audioManager.playSfx(AssetManager.sfxClick);
+    // Play skill SFX if available
+    if (skill.sfxPath != null) {
+      _audioManager.playSfx(skill.sfxPath!);
+    } else {
+      _audioManager.playSfx(AssetManager.sfxClick);
+    }
 
     setState(() {
       String log = '';
+
+      // Show skill animation if available
+      if (skill.animationPath != null) {
+        _showSkillAnimation = true;
+        _currentAnimationPath = skill.animationPath;
+        _isPlayerSkillAnimation = true; // Player is casting
+        _isHealAnimation = skill.effect == SkillEffect.heal;
+
+        // Hide animation after 800ms
+        Future.delayed(const Duration(milliseconds: 800), () {
+          if (mounted) {
+            setState(() {
+              _showSkillAnimation = false;
+            });
+          }
+        });
+      }
 
       // Spend MP first (for all skills)
       _battleState.player.spendMp(skill.skillCost);
@@ -1274,6 +1398,29 @@ class _BattleScreenState extends State<BattleScreen>
               if (useSkill) {
                 final skill = _activeMonster
                     .skills[Random().nextInt(_activeMonster.skills.length)];
+
+                // Play skill SFX if available
+                if (skill.sfxPath != null) {
+                  _audioManager.playSfx(skill.sfxPath!);
+                }
+
+                // Show skill animation if available
+                if (skill.animationPath != null) {
+                  _showSkillAnimation = true;
+                  _currentAnimationPath = skill.animationPath;
+                  _isPlayerSkillAnimation = false; // Enemy skill animation
+                  _isHealAnimation = skill.effect == SkillEffect.heal;
+
+                  // Hide animation after 800ms
+                  Future.delayed(const Duration(milliseconds: 800), () {
+                    if (mounted) {
+                      setState(() {
+                        _showSkillAnimation = false;
+                      });
+                    }
+                  });
+                }
+
                 enemyDamage = skill.calculateDamage(_battleState.enemy.skill);
                 _battleState.player.takeDamage(enemyDamage);
                 enemyLog = AppLocalizations.of(context)!.battleEnemyUsesSkill(
@@ -1287,10 +1434,23 @@ class _BattleScreenState extends State<BattleScreen>
                 enemyLog = AppLocalizations.of(
                   context,
                 )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+                _audioManager.playSfx(AssetManager.sfxBasicAttack);
+
+                // Show attack animation
+                _showSkillAnimation = true;
+                _currentAnimationPath = AssetManager.animAttackEffect;
+                _isPlayerSkillAnimation = false;
+                _isHealAnimation = false;
+                Future.delayed(const Duration(milliseconds: 800), () {
+                  if (mounted) {
+                    setState(() {
+                      _showSkillAnimation = false;
+                    });
+                  }
+                });
               }
               _isPlayerHit = true;
               _playerShakeController.forward(from: 0);
-              _audioManager.playSfx(AssetManager.sfxClick);
 
               _battleState.battleLog = enemyLog;
 
@@ -1632,9 +1792,23 @@ class _BattleScreenState extends State<BattleScreen>
             String enemyLog = AppLocalizations.of(
               context,
             )!.battleEnemyAttacks(_battleState.enemy.name, enemyDamage);
+            _audioManager.playSfx(AssetManager.sfxBasicAttack);
+
+            // Show attack animation
+            _showSkillAnimation = true;
+            _currentAnimationPath = AssetManager.animAttackEffect;
+            _isPlayerSkillAnimation = false;
+            _isHealAnimation = false;
+            Future.delayed(const Duration(milliseconds: 800), () {
+              if (mounted) {
+                setState(() {
+                  _showSkillAnimation = false;
+                });
+              }
+            });
+
             _isPlayerHit = true;
             _playerShakeController.forward(from: 0);
-            _audioManager.playSfx(AssetManager.sfxClick);
 
             _battleState.battleLog = enemyLog;
 

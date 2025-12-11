@@ -27,6 +27,7 @@ class MonsterRegistry {
     skillStat: 6,
     defense: 4,
     skills: [Skill.quickStrike],
+    spritePath: AssetManager.goblinScoutSprite,
   );
 
   static final goblinShaman = Monster(
@@ -112,6 +113,7 @@ class MonsterRegistry {
     skillStat: 10,
     defense: 5,
     skills: [Skill.quickStrike, Skill.iceSpear],
+    spritePath: AssetManager.skeletonSprite,
   );
 
   static final skeletonArcher = Monster(
@@ -122,6 +124,7 @@ class MonsterRegistry {
     skillStat: 8,
     defense: 4,
     skills: [Skill.quickStrike, Skill.iceSpear],
+    spritePath: AssetManager.skeletonArcherSprite,
   );
 
   static final skeletonMage = Monster(
@@ -132,6 +135,7 @@ class MonsterRegistry {
     skillStat: 14,
     defense: 5,
     skills: [Skill.iceSpear, Skill.thunderStrike],
+    spritePath: AssetManager.skeletonMageSprite,
   );
 
   static final skeletonKnight = Monster(
@@ -142,6 +146,7 @@ class MonsterRegistry {
     skillStat: 9,
     defense: 9,
     skills: [Skill.quickStrike],
+    spritePath: AssetManager.skeletonKnightSprite,
   );
 
   static final skeletonWarlock = Monster(
@@ -152,6 +157,7 @@ class MonsterRegistry {
     skillStat: 18,
     defense: 6,
     skills: [Skill.fireball, Skill.thunderStrike],
+    spritePath: AssetManager.skeletonWarlockSprite,
   );
 
   static final ghoul = Monster(
@@ -162,6 +168,7 @@ class MonsterRegistry {
     skillStat: 9,
     defense: 7,
     skills: [Skill.quickStrike],
+    spritePath: AssetManager.ghoulSprite,
   );
 
   static final lichAdept = Monster(
@@ -182,6 +189,7 @@ class MonsterRegistry {
     skillStat: 19,
     defense: 5,
     skills: [Skill.iceSpear, Skill.quickStrike],
+    spritePath: AssetManager.wraithSprite,
   );
 
   static final skeletonBoss = Monster(
@@ -319,7 +327,7 @@ class MonsterRegistry {
       goblinBerserker,
       goblinSniper,
       tideSerpent,
-      coralGolem,      
+      coralGolem,
     ],
     Dungeon.whisperingCrypt: [
       skeleton,

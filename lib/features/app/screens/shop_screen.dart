@@ -38,7 +38,7 @@ class _ShopScreenState extends State<ShopScreen> {
   }
 
   void _buyItem(ShopItem shopItem) {
-    _audioManager.playSfx(AssetManager.sfxClick);
+    _audioManager.playSfx(AssetManager.sfxBuying);
 
     final l10n = AppLocalizations.of(context)!;
     final item = shopItem.item;

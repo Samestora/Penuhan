@@ -146,7 +146,6 @@ class PauseOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final audioManager = context.read<AudioManager>();
-    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       color: Colors.black.withOpacity(0.85),
@@ -162,10 +161,10 @@ class PauseOverlay extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                l10n.pauseTitle,
+              const Text(
+                'PAUSED',
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: 'Unifont',
                   fontSize: 32,
                   color: Colors.white,
@@ -174,7 +173,7 @@ class PauseOverlay extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               _buildPauseButton(
-                label: l10n.pauseResume,
+                label: 'RESUME',
                 onPressed: () {
                   audioManager.playSfx(AssetManager.sfxClick);
                   onResume();
@@ -183,7 +182,7 @@ class PauseOverlay extends StatelessWidget {
               const SizedBox(height: 12),
               if (onSave != null) ...[
                 _buildPauseButton(
-                  label: l10n.pauseSave,
+                  label: 'SAVE',
                   onPressed: () {
                     audioManager.playSfx(AssetManager.sfxClick);
                     onSave!();
@@ -193,7 +192,7 @@ class PauseOverlay extends StatelessWidget {
               ],
               if (onOption != null) ...[
                 _buildPauseButton(
-                  label: l10n.pauseSetting,
+                  label: 'OPTION',
                   onPressed: () {
                     audioManager.playSfx(AssetManager.sfxClick);
                     showDialog(
@@ -208,7 +207,7 @@ class PauseOverlay extends StatelessWidget {
                 const SizedBox(height: 12),
               ],
               _buildPauseButton(
-                label: l10n.pauseMainMenu,
+                label: 'MAIN MENU',
                 onPressed: () {
                   audioManager.playSfx(AssetManager.sfxClick);
                   onMainMenu();
@@ -216,7 +215,7 @@ class PauseOverlay extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               _buildPauseButton(
-                label: l10n.pauseExitGame,
+                label: 'EXIT',
                 onPressed: () {
                   audioManager.playSfx(AssetManager.sfxClick);
                   _showExitConfirmation(context, audioManager);
